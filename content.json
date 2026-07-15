@@ -25,6 +25,14 @@
         {
           "key": "Publisher",
           "value": "Sulakauri Publishing"
+        },
+        {
+          "key": "Editor",
+          "value": "Ana Tchabashvili"
+        },
+        {
+          "key": "cover",
+          "value": "Ana Jibladze"
         }
       ],
       "id": "couriers-tales",
