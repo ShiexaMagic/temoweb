@@ -59,7 +59,7 @@
         },
         {
           "key": "Genre",
-          "value": "Two plays"
+          "value": "plays"
         },
         {
           "key": "Plays Included",
@@ -88,6 +88,10 @@
         {
           "key": "ISBN",
           "value": "978-9941-37-810-2"
+        },
+        {
+          "key": "Award",
+          "value": "CO₂ received the Friedrich Ebert Stiftung Prize in Dramaturgy in 2025."
         }
       ],
       "id": "pathetic-monologues-book",
