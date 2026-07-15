@@ -72,10 +72,15 @@ def git_auto_push(section):
     """Commit content.json and push to remote in a background thread."""
     def _push():
         global _push_status
-        _push_status = {"status": "pushing", "message": "Pushing…"}
+        _push_status = {"status": "pushing", "message": "Building & pushing…"}
         try:
+            # 1. Regenerate static index.html for Vercel
+            import build as _build
+            _build.build()
+
+            # 2. Stage both data file and built HTML
             subprocess.run(
-                ["git", "add", "content.json"],
+                ["git", "add", "content.json", "index.html"],
                 cwd=BASE, capture_output=True, timeout=10
             )
             commit = subprocess.run(
@@ -91,7 +96,7 @@ def git_auto_push(section):
                 cwd=BASE, capture_output=True, timeout=30, text=True
             )
             if push.returncode == 0:
-                _push_status = {"status": "ok", "message": "Pushed to GitHub"}
+                _push_status = {"status": "ok", "message": "Built & pushed → Vercel deploying"}
             else:
                 _push_status = {"status": "error", "message": push.stderr.strip() or push.stdout.strip()}
         except Exception as exc:
