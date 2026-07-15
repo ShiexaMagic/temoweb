@@ -148,12 +148,12 @@
       "description": "A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves.",
       "details": [
         {
-          "key": "Premiered",
-          "value": "Theatre on Atoneli, April 2025"
-        },
-        {
           "key": "Director",
           "value": "Ilia Korkashvili"
+        },
+        {
+          "key": "Premiered",
+          "value": "Theatre on Atoneli, April 2025"
         },
         {
           "key": "Language",
@@ -169,7 +169,7 @@
         }
       ],
       "id": "co2",
-      "image": "CO2.jpeg",
+      "image": "57.jpg",
       "title": "CO₂",
       "year": "Play, 2025"
     }
