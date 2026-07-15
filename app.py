@@ -26,15 +26,31 @@ CONTENT_FILE = os.path.join(BASE, "content.json")
 CONFIG_FILE = os.path.join(BASE, "admin_config.json")
 IMAGES_DIR = os.path.join(BASE, "Images")
 
+# Git / hosting env vars (set these in Railway dashboard)
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_REPO  = os.environ.get("GITHUB_REPO", "ShiexaMagic/temoweb")
+
 app = Flask(__name__, template_folder="templates")
 
 
 def _load_secret_key():
+    # Env var takes priority (Railway / production)
+    if os.environ.get("SECRET_KEY"):
+        return os.environ["SECRET_KEY"]
     cfg = _load_admin_config()
     return cfg.get("secret_key", secrets.token_hex(32))
 
 
 def _load_admin_config():
+    # ── Hosted mode: credentials from environment variables ──────
+    if os.environ.get("ADMIN_PASSWORD_HASH"):
+        return {
+            "username": os.environ.get("ADMIN_USERNAME", "admin"),
+            "password_hash": os.environ["ADMIN_PASSWORD_HASH"],
+            "secret_key": os.environ.get("SECRET_KEY", secrets.token_hex(32)),
+            "hosted": True,
+        }
+    # ── Local mode: credentials from admin_config.json ───────────
     if not os.path.exists(CONFIG_FILE):
         cfg = {
             "username": "admin",
@@ -51,6 +67,21 @@ def _load_admin_config():
 
 
 app.secret_key = _load_secret_key()
+
+
+def _configure_git():
+    """Set git identity and token-authenticated remote URL (for Railway)."""
+    if GITHUB_TOKEN:
+        remote_url = f"https://x-access-token:{GITHUB_TOKEN}@github.com/{GITHUB_REPO}.git"
+        subprocess.run(["git", "remote", "set-url", "origin", remote_url],
+                       cwd=BASE, capture_output=True)
+    subprocess.run(["git", "config", "user.email", "admin@temorekhviashvili.com"],
+                   cwd=BASE, capture_output=True)
+    subprocess.run(["git", "config", "user.name", "Temo Rekhviashvili"],
+                   cwd=BASE, capture_output=True)
+
+
+_configure_git()
 
 
 # ── Helpers ─────────────────────────────────────────────────────
@@ -110,6 +141,11 @@ def load_admin_config():
 
 
 def save_admin_config(cfg):
+    if _load_admin_config().get("hosted"):
+        # In hosted mode credentials live in Railway env vars — cannot be
+        # written to a file that survives restarts.  Return silently; the
+        # /api/change-password route will surface an appropriate message.
+        return
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=2)
 
@@ -265,6 +301,11 @@ def api_git_status():
 @app.route("/api/change-password", methods=["POST"])
 @login_required
 def api_change_password():
+    if _load_admin_config().get("hosted"):
+        return jsonify({
+            "error": "Running in hosted mode. Update the ADMIN_PASSWORD_HASH "
+                     "environment variable in your Railway dashboard instead."
+        }), 400
     data = request.get_json(force=True, silent=True) or {}
     current = data.get("current", "")
     new_pw = data.get("new", "")
