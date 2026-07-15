@@ -2,6 +2,7 @@ import json
 import os
 import secrets
 import subprocess
+import sys
 import threading
 from functools import wraps
 
@@ -29,6 +30,10 @@ IMAGES_DIR = os.path.join(BASE, "Images")
 # Git / hosting env vars (set these in Railway dashboard)
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO  = os.environ.get("GITHUB_REPO", "ShiexaMagic/temoweb")
+
+# Ensure build.py is importable from the background thread
+if BASE not in sys.path:
+    sys.path.insert(0, BASE)
 
 app = Flask(__name__, template_folder="templates")
 
@@ -71,14 +76,17 @@ app.secret_key = _load_secret_key()
 
 def _configure_git():
     """Set git identity and token-authenticated remote URL (for Railway)."""
-    if GITHUB_TOKEN:
-        remote_url = f"https://x-access-token:{GITHUB_TOKEN}@github.com/{GITHUB_REPO}.git"
-        subprocess.run(["git", "remote", "set-url", "origin", remote_url],
-                       cwd=BASE, capture_output=True)
-    subprocess.run(["git", "config", "user.email", "admin@temorekhviashvili.com"],
-                   cwd=BASE, capture_output=True)
-    subprocess.run(["git", "config", "user.name", "Temo Rekhviashvili"],
-                   cwd=BASE, capture_output=True)
+    try:
+        if GITHUB_TOKEN:
+            remote_url = f"https://x-access-token:{GITHUB_TOKEN}@github.com/{GITHUB_REPO}.git"
+            subprocess.run(["git", "remote", "set-url", "origin", remote_url],
+                           cwd=BASE, capture_output=True, timeout=10)
+        subprocess.run(["git", "config", "user.email", "admin@temorekhviashvili.com"],
+                       cwd=BASE, capture_output=True, timeout=10)
+        subprocess.run(["git", "config", "user.name", "Temo Rekhviashvili"],
+                       cwd=BASE, capture_output=True, timeout=10)
+    except Exception as exc:  # git not in PATH or other OS error — non-fatal
+        print(f"[git config] skipped: {exc}")
 
 
 _configure_git()
