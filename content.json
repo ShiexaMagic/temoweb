@@ -16,7 +16,7 @@
         },
         {
           "key": "Genre",
-          "value": "Short novel"
+          "value": "Novella"
         },
         {
           "key": "Award",
@@ -33,6 +33,10 @@
         {
           "key": "Cover design",
           "value": "Ana Jibladze"
+        },
+        {
+          "key": "ISBN:",
+          "value": "978-9941-30-750-8"
         }
       ],
       "id": "couriers-tales",
