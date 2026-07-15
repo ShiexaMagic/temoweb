@@ -240,8 +240,8 @@
     "image": "Temo Re Movie.jpeg",
     "paragraphs": [
       "Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili’s debut novel Courier’s Tales. Rekhviashvili co-wrote the film and plays the leading role.",
-      "The film follows Temo, a young actor who also works as a courier. Over the course of a single day, he travels across Tbilisi on a moped and performs in a suburban theatre in the evening. Poverty, injustice, corruption and alienation gradually turn into disturbing visions.",
-      "Constructed as a black-and-white photomontage, Temo Re combines fiction and documentary elements to create a fragmented portrait of contemporary Tbilisi."
+      "The film follows Temo, a young actor who also works as a courier. Over the course of a single day, he travels across Tbilisi on a moped and performs in a suburban theatre in the evening. The poverty, injustice, corruption and alienation he encounters during the day gradually transform into disturbing visions that haunt him at night.",
+      "Constructed as a black-and-white photomontage, Temo Re combines fiction and documentary elements to create a fragmented portrait of contemporary Tbilisi and a young man moving between work, theatre, exhaustion and imagination"
     ],
     "details": [
       {
@@ -267,6 +267,10 @@
       {
         "key": "Awards",
         "value": "Tiger Short Award · KNF Award · IFFR · SFCC Critics’ Award · Golden Prometheus · Eliso Award"
+      },
+      {
+        "key": "Cast",
+        "value": "Natalia Gabisonia, Mikheil Abramishvili, Sandro Kalandadze, Tamara Chumashvili and others"
       }
     ]
   },
