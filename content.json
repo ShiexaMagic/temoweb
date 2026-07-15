@@ -5,16 +5,6 @@
   },
   "books": [
     {
-      "id": "couriers-tales",
-      "label": "Novel / Short Novel",
-      "title": "Courier’s Tales",
-      "image": "Carrier Tales.jpeg",
-      "meta_line1": "Published by Sulakauri Publishing, 2021",
-      "meta_line2": "Winner of the SABA Literary Award for Best Debut, 2022",
-      "paragraphs": [
-        "Courier’s Tales is the debut prose work by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.",
-        "Set mostly in contemporary Tbilisi, the novel moves through streets, staircases, rehearsal rooms and precarious jobs. In its final part, the story opens toward Germany."
-      ],
       "details": [
         {
           "key": "Original Title",
@@ -36,19 +26,19 @@
           "key": "Publisher",
           "value": "Sulakauri Publishing"
         }
-      ]
+      ],
+      "id": "couriers-tales",
+      "image": "Carrier Tales.jpeg",
+      "label": "Novel / Short Novel",
+      "meta_line1": "Published by Sulakauri Publishing, 2021",
+      "meta_line2": "Winner of the SABA Literary Award for Best Debut, 2022",
+      "paragraphs": [
+        "Courier’s Tales is the debut prose work by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.",
+        "Set mostly in contemporary Tbilisi, the novel moves through streets, staircases, rehearsal rooms and precarious jobs. In its final part, the story opens toward Germany."
+      ],
+      "title": "Courier’s Tales"
     },
     {
-      "id": "pathetic-monologues-book",
-      "label": "Plays / Collection",
-      "title": "Pathetic Monologues — Two Plays",
-      "image": "Patetique Book.jpeg",
-      "meta_line1": "Published by Sulakauri Publishing, 2025",
-      "meta_line2": "A collection of two plays by Temo Rekhviashvili",
-      "paragraphs": [
-        "Pathetic Monologues — Two Plays brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.",
-        "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance. CO₂ is a darkly comic play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life."
-      ],
       "details": [
         {
           "key": "Year",
@@ -66,22 +56,23 @@
           "key": "Publisher",
           "value": "Sulakauri Publishing"
         }
-      ]
+      ],
+      "id": "pathetic-monologues-book",
+      "image": "Patetique Book.jpeg",
+      "label": "Plays / Collection",
+      "meta_line1": "Published by Sulakauri Publishing, 2025",
+      "meta_line2": "A collection of two plays by Temo Rekhviashvili",
+      "paragraphs": [
+        "Pathetic Monologues — Two Plays brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.",
+        "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance. CO₂ is a darkly comic play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life."
+      ],
+      "title": "Pathetic Monologues — Two Plays"
     },
     {
-      "id": "neo-tbilisian",
-      "label": "Poetry",
-      "title": "Neo-Tbilisian Mukhambazebi",
-      "image": "",
-      "meta_line1": "Published by Sulakauri Publishing, 2026",
-      "meta_line2": "",
-      "paragraphs": [
-        "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
-      ],
       "details": [
         {
           "key": "Year",
-          "value": "2026"
+          "value": "coming soon"
         },
         {
           "key": "Genre",
@@ -89,9 +80,26 @@
         },
         {
           "key": "Publisher",
-          "value": "Sulakauri Publishing"
+          "value": "Intelekti Publishing"
+        },
+        {
+          "key": "cover",
+          "value": "Anano Tabaghua"
+        },
+        {
+          "key": "Editor",
+          "value": "Gvantsa Shubitidze"
         }
-      ]
+      ],
+      "id": "neo-tbilisian",
+      "image": "Screenshot_2026-07-15_at_16.46.22.png",
+      "label": "Poetry",
+      "meta_line1": "Published by Sulakauri Publishing, 2026",
+      "meta_line2": "",
+      "paragraphs": [
+        "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
+      ],
+      "title": "Neo-Tbilisian Mukhambazebi"
     }
   ],
   "theatre_plays": [
