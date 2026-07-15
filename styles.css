@@ -1,0 +1,623 @@
+﻿/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg:       #fafaf8;
+  --bg-alt:   #f3f2ee;
+  --text:     #111111;
+  --muted:    #666666;
+  --border:   #d8d8d3;
+  --label:    #999999;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  font-size: 16px;
+}
+
+a { color: inherit; text-decoration: none; }
+
+img { display: block; max-width: 100%; }
+
+h1, h2, h3 {
+  font-family: 'EB Garamond', 'Times New Roman', serif;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+p { margin: 0 0 0.9rem; }
+p:last-child { margin-bottom: 0; }
+
+/* ── Layout ── */
+.container {
+  width: min(1100px, calc(100% - 3rem));
+  margin: 0 auto;
+}
+
+/* ── Header / Nav ── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(250, 250, 248, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 0;
+}
+
+.brand {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: color 150ms;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+/* ── Hero ── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 44%;
+  min-height: calc(100vh - 58px);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-text-panel {
+  display: flex;
+  align-items: center;
+  padding: 5rem 4rem 5rem max(2rem, calc((100vw - 1100px) / 2 + 1.5rem));
+}
+
+.hero-text-inner { max-width: 520px; }
+
+.hero-tagline {
+  margin: 0 0 1.4rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero h1 {
+  margin: 0 0 1.6rem;
+  font-size: clamp(3rem, 5vw, 4.6rem);
+  font-weight: 400;
+}
+
+.hero-bio {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.hero-image-panel {
+  overflow: hidden;
+  background: #e0ded8;
+}
+
+.hero-image-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* ── Sections ── */
+.section { padding: 4.5rem 0; }
+
+.section-alt { background: var(--bg-alt); }
+
+.section-header { margin-bottom: 2.5rem; }
+
+.section-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.section h2,
+.section > .container > h2 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+}
+
+.section-note {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* ── Book List ── */
+.book-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.book-item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2.5rem;
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--border);
+  align-items: start;
+}
+
+.book-item:last-child { border-bottom: 1px solid var(--border); }
+
+.book-cover {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: #e8e6e0;
+}
+
+.book-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-cover-placeholder .cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #d4c9b0;
+  padding: 1rem;
+  text-align: center;
+  font-family: 'EB Garamond', serif;
+  font-size: 1.1rem;
+  color: #5a5040;
+  line-height: 1.3;
+}
+
+.item-label {
+  margin: 0 0 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.book-info h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.7rem;
+}
+
+.item-meta {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ── Item Details table ── */
+.item-details {
+  margin-top: 1.2rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.detail-row span:first-child {
+  color: var(--label);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding-top: 0.1rem;
+}
+
+/* ── Rights bar ── */
+.rights-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  font-size: 0.88rem;
+}
+
+.rights-bar p { color: var(--muted); margin: 0 0 0.4rem; }
+
+.rights-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.text-link {
+  font-weight: 500;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--text);
+  padding-bottom: 1px;
+  transition: opacity 150ms;
+}
+
+.text-link:hover { opacity: 0.6; }
+
+/* ── Theatre ── */
+.section-alt .section-label { color: var(--label); }
+.section-alt h2 { margin-bottom: 1rem; }
+
+.subsection-label {
+  margin: 2.5rem 0 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--label);
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+
+.subsection-title {
+  margin: 0 0 0.3rem;
+  font-size: 1.9rem;
+  font-weight: 400;
+}
+
+.subsection-subtitle {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.theatre-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.theatre-card {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.theatre-poster {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #e0ded8;
+}
+
+.theatre-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.theatre-info {
+  padding: 1.4rem;
+}
+
+.theatre-info h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1.5rem;
+}
+
+/* ── Credits table ── */
+.credits-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.credits-table tr {
+  border-bottom: 1px solid var(--border);
+}
+
+.credits-table td {
+  padding: 0.7rem 0.5rem 0.7rem 0;
+  vertical-align: top;
+}
+
+.credit-title {
+  font-weight: 600;
+  width: 28%;
+  font-size: 0.88rem;
+}
+
+.credit-venue {
+  color: var(--muted);
+  width: 38%;
+  font-size: 0.85rem;
+}
+
+.credit-detail {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.table-note {
+  margin-top: 0.8rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* ── Featured Film ── */
+.featured-film {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 3rem;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+  background: var(--bg-alt);
+  align-items: start;
+}
+
+.film-poster {
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.film-poster img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.film-info h3 {
+  margin: 0.4rem 0 0.2rem;
+  font-size: 2.2rem;
+}
+
+/* ── Press ── */
+.press-list { display: flex; flex-direction: column; gap: 0; }
+
+.press-item {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+}
+
+.press-item:first-child { border-top: 1px solid var(--border); }
+
+.press-year {
+  min-width: 50px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--label);
+  padding-top: 0.05rem;
+}
+
+.press-item p { margin: 0; color: var(--muted); }
+.press-item p em { color: var(--text); font-style: italic; }
+
+/* ── About ── */
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 4rem;
+  align-items: start;
+}
+
+.about-main h2 {
+  margin: 0 0 1.4rem;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+}
+
+.about-intro {
+  font-size: 1.08rem;
+  margin-bottom: 1.2rem;
+  font-family: 'EB Garamond', serif;
+}
+
+.about-main p { color: var(--muted); font-size: 0.95rem; }
+.about-intro { color: var(--text) !important; }
+
+.about-closing {
+  margin-top: 1.2rem;
+  font-style: italic;
+  color: var(--text) !important;
+}
+
+.about-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.highlights-box,
+.fields-box {
+  border: 1px solid var(--border);
+  padding: 1.2rem;
+  background: var(--bg-alt);
+}
+
+.highlights-label {
+  margin: 0 0 1rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.timeline { display: flex; flex-direction: column; gap: 0; }
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+
+.timeline-item:last-child { border-bottom: none; }
+
+.tl-year {
+  font-weight: 600;
+  color: var(--label);
+  font-size: 0.75rem;
+}
+
+.timeline-item span:last-child { color: var(--muted); }
+
+.fields-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.fields-list span {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.2;
+  display: block;
+  width: 100%;
+}
+
+/* ── Contact ── */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  padding-top: 0.5rem;
+}
+
+.contact-layout p { color: var(--muted); font-size: 0.95rem; margin: 0; }
+
+.contact-email {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.25rem;
+  border-bottom: 1px solid var(--text);
+  padding-bottom: 2px;
+  transition: opacity 150ms;
+  display: inline-block;
+}
+
+.contact-email:hover { opacity: 0.55; }
+
+/* ── Footer ── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 0;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.footer-content p { margin: 0; }
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .hero-text-panel {
+    padding: 3.5rem 1.5rem;
+  }
+
+  .hero-image-panel {
+    height: 60vw;
+    min-height: 300px;
+  }
+
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .featured-film {
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .nav-links { gap: 1rem; }
+
+  .book-item {
+    grid-template-columns: 130px 1fr;
+    gap: 1.2rem;
+  }
+
+  .theatre-grid { grid-template-columns: 1fr; }
+
+  .featured-film {
+    grid-template-columns: 1fr;
+  }
+
+  .film-poster { max-width: 260px; }
+
+  .contact-layout { grid-template-columns: 1fr; }
+
+  .rights-bar { grid-template-columns: 1fr; }
+
+  .credits-table td { padding: 0.5rem 0.3rem 0.5rem 0; }
+  .credit-venue { display: none; }
+}
+
+@media (max-width: 500px) {
+  .nav { flex-direction: column; gap: 0.6rem; align-items: flex-start; }
+  .nav-links { flex-wrap: wrap; gap: 0.6rem 1rem; }
+
+  .book-item {
+    grid-template-columns: 1fr;
+  }
+
+  .book-cover { max-width: 180px; }
+
+  .detail-row { grid-template-columns: 100px 1fr; }
+}

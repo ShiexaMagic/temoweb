@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Temo Rekhviashvili | Writer, Playwright, Actor</title>
+    <meta name="description" content="Portfolio website for Temo Rekhviashvili, Georgian writer, playwright, and actor." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav container">
+        <a class="brand" href="#home">Temo Rekhviashvili</a>
+        <div class="nav-links">
+          <a href="#books">Books</a>
+          <a href="#theatre">Theatre</a>
+          <a href="#cinema">Cinema</a>
+          <a href="#press">Press</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="home">
+
+      <!-- ── HERO ── -->
+      <section class="hero">
+        <div class="hero-text-panel">
+          <div class="hero-text-inner">
+            <p class="hero-tagline">{{ content.hero.tagline }}</p>
+            <h1>Temo<br />Rekhviashvili</h1>
+            <p class="hero-bio">{{ content.hero.bio }}</p>
+          </div>
+        </div>
+        <div class="hero-image-panel">
+          <img src="/Images/Temo Image.jpeg" alt="Temo Rekhviashvili" />
+        </div>
+      </section>
+
+      <!-- ── BOOKS ── -->
+      <section id="books" class="section">
+        <div class="container">
+          <div class="section-header">
+            <p class="section-label">Books</p>
+            <h2>Publications</h2>
+            <p class="section-note">Three books in Georgian. Translation rights are held by the author. English samples and synopses are available.</p>
+          </div>
+
+          <div class="book-list">
+            {% for book in content.books %}
+            <article class="book-item">
+              <div class="book-cover {% if not book.image %}book-cover-placeholder{% endif %}">
+                {% if book.image %}
+                  <img src="/Images/{{ book.image }}" alt="{{ book.title }} book cover" />
+                {% else %}
+                  <div class="cover-placeholder"><p>{{ book.title }}</p></div>
+                {% endif %}
+              </div>
+              <div class="book-info">
+                <p class="item-label">{{ book.label }}</p>
+                <h3>{{ book.title }}</h3>
+                <p class="item-meta">
+                  {{ book.meta_line1 }}{% if book.meta_line2 %}<br />{{ book.meta_line2 }}{% endif %}
+                </p>
+                {% for para in book.paragraphs %}
+                  <p>{{ para }}</p>
+                {% endfor %}
+                {% if book.details %}
+                <div class="item-details">
+                  {% for row in book.details %}
+                  <div class="detail-row"><span>{{ row.key }}</span><span>{{ row.value }}</span></div>
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+
+          <div class="rights-bar">
+            <div>
+              <p class="rights-label">{{ content.rights_note.title }}</p>
+              <p>{{ content.rights_note.text }}</p>
+            </div>
+            <div>
+              <p>For publishing, translation and adaptation inquiries please get in touch.</p>
+              <a href="mailto:{{ content.contact.email }}" class="text-link">{{ content.contact.email }} &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── THEATRE ── -->
+      <section id="theatre" class="section section-alt">
+        <div class="container">
+          <p class="section-label">Theatre</p>
+          <h2>Stage work as playwright and actor.</h2>
+
+          <div class="subsection-label">Playwright / Dramatic Writing</div>
+
+          <div class="theatre-grid">
+            {% for play in content.theatre_plays %}
+            <article class="theatre-card">
+              <div class="theatre-poster">
+                {% if play.image %}
+                  <img src="/Images/{{ play.image }}" alt="{{ play.title }} poster" />
+                {% endif %}
+              </div>
+              <div class="theatre-info">
+                <h3>{{ play.title }}</h3>
+                <p class="item-meta">{{ play.year }}</p>
+                <p>{{ play.description }}</p>
+                {% if play.details %}
+                <div class="item-details">
+                  {% for row in play.details %}
+                  <div class="detail-row"><span>{{ row.key }}</span><span>{{ row.value }}</span></div>
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+
+          <div class="subsection-label">Actor</div>
+          <h3 class="subsection-title">Selected stage acting credits</h3>
+          <p class="subsection-subtitle">A concise selection of theatre roles.</p>
+
+          <table class="credits-table">
+            <tbody>
+              {% for credit in content.theatre_credits %}
+              <tr>
+                <td class="credit-title">{{ credit.title }}</td>
+                <td class="credit-venue">{{ credit.venue }}</td>
+                <td class="credit-detail">{{ credit.detail }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <p class="table-note">Full theatre CV available on request.</p>
+        </div>
+      </section>
+
+      <!-- ── CINEMA ── -->
+      <section id="cinema" class="section">
+        <div class="container">
+          <p class="section-label">Cinema</p>
+          <h2>Film work as writer, co-screenwriter and actor.</h2>
+
+          {% set film = content.cinema_featured %}
+          <div class="featured-film">
+            <div class="film-poster">
+              {% if film.image %}
+                <img src="/Images/{{ film.image }}" alt="{{ film.title }} film poster" />
+              {% endif %}
+            </div>
+            <div class="film-info">
+              <p class="item-label">{{ film.label }}</p>
+              <h3>{{ film.title }}</h3>
+              <p class="item-meta">{{ film.year }}</p>
+              {% for para in film.paragraphs %}
+                <p>{{ para }}</p>
+              {% endfor %}
+              {% if film.details %}
+              <div class="item-details">
+                {% for row in film.details %}
+                <div class="detail-row"><span>{{ row.key }}</span><span>{{ row.value }}</span></div>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="subsection-label">Selected Screen Acting Credits</div>
+          <table class="credits-table">
+            <tbody>
+              {% for credit in content.cinema_credits %}
+              <tr>
+                <td class="credit-title">{{ credit.title }}</td>
+                <td class="credit-venue">{{ credit.venue }}</td>
+                <td class="credit-detail">{{ credit.year }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <p class="table-note">Full filmography available on IMDb.</p>
+        </div>
+      </section>
+
+      <!-- ── PRESS ── -->
+      <section id="press" class="section section-alt">
+        <div class="container">
+          <p class="section-label">Press</p>
+          <h2>Recognition</h2>
+          <div class="press-list">
+            {% for item in content.press %}
+            <div class="press-item">
+              <span class="press-year">{{ item.year }}</span>
+              <p>{{ item.text }}</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ABOUT ── -->
+      <section id="about" class="section">
+        <div class="container">
+          <p class="section-label">About</p>
+          <div class="about-layout">
+            <div class="about-main">
+              <h2>About</h2>
+              <p class="about-intro">{{ content.about.intro }}</p>
+              {% for para in content.about.paragraphs %}
+                <p>{{ para }}</p>
+              {% endfor %}
+              <p class="about-closing">{{ content.about.closing }}</p>
+            </div>
+
+            <div class="about-sidebar">
+              <div class="highlights-box">
+                <p class="highlights-label">Selected Highlights</p>
+                <div class="timeline">
+                  {% for item in content.about.timeline %}
+                  <div class="timeline-item">
+                    <span class="tl-year">{{ item.year }}</span>
+                    <span>{{ item.text }}</span>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="fields-box">
+                <p class="highlights-label">Fields</p>
+                <div class="fields-list">
+                  {% for field in content.about.fields %}
+                  <span>{{ field }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CONTACT ── -->
+      <section id="contact" class="section section-alt">
+        <div class="container">
+          <p class="section-label">Contact</p>
+          <h2>Get in touch</h2>
+          <div class="contact-layout">
+            <p>{{ content.contact.description }}</p>
+            <div>
+              <a href="mailto:{{ content.contact.email }}" class="contact-email">
+                {{ content.contact.email }} &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <p>&copy; <span id="year"></span> Temo Rekhviashvili</p>
+        <p>Writer &middot; Playwright &middot; Actor</p>
+      </div>
+    </footer>
+
+    <script src="/script.js"></script>
+  </body>
+</html>
