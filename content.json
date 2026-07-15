@@ -120,10 +120,6 @@
   ],
   "theatre_plays": [
     {
-      "id": "pathetic-monologues-play",
-      "title": "Pathetic Monologues",
-      "year": "Play, 2023",
-      "image": "Pathetique Theater.jpeg",
       "description": "A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.",
       "details": [
         {
@@ -141,18 +137,14 @@
         {
           "key": "Touring Group",
           "value": "18 people"
-        },
-        {
-          "key": "Recognition",
-          "value": "EUROPHALIA support · English public reading in Antwerp"
         }
-      ]
+      ],
+      "id": "pathetic-monologues-play",
+      "image": "ees.jpg",
+      "title": "Pathetic Monologues",
+      "year": "Play, 2023"
     },
     {
-      "id": "co2",
-      "title": "CO₂",
-      "year": "Play, 2025",
-      "image": "CO2.jpeg",
       "description": "A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves.",
       "details": [
         {
@@ -175,7 +167,11 @@
           "key": "Recognition",
           "value": "Friedrich Ebert Stiftung Prize in Dramaturgy, 2025"
         }
-      ]
+      ],
+      "id": "co2",
+      "image": "CO2.jpeg",
+      "title": "CO₂",
+      "year": "Play, 2025"
     }
   ],
   "theatre_credits": [
