@@ -123,12 +123,12 @@
       "description": "A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.",
       "details": [
         {
-          "key": "Premiered",
-          "value": "Theatre Company Haraki, December 2023"
-        },
-        {
           "key": "Director",
           "value": "Ilia Korkashvili"
+        },
+        {
+          "key": "premiered",
+          "value": "Theatre Company Haraki, December 2023"
         },
         {
           "key": "Language",
