@@ -186,24 +186,36 @@
           "value": "Ilia Korkashvili"
         },
         {
-          "key": "Premiered",
-          "value": "Theatre on Atoneli, April 2025"
+          "key": "Set desinger",
+          "value": "Keti Nadibaidze"
         },
         {
-          "key": "Language",
-          "value": "Georgian"
+          "key": "Composer",
+          "value": "Ana Kublashvili"
         },
         {
-          "key": "Touring Group",
+          "key": "starring",
+          "value": "Vano Tarkhnishvili, Giorgi Korganashvili, Beka Khachidze, Paata Inauri."
+        },
+        {
+          "key": "Technical group",
+          "value": "Tika Salukvadze, Nato Mchedlishvili, Dima Jikia, Dati Sakhokia, Mariam Jorjoliani, Mariam Kartvelishvili"
+        },
+        {
+          "key": "touring Group",
           "value": "10 people"
         },
         {
-          "key": "Recognition",
+          "key": "premiered",
+          "value": "Theatre On Atoneli 2025 "
+        },
+        {
+          "key": "Recognation",
           "value": "Friedrich Ebert Stiftung Prize in Dramaturgy, 2025"
         }
       ],
       "id": "co2",
-      "image": "489016306_686665053767069_5307945707709957682_n.jpg",
+      "image": "CO2.jpeg",
       "title": "CO₂",
       "year": "Play, 2025"
     }
