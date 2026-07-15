@@ -55,6 +55,14 @@
         {
           "key": "Publisher",
           "value": "Sulakauri Publishing"
+        },
+        {
+          "key": "Editor",
+          "value": "Nino Gogaladze"
+        },
+        {
+          "key": "cover",
+          "value": "Keti Nadibaidze"
         }
       ],
       "id": "pathetic-monologues-book",
