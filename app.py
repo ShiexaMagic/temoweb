@@ -1,9 +1,12 @@
+import base64
 import json
 import os
 import secrets
 import subprocess
 import sys
 import threading
+import urllib.error
+import urllib.request
 from functools import wraps
 
 from flask import (
@@ -103,52 +106,69 @@ def save_content(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-# ── Git auto-push ────────────────────────────────────────────────
+# \u2500\u2500 GitHub API push (no git binary needed) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 _push_status = {"status": "idle", "message": ""}
 
 
+def _github_update_file(filepath, content_bytes, message):
+    """Update one file in the GitHub repo via the REST API."""
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{filepath}"
+    hdrs = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+    }
+    sha = None
+    try:
+        req = urllib.request.Request(url, headers=hdrs)
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            sha = json.loads(resp.read()).get("sha")
+    except urllib.error.HTTPError:
+        pass
+    body = {"message": message, "content": base64.b64encode(content_bytes).decode()}
+    if sha:
+        body["sha"] = sha
+    req = urllib.request.Request(url, data=json.dumps(body).encode(), method="PUT", headers=hdrs)
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        return json.loads(resp.read())
+
+
+def _git_cli_push(section):
+    """Fallback: use local git CLI (local development only)."""
+    subprocess.run(["git", "checkout", "-B", "main"], cwd=BASE, capture_output=True, timeout=10)
+    subprocess.run(["git", "add", "content.json", "index.html"], cwd=BASE, capture_output=True, timeout=10)
+    commit = subprocess.run(["git", "commit", "-m", f"admin: update {section}"],
+                            cwd=BASE, capture_output=True, timeout=10, text=True)
+    if commit.returncode not in (0, 1):
+        return False, commit.stderr.strip()
+    push = subprocess.run(["git", "push", "origin", "HEAD:main"],
+                          cwd=BASE, capture_output=True, timeout=30, text=True)
+    return (True, None) if push.returncode == 0 else (False, push.stderr.strip() or push.stdout.strip())
+
+
 def git_auto_push(section):
-    """Commit content.json and push to remote in a background thread."""
+    """Rebuild static site and push via GitHub API or local git."""
     def _push():
         global _push_status
-        _push_status = {"status": "pushing", "message": "Building & pushing…"}
+        _push_status = {"status": "pushing", "message": "Building & pushing..."}
         try:
-            # 1. Regenerate static index.html for Vercel
             import build as _build
             _build.build()
-
-            # 2. Ensure on main branch (Railway deploys detached HEAD)
-            subprocess.run(["git", "checkout", "-B", "main"],
-                           cwd=BASE, capture_output=True, timeout=10)
-
-            # 3. Stage both data file and built HTML
-            subprocess.run(
-                ["git", "add", "content.json", "index.html"],
-                cwd=BASE, capture_output=True, timeout=10
-            )
-            commit = subprocess.run(
-                ["git", "commit", "-m", f"admin: update {section}"],
-                cwd=BASE, capture_output=True, timeout=10, text=True
-            )
-            # nothing new to commit — that’s fine
-            if commit.returncode not in (0, 1):
-                _push_status = {"status": "error", "message": commit.stderr.strip()}
-                return
-            push = subprocess.run(
-                ["git", "push", "origin", "HEAD:main"],
-                cwd=BASE, capture_output=True, timeout=30, text=True
-            )
-            if push.returncode == 0:
-                _push_status = {"status": "ok", "message": "Built & pushed → Vercel deploying"}
+            msg = f"admin: update {section}"
+            if GITHUB_TOKEN:
+                with open(CONTENT_FILE, "rb") as f:
+                    _github_update_file("content.json", f.read(), msg)
+                with open(os.path.join(BASE, "index.html"), "rb") as f:
+                    _github_update_file("index.html", f.read(), msg)
+                _push_status = {"status": "ok", "message": "Built & pushed -> Vercel deploying"}
             else:
-                _push_status = {"status": "error", "message": push.stderr.strip() or push.stdout.strip()}
-                print(f"[git push error] {_push_status['message']}")
+                ok, err = _git_cli_push(section)
+                _push_status = ({"status": "ok", "message": "Built & pushed -> Vercel deploying"}
+                                if ok else {"status": "error", "message": err or "git push failed"})
         except Exception as exc:
             _push_status = {"status": "error", "message": str(exc)}
-
+            print(f"[push error] {exc}")
     threading.Thread(target=_push, daemon=True).start()
-
-
 def load_admin_config():
     return _load_admin_config()
 
