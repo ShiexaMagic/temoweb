@@ -294,6 +294,8 @@
     }
   ],
   "about": {
+    "closing": "His work is marked by directness, dark humour and close attention to people trying to survive without losing the ability to laugh, desire, remember and speak.",
+    "fields": [],
     "intro": "Temo Rekhviashvili is a Georgian writer, playwright and actor working across literature, theatre and cinema.",
     "paragraphs": [
       "He was born in 1993 and graduated from the Drama Faculty of Shota Rustaveli Theatre and Film Georgia State University in 2015.",
@@ -302,47 +304,39 @@
       "His debut short novel Courier’s Tales was published by Sulakauri Publishing in 2021 and received the SABA Literary Award for Best Debut in 2022.",
       "He is also the author of Pathetic Monologues — Two Plays, published by Sulakauri Publishing in 2025. Courier’s Tales later inspired the short film Temo Re, directed by Anka Gujabidze, which Rekhviashvili co-wrote and in which he played the leading role."
     ],
-    "closing": "His work is marked by directness, dark humour and close attention to people trying to survive without losing the ability to laugh, desire, remember and speak.",
     "timeline": [
       {
-        "year": "1993",
-        "text": "Born in Georgia"
+        "text": "Born in Georgia",
+        "year": "1993"
       },
       {
-        "year": "2015",
-        "text": "Graduated from Shota Rustaveli Theatre and Film Georgia State University"
+        "text": "Graduated from Shota Rustaveli Theatre and Film Georgia State University",
+        "year": "2015"
       },
       {
-        "year": "2016",
-        "text": "Took part in the founding of Open Space for Experimental Art"
+        "text": "Took part in the founding of Open Space for Experimental Art",
+        "year": "2016"
       },
       {
-        "year": "2019",
-        "text": "Co-founder of Theatre Company Haraki"
+        "text": "Co-founder of Theatre Company Haraki",
+        "year": "2019"
       },
       {
-        "year": "2021",
-        "text": "Courier’s Tales published by Sulakauri Publishing"
+        "text": "Courier’s Tales published by Sulakauri Publishing",
+        "year": "2021"
       },
       {
-        "year": "2022",
-        "text": "SABA Literary Award for Best Debut"
+        "text": "SABA Literary Award for Best Debut",
+        "year": "2022"
       },
       {
-        "year": "2025",
-        "text": "Pathetic Monologues — Two Plays published"
+        "text": "Pathetic Monologues — Two Plays published",
+        "year": "2025"
       },
       {
-        "year": "2025",
-        "text": "Temo Re premiered at IFFR"
+        "text": "Temo Re premiered at IFFR",
+        "year": "2025"
       }
-    ],
-    "fields": [
-      "Prose",
-      "Drama",
-      "Poetry",
-      "Performance",
-      "Cinema"
     ]
   },
   "contact": {
