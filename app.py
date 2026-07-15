@@ -117,7 +117,11 @@ def git_auto_push(section):
             import build as _build
             _build.build()
 
-            # 2. Stage both data file and built HTML
+            # 2. Ensure on main branch (Railway deploys detached HEAD)
+            subprocess.run(["git", "checkout", "-B", "main"],
+                           cwd=BASE, capture_output=True, timeout=10)
+
+            # 3. Stage both data file and built HTML
             subprocess.run(
                 ["git", "add", "content.json", "index.html"],
                 cwd=BASE, capture_output=True, timeout=10
@@ -131,13 +135,14 @@ def git_auto_push(section):
                 _push_status = {"status": "error", "message": commit.stderr.strip()}
                 return
             push = subprocess.run(
-                ["git", "push"],
+                ["git", "push", "origin", "HEAD:main"],
                 cwd=BASE, capture_output=True, timeout=30, text=True
             )
             if push.returncode == 0:
                 _push_status = {"status": "ok", "message": "Built & pushed → Vercel deploying"}
             else:
                 _push_status = {"status": "error", "message": push.stderr.strip() or push.stdout.strip()}
+                print(f"[git push error] {_push_status['message']}")
         except Exception as exc:
             _push_status = {"status": "error", "message": str(exc)}
 

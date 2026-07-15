@@ -295,6 +295,7 @@ async function pollGitStatus() {
         badge.className = 'show error';
         badge.textContent = '⚠ push failed';
         badge.title = json.message;
+        showToast('Push failed: ' + json.message, 'error');
       }
     } catch (_) {}
   }
