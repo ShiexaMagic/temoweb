@@ -1,44 +1,71 @@
 {
   "hero": {
-    "tagline": "Writer \u00b7 Playwright \u00b7 Actor",
-    "bio": "Temo Rekhviashvili is a Georgian writer, playwright and actor working across literature, theatre and cinema. He is the author of Courier\u2019s Tales, winner of the 2022 SABA Literary Award for Best Debut, and co-writer and lead actor of Temo Re, winner of the Tiger Short Award and the KNF Award at the International Film Festival Rotterdam."
+    "tagline": "Writer · Playwright · Actor",
+    "bio": "Temo Rekhviashvili is a Georgian writer, playwright and actor working across literature, theatre and cinema. He is the author of Courier’s Tales, winner of the 2022 SABA Literary Award for Best Debut, and co-writer and lead actor of Temo Re, winner of the Tiger Short Award and the KNF Award at the International Film Festival Rotterdam. And Very Good Guy"
   },
   "books": [
     {
       "id": "couriers-tales",
       "label": "Novel / Short Novel",
-      "title": "Courier\u2019s Tales",
+      "title": "Courier’s Tales",
       "image": "Carrier Tales.jpeg",
       "meta_line1": "Published by Sulakauri Publishing, 2021",
       "meta_line2": "Winner of the SABA Literary Award for Best Debut, 2022",
       "paragraphs": [
-        "Courier\u2019s Tales is the debut prose work by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.",
+        "Courier’s Tales is the debut prose work by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.",
         "Set mostly in contemporary Tbilisi, the novel moves through streets, staircases, rehearsal rooms and precarious jobs. In its final part, the story opens toward Germany."
       ],
       "details": [
-        { "key": "Original Title", "value": "\u10d9\u10e3\u10e0\u10d8\u10d4\u10e0\u10d8\u10e1 \u10d0\u10db\u10d1\u10d4\u10d1\u10d8" },
-        { "key": "Year", "value": "2021" },
-        { "key": "Genre", "value": "Short novel" },
-        { "key": "Award", "value": "SABA Literary Award \u2014 Best Debut, 2022" },
-        { "key": "Publisher", "value": "Sulakauri Publishing" }
+        {
+          "key": "Original Title",
+          "value": "კურიერის ამბები"
+        },
+        {
+          "key": "Year",
+          "value": "2021"
+        },
+        {
+          "key": "Genre",
+          "value": "Short novel"
+        },
+        {
+          "key": "Award",
+          "value": "SABA Literary Award — Best Debut, 2022"
+        },
+        {
+          "key": "Publisher",
+          "value": "Sulakauri Publishing"
+        }
       ]
     },
     {
       "id": "pathetic-monologues-book",
       "label": "Plays / Collection",
-      "title": "Pathetic Monologues \u2014 Two Plays",
+      "title": "Pathetic Monologues — Two Plays",
       "image": "Patetique Book.jpeg",
       "meta_line1": "Published by Sulakauri Publishing, 2025",
       "meta_line2": "A collection of two plays by Temo Rekhviashvili",
       "paragraphs": [
-        "Pathetic Monologues \u2014 Two Plays brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.",
-        "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance. CO\u2082 is a darkly comic play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life."
+        "Pathetic Monologues — Two Plays brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.",
+        "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance. CO₂ is a darkly comic play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life."
       ],
       "details": [
-        { "key": "Year", "value": "2025" },
-        { "key": "Genre", "value": "Two plays" },
-        { "key": "Plays Included", "value": "Pathetic Monologues \u00b7 CO\u2082" },
-        { "key": "Publisher", "value": "Sulakauri Publishing" }
+        {
+          "key": "Year",
+          "value": "2025"
+        },
+        {
+          "key": "Genre",
+          "value": "Two plays"
+        },
+        {
+          "key": "Plays Included",
+          "value": "Pathetic Monologues · CO₂"
+        },
+        {
+          "key": "Publisher",
+          "value": "Sulakauri Publishing"
+        }
       ]
     },
     {
@@ -52,9 +79,18 @@
         "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
       ],
       "details": [
-        { "key": "Year", "value": "2026" },
-        { "key": "Genre", "value": "Poetry" },
-        { "key": "Publisher", "value": "Sulakauri Publishing" }
+        {
+          "key": "Year",
+          "value": "2026"
+        },
+        {
+          "key": "Genre",
+          "value": "Poetry"
+        },
+        {
+          "key": "Publisher",
+          "value": "Sulakauri Publishing"
+        }
       ]
     }
   ],
@@ -66,39 +102,109 @@
       "image": "Pathetique Theater.jpeg",
       "description": "A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.",
       "details": [
-        { "key": "Premiered", "value": "Theatre Company Haraki, December 2023" },
-        { "key": "Director", "value": "Ilia Korkashvili" },
-        { "key": "Language", "value": "Georgian" },
-        { "key": "Touring Group", "value": "18 people" },
-        { "key": "Recognition", "value": "EUROPHALIA support \u00b7 English public reading in Antwerp" }
+        {
+          "key": "Premiered",
+          "value": "Theatre Company Haraki, December 2023"
+        },
+        {
+          "key": "Director",
+          "value": "Ilia Korkashvili"
+        },
+        {
+          "key": "Language",
+          "value": "Georgian"
+        },
+        {
+          "key": "Touring Group",
+          "value": "18 people"
+        },
+        {
+          "key": "Recognition",
+          "value": "EUROPHALIA support · English public reading in Antwerp"
+        }
       ]
     },
     {
       "id": "co2",
-      "title": "CO\u2082",
+      "title": "CO₂",
       "year": "Play, 2025",
       "image": "CO2.jpeg",
-      "description": "A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying \u2014 often too late \u2014 to understand themselves.",
+      "description": "A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves.",
       "details": [
-        { "key": "Premiered", "value": "Theatre on Atoneli, April 2025" },
-        { "key": "Director", "value": "Ilia Korkashvili" },
-        { "key": "Language", "value": "Georgian" },
-        { "key": "Touring Group", "value": "10 people" },
-        { "key": "Recognition", "value": "Friedrich Ebert Stiftung Prize in Dramaturgy, 2025" }
+        {
+          "key": "Premiered",
+          "value": "Theatre on Atoneli, April 2025"
+        },
+        {
+          "key": "Director",
+          "value": "Ilia Korkashvili"
+        },
+        {
+          "key": "Language",
+          "value": "Georgian"
+        },
+        {
+          "key": "Touring Group",
+          "value": "10 people"
+        },
+        {
+          "key": "Recognition",
+          "value": "Friedrich Ebert Stiftung Prize in Dramaturgy, 2025"
+        }
       ]
     }
   ],
   "theatre_credits": [
-    { "title": "Berserkers II: Sunny Night", "venue": "City Theatre", "detail": "2023 \u00b7 Psychiatrist / Guga / Elizabar" },
-    { "title": "Berserkers I: The Mission", "venue": "Theatre Company Haraki", "detail": "2020\u20132021 \u00b7 The Man in the Elevator" },
-    { "title": "ART", "venue": "Theatre Company Haraki", "detail": "2022 \u00b7 Ivan" },
-    { "title": "Life x3", "venue": "Theatre Company Haraki", "detail": "2022 \u00b7 Henry" },
-    { "title": "The Tenant", "venue": "Theatre Company Haraki", "detail": "2022 \u00b7 The Tenant / Varden Mekvabishvili / Kote Enukidze" },
-    { "title": "Hamlet", "venue": "Club \u201cMtkvarze\u201d", "detail": "2019 \u00b7 Laertes / Guildenstern" },
-    { "title": "Parents\u2019 Meeting", "venue": "Open Space", "detail": "2018 \u00b7 Himself" },
-    { "title": "The God of Hunger", "venue": "Open Space", "detail": "2017 \u00b7 Erisikhton / Giorgi" },
-    { "title": "Woyzeck", "venue": "Shota Rustaveli Theatre and Film Georgia State University", "detail": "2012 \u00b7 Woyzeck" },
-    { "title": "Romeo and Juliet", "venue": "Shota Rustaveli Theatre and Film Georgia State University", "detail": "2012 \u00b7 Romeo" }
+    {
+      "title": "Berserkers II: Sunny Night",
+      "venue": "City Theatre",
+      "detail": "2023 · Psychiatrist / Guga / Elizabar"
+    },
+    {
+      "title": "Berserkers I: The Mission",
+      "venue": "Theatre Company Haraki",
+      "detail": "2020–2021 · The Man in the Elevator"
+    },
+    {
+      "title": "ART",
+      "venue": "Theatre Company Haraki",
+      "detail": "2022 · Ivan"
+    },
+    {
+      "title": "Life x3",
+      "venue": "Theatre Company Haraki",
+      "detail": "2022 · Henry"
+    },
+    {
+      "title": "The Tenant",
+      "venue": "Theatre Company Haraki",
+      "detail": "2022 · The Tenant / Varden Mekvabishvili / Kote Enukidze"
+    },
+    {
+      "title": "Hamlet",
+      "venue": "Club “Mtkvarze”",
+      "detail": "2019 · Laertes / Guildenstern"
+    },
+    {
+      "title": "Parents’ Meeting",
+      "venue": "Open Space",
+      "detail": "2018 · Himself"
+    },
+    {
+      "title": "The God of Hunger",
+      "venue": "Open Space",
+      "detail": "2017 · Erisikhton / Giorgi"
+    },
+    {
+      "title": "Woyzeck",
+      "venue": "Shota Rustaveli Theatre and Film Georgia State University",
+      "detail": "2012 · Woyzeck"
+    },
+    {
+      "title": "Romeo and Juliet",
+      "venue": "Shota Rustaveli Theatre and Film Georgia State University",
+      "detail": "2012 · Romeo"
+    }
   ],
   "cinema_featured": {
     "label": "Featured Film",
@@ -106,55 +212,141 @@
     "year": "Short film, 2025",
     "image": "Temo Re Movie.jpeg",
     "paragraphs": [
-      "Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili\u2019s debut novel Courier\u2019s Tales. Rekhviashvili co-wrote the film and plays the leading role.",
+      "Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili’s debut novel Courier’s Tales. Rekhviashvili co-wrote the film and plays the leading role.",
       "The film follows Temo, a young actor who also works as a courier. Over the course of a single day, he travels across Tbilisi on a moped and performs in a suburban theatre in the evening. Poverty, injustice, corruption and alienation gradually turn into disturbing visions.",
       "Constructed as a black-and-white photomontage, Temo Re combines fiction and documentary elements to create a fragmented portrait of contemporary Tbilisi."
     ],
     "details": [
-      { "key": "Director", "value": "Anka Gujabidze" },
-      { "key": "Writers", "value": "Temo Rekhviashvili, Anka Gujabidze, Salome Asatiani" },
-      { "key": "Based On", "value": "Courier\u2019s Tales by Temo Rekhviashvili" },
-      { "key": "Country", "value": "Georgia" },
-      { "key": "Runtime", "value": "50 minutes" },
-      { "key": "Awards", "value": "Tiger Short Award \u00b7 KNF Award \u00b7 IFFR \u00b7 SFCC Critics\u2019 Award \u00b7 Golden Prometheus" }
+      {
+        "key": "Director",
+        "value": "Anka Gujabidze"
+      },
+      {
+        "key": "Writers",
+        "value": "Temo Rekhviashvili, Anka Gujabidze, Salome Asatiani"
+      },
+      {
+        "key": "Based On",
+        "value": "Courier’s Tales by Temo Rekhviashvili"
+      },
+      {
+        "key": "Country",
+        "value": "Georgia"
+      },
+      {
+        "key": "Runtime",
+        "value": "50 minutes"
+      },
+      {
+        "key": "Awards",
+        "value": "Tiger Short Award · KNF Award · IFFR · SFCC Critics’ Award · Golden Prometheus"
+      }
     ]
   },
   "cinema_credits": [
-    { "title": "Shemomkhede", "venue": "Directed by Giorgi Sikharulidze", "year": "2023" },
-    { "title": "Natia", "venue": "Directed by Anna Parcerisas Casanovas", "year": "2017" },
-    { "title": "The Box", "venue": "Directed by Elene Khuntsaria", "year": "2015" },
-    { "title": "The Version", "venue": "Directed by Ilia Beria", "year": "2013" },
-    { "title": "The Wheels", "venue": "Directed by Giorgi Khechuashvili", "year": "2013" }
+    {
+      "title": "Shemomkhede",
+      "venue": "Directed by Giorgi Sikharulidze",
+      "year": "2023"
+    },
+    {
+      "title": "Natia",
+      "venue": "Directed by Anna Parcerisas Casanovas",
+      "year": "2017"
+    },
+    {
+      "title": "The Box",
+      "venue": "Directed by Elene Khuntsaria",
+      "year": "2015"
+    },
+    {
+      "title": "The Version",
+      "venue": "Directed by Ilia Beria",
+      "year": "2013"
+    },
+    {
+      "title": "The Wheels",
+      "venue": "Directed by Giorgi Khechuashvili",
+      "year": "2013"
+    }
   ],
   "press": [
-    { "year": "2022", "text": "SABA Literary Award for Best Debut \u2014 for Courier\u2019s Tales" },
-    { "year": "2025", "text": "Tiger Short Award \u2014 International Film Festival Rotterdam \u2014 Temo Re" },
-    { "year": "2025", "text": "KNF Award \u2014 International Film Festival Rotterdam \u2014 Temo Re" },
-    { "year": "2025", "text": "SFCC Critics\u2019 Award & Golden Prometheus \u2014 Best Fiction Short Film \u2014 Temo Re" },
-    { "year": "2025", "text": "Friedrich Ebert Stiftung Prize in Dramaturgy \u2014 for CO\u2082" },
-    { "year": "2024", "text": "EUROPHALIA support for Pathetic Monologues \u00b7 English-language public reading in Antwerp" }
+    {
+      "year": "2022",
+      "text": "SABA Literary Award for Best Debut — for Courier’s Tales"
+    },
+    {
+      "year": "2025",
+      "text": "Tiger Short Award — International Film Festival Rotterdam — Temo Re"
+    },
+    {
+      "year": "2025",
+      "text": "KNF Award — International Film Festival Rotterdam — Temo Re"
+    },
+    {
+      "year": "2025",
+      "text": "SFCC Critics’ Award & Golden Prometheus — Best Fiction Short Film — Temo Re"
+    },
+    {
+      "year": "2025",
+      "text": "Friedrich Ebert Stiftung Prize in Dramaturgy — for CO₂"
+    },
+    {
+      "year": "2024",
+      "text": "EUROPHALIA support for Pathetic Monologues · English-language public reading in Antwerp"
+    }
   ],
   "about": {
     "intro": "Temo Rekhviashvili is a Georgian writer, playwright and actor working across literature, theatre and cinema.",
     "paragraphs": [
       "He was born in 1993 and graduated from the Drama Faculty of Shota Rustaveli Theatre and Film Georgia State University in 2015.",
       "He has worked as an independent freelance actor across several theatres. In 2016, he took part in the founding of Open Space for Experimental Art, and in 2019 became one of the co-founders of Theatre Company Haraki.",
-      "In 2017, together with Gvantsa Enukidze, he founded the secret poetry group Universally Accessible Dramatic Poetry. Since 2019, he has been a member of Temur Chkheidze\u2019s Studio.",
-      "His debut short novel Courier\u2019s Tales was published by Sulakauri Publishing in 2021 and received the SABA Literary Award for Best Debut in 2022.",
-      "He is also the author of Pathetic Monologues \u2014 Two Plays, published by Sulakauri Publishing in 2025. Courier\u2019s Tales later inspired the short film Temo Re, directed by Anka Gujabidze, which Rekhviashvili co-wrote and in which he played the leading role."
+      "In 2017, together with Gvantsa Enukidze, he founded the secret poetry group Universally Accessible Dramatic Poetry. Since 2019, he has been a member of Temur Chkheidze’s Studio.",
+      "His debut short novel Courier’s Tales was published by Sulakauri Publishing in 2021 and received the SABA Literary Award for Best Debut in 2022.",
+      "He is also the author of Pathetic Monologues — Two Plays, published by Sulakauri Publishing in 2025. Courier’s Tales later inspired the short film Temo Re, directed by Anka Gujabidze, which Rekhviashvili co-wrote and in which he played the leading role."
     ],
     "closing": "His work is marked by directness, dark humour and close attention to people trying to survive without losing the ability to laugh, desire, remember and speak.",
     "timeline": [
-      { "year": "1993", "text": "Born in Georgia" },
-      { "year": "2015", "text": "Graduated from Shota Rustaveli Theatre and Film Georgia State University" },
-      { "year": "2016", "text": "Took part in the founding of Open Space for Experimental Art" },
-      { "year": "2019", "text": "Co-founder of Theatre Company Haraki" },
-      { "year": "2021", "text": "Courier\u2019s Tales published by Sulakauri Publishing" },
-      { "year": "2022", "text": "SABA Literary Award for Best Debut" },
-      { "year": "2025", "text": "Pathetic Monologues \u2014 Two Plays published" },
-      { "year": "2025", "text": "Temo Re premiered at IFFR" }
+      {
+        "year": "1993",
+        "text": "Born in Georgia"
+      },
+      {
+        "year": "2015",
+        "text": "Graduated from Shota Rustaveli Theatre and Film Georgia State University"
+      },
+      {
+        "year": "2016",
+        "text": "Took part in the founding of Open Space for Experimental Art"
+      },
+      {
+        "year": "2019",
+        "text": "Co-founder of Theatre Company Haraki"
+      },
+      {
+        "year": "2021",
+        "text": "Courier’s Tales published by Sulakauri Publishing"
+      },
+      {
+        "year": "2022",
+        "text": "SABA Literary Award for Best Debut"
+      },
+      {
+        "year": "2025",
+        "text": "Pathetic Monologues — Two Plays published"
+      },
+      {
+        "year": "2025",
+        "text": "Temo Re premiered at IFFR"
+      }
     ],
-    "fields": ["Prose", "Drama", "Poetry", "Performance", "Cinema"]
+    "fields": [
+      "Prose",
+      "Drama",
+      "Poetry",
+      "Performance",
+      "Cinema"
+    ]
   },
   "contact": {
     "description": "For literary, theatrical, and film collaborations, publishing inquiries, translation rights, and professional engagements.",
