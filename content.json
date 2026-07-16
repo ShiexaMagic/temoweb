@@ -7,61 +7,6 @@
     {
       "details": [
         {
-          "key": "Year",
-          "value": "2025"
-        },
-        {
-          "key": "Genre",
-          "value": "plays"
-        },
-        {
-          "key": "Plays Included",
-          "value": "Pathetic Monologues · CO₂"
-        },
-        {
-          "key": "Publisher",
-          "value": "Sulakauri Publishing"
-        },
-        {
-          "key": "Editor",
-          "value": "Nino Gogaladze"
-        },
-        {
-          "key": "Cover design",
-          "value": "Keti Nadibaidze"
-        },
-        {
-          "key": "Technical designer",
-          "value": "Lado Lomadze"
-        },
-        {
-          "key": "ORiginal title",
-          "value": "პათეტიკური მონოლოგები - ორი პიესა"
-        },
-        {
-          "key": "ISBN",
-          "value": "978-9941-37-810-2"
-        },
-        {
-          "key": "Award",
-          "value": "CO₂ received the Friedrich Ebert Stiftung Prize in Dramaturgy in 2025."
-        }
-      ],
-      "id": "pathetic-monologues-book",
-      "image": "Patetique Book.jpeg",
-      "label": "Plays / Collection",
-      "meta_line1": "Published by Sulakauri Publishing, 2025",
-      "meta_line2": "A collection of two plays by Temo Rekhviashvili",
-      "paragraphs": [
-        "\"Pathetic Monologues - Two Plays\" brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.\n \n",
-        "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. One of its voices dreams of leaving Georgia for Berlin, turning emigration into both a comic obsession and a symptom of deeper personal and social despair.\n \n",
-        "CO₂ is a darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying - often too late - to understand themselves.\nBoth plays have been staged in Georgia: Pathetic Monologues premiered at Theatre Company Haraki in December 2023, while CO₂ premiered at Theatre on Atoneli in April 2025.\n"
-      ],
-      "title": "Two Plays"
-    },
-    {
-      "details": [
-        {
           "key": "Original Title",
           "value": "კურიერის ამბები"
         },
@@ -142,6 +87,61 @@
         "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
       ],
       "title": "Neo-Tbilisian Mukhambazebi"
+    },
+    {
+      "details": [
+        {
+          "key": "Year",
+          "value": "2025"
+        },
+        {
+          "key": "Genre",
+          "value": "plays"
+        },
+        {
+          "key": "Plays Included",
+          "value": "Pathetic Monologues · CO₂"
+        },
+        {
+          "key": "Publisher",
+          "value": "Sulakauri Publishing"
+        },
+        {
+          "key": "Editor",
+          "value": "Nino Gogaladze"
+        },
+        {
+          "key": "Cover design",
+          "value": "Keti Nadibaidze"
+        },
+        {
+          "key": "Technical designer",
+          "value": "Lado Lomadze"
+        },
+        {
+          "key": "ORiginal title",
+          "value": "პათეტიკური მონოლოგები - ორი პიესა"
+        },
+        {
+          "key": "ISBN",
+          "value": "978-9941-37-810-2"
+        },
+        {
+          "key": "Award",
+          "value": "CO₂ received the Friedrich Ebert Stiftung Prize in Dramaturgy in 2025."
+        }
+      ],
+      "id": "pathetic-monologues-book",
+      "image": "Patetique Book.jpeg",
+      "label": "Plays / Collection",
+      "meta_line1": "Published by Sulakauri Publishing, 2025",
+      "meta_line2": "A collection of two plays by Temo Rekhviashvili",
+      "paragraphs": [
+        "\"Pathetic Monologues - Two Plays\" brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.\n \n",
+        "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. One of its voices dreams of leaving Georgia for Berlin, turning emigration into both a comic obsession and a symptom of deeper personal and social despair.\n \n",
+        "CO₂ is a darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying - often too late - to understand themselves.\nBoth plays have been staged in Georgia: Pathetic Monologues premiered at Theatre Company Haraki in December 2023, while CO₂ premiered at Theatre on Atoneli in April 2025.\n"
+      ],
+      "title": "Two Plays"
     }
   ],
   "theatre_plays": [
