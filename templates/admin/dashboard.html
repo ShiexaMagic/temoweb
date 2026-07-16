@@ -319,16 +319,38 @@ function renderHero(el) {
   const h = content.hero || {};
   el.innerHTML = `
     <div class="page-header">
-      <div><h1 class="page-title">Hero</h1><p class="page-sub">Opening tagline and biography shown on the homepage.</p></div>
+      <div><h1 class="page-title">Hero</h1><p class="page-sub">Opening tagline, biography and portrait photo shown on the homepage.</p></div>
     </div>
     <div class="form-group"><label>Tagline</label><input id="h-tagline" value="${esc(h.tagline||'')}" /></div>
     <div class="form-group"><label>Biography</label><textarea id="h-bio" style="min-height:130px">${esc(h.bio||'')}</textarea></div>
+    <div class="form-group">
+      <label>Hero / Portrait Image</label>
+      <div class="img-pick-row">
+        <div id="h-img-prev">
+          ${h.image ? `<img class="img-preview" src="/Images/${esc(h.image)}" style="width:120px;height:160px;object-fit:cover" />` : '<div class="img-preview-placeholder">No image</div>'}
+        </div>
+        <div>
+          <input type="hidden" id="h-img" value="${esc(h.image||'')}" />
+          <button class="btn btn-secondary btn-sm img-pick-btn" onclick="openImagePicker(fn=>{setHeroImage(fn)})">Choose image</button>
+          ${h.image ? `<button class="btn btn-ghost btn-sm img-pick-btn" onclick="clearHeroImage()">Remove</button>` : ''}
+        </div>
+      </div>
+    </div>
     <div class="form-actions"><button class="btn btn-primary" onclick="saveHero()">Save Changes</button></div>`;
+}
+function setHeroImage(fn) {
+  document.getElementById('h-img').value = fn;
+  document.getElementById('h-img-prev').innerHTML = `<img class="img-preview" src="/Images/${esc(fn)}" style="width:120px;height:160px;object-fit:cover" />`;
+}
+function clearHeroImage() {
+  document.getElementById('h-img').value = '';
+  document.getElementById('h-img-prev').innerHTML = '<div class="img-preview-placeholder">No image</div>';
 }
 function saveHero() {
   saveSection('hero', {
     tagline: val('h-tagline'),
     bio: val('h-bio'),
+    image: val('h-img'),
   });
 }
 
@@ -738,11 +760,12 @@ function renderPress(el) {
   el.innerHTML=`
     <div class="page-header"><div><h1 class="page-title">Press & Recognition</h1><p class="page-sub">Awards, prizes and notable recognition.</p></div></div>
     <table class="table-editor" id="press-table">
-      <thead><tr><th style="width:70px">Year</th><th>Recognition text</th><th class="ctrl-col"></th></tr></thead>
+      <thead><tr><th style="width:70px">Year</th><th>Display text</th><th>URL (link)</th><th class="ctrl-col"></th></tr></thead>
       <tbody>
         ${items.map(p=>`<tr>
           <td><input value="${esc(p.year)}" class="press-year" style="width:60px" /></td>
           <td><input value="${esc(p.text)}" class="press-text" /></td>
+          <td><input value="${esc(p.url||'')}" class="press-url" placeholder="https://..." /></td>
           <td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>
         </tr>`).join('')}
       </tbody>
@@ -754,11 +777,11 @@ function renderPress(el) {
 }
 function addPressItem() {
   const tbody=document.querySelector('#press-table tbody'); const tr=document.createElement('tr');
-  tr.innerHTML=`<td><input value="" class="press-year" style="width:60px" /></td><td><input value="" class="press-text" /></td><td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>`;
+  tr.innerHTML=`<td><input value="" class="press-year" style="width:60px" /></td><td><input value="" class="press-text" /></td><td><input value="" class="press-url" placeholder="https://..." /></td><td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>`;
   tbody.appendChild(tr);
 }
 function savePress() {
-  const rows=[...document.querySelectorAll('#press-table tbody tr')].map(r=>({ year:r.querySelector('.press-year').value, text:r.querySelector('.press-text').value })).filter(r=>r.text);
+  const rows=[...document.querySelectorAll('#press-table tbody tr')].map(r=>({ year:r.querySelector('.press-year').value, text:r.querySelector('.press-text').value, url:r.querySelector('.press-url').value })).filter(r=>r.text);
   saveSection('press',rows);
 }
 

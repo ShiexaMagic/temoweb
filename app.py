@@ -272,6 +272,7 @@ VALID_SECTIONS = {
     "about",
     "contact",
     "rights_note",
+    "cv",
 }
 
 

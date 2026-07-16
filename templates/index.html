@@ -19,6 +19,7 @@
           <a href="#theatre">Theatre</a>
           <a href="#cinema">Cinema</a>
           <a href="#press">Press</a>
+          <a href="#cv">CV</a>
           <a href="#about">About</a>
           <a href="#contact">Contact</a>
         </div>
@@ -37,7 +38,7 @@
           </div>
         </div>
         <div class="hero-image-panel">
-          <img src="/Images/Temo Image.jpeg" alt="Temo Rekhviashvili" />
+          <img src="/Images/{{ content.hero.image if content.hero.image else 'Temo Image.jpeg' }}" alt="Temo Rekhviashvili" />
         </div>
       </section>
 
@@ -50,32 +51,19 @@
             <p class="section-note">Three books in Georgian. Translation rights are held by the author. English samples and synopses are available.</p>
           </div>
 
-          <div class="book-list">
+          <div class="items-grid">
             {% for book in content.books %}
-            <article class="book-item">
-              <div class="book-cover {% if not book.image %}book-cover-placeholder{% endif %}">
+            <article class="grid-card" data-modal='{{ book | tojson }}' onclick="openDetailModal(this)">
+              <div class="card-cover {% if not book.image %}card-cover-placeholder{% endif %}">
                 {% if book.image %}
-                  <img src="/Images/{{ book.image }}" alt="{{ book.title }} book cover" />
+                  <img src="/Images/{{ book.image }}" alt="{{ book.title }}" />
                 {% else %}
                   <div class="cover-placeholder"><p>{{ book.title }}</p></div>
                 {% endif %}
               </div>
-              <div class="book-info">
+              <div class="card-foot">
                 <p class="item-label">{{ book.label }}</p>
-                <h3>{{ book.title }}</h3>
-                <p class="item-meta">
-                  {{ book.meta_line1 }}{% if book.meta_line2 %}<br />{{ book.meta_line2 }}{% endif %}
-                </p>
-                {% for para in book.paragraphs %}
-                  <p>{{ para }}</p>
-                {% endfor %}
-                {% if book.details %}
-                <div class="item-details">
-                  {% for row in book.details %}
-                  <div class="detail-row"><span>{{ row.key }}</span><span>{{ row.value }}</span></div>
-                  {% endfor %}
-                </div>
-                {% endif %}
+                <p class="card-title">{{ book.title }}</p>
               </div>
             </article>
             {% endfor %}
@@ -102,25 +90,17 @@
 
           <div class="subsection-label">Playwright / Dramatic Writing</div>
 
-          <div class="theatre-grid">
+          <div class="items-grid plays-grid">
             {% for play in content.theatre_plays %}
-            <article class="theatre-card">
-              <div class="theatre-poster">
+            <article class="grid-card" data-modal='{{ play | tojson }}' onclick="openDetailModal(this)">
+              <div class="card-cover">
                 {% if play.image %}
-                  <img src="/Images/{{ play.image }}" alt="{{ play.title }} poster" />
+                  <img src="/Images/{{ play.image }}" alt="{{ play.title }}" />
                 {% endif %}
               </div>
-              <div class="theatre-info">
-                <h3>{{ play.title }}</h3>
-                <p class="item-meta">{{ play.year }}</p>
-                <p>{{ play.description }}</p>
-                {% if play.details %}
-                <div class="item-details">
-                  {% for row in play.details %}
-                  <div class="detail-row"><span>{{ row.key }}</span><span>{{ row.value }}</span></div>
-                  {% endfor %}
-                </div>
-                {% endif %}
+              <div class="card-foot">
+                <p class="item-label">{{ play.year }}</p>
+                <p class="card-title">{{ play.title }}</p>
               </div>
             </article>
             {% endfor %}
@@ -152,26 +132,20 @@
           <h2>Film work as writer, co-screenwriter and actor.</h2>
 
           {% set film = content.cinema_featured %}
-          <div class="featured-film">
-            <div class="film-poster">
+          <div class="featured-film-compact" data-modal='{{ film | tojson }}' onclick="openDetailModal(this)">
+            <div class="film-poster-compact">
               {% if film.image %}
-                <img src="/Images/{{ film.image }}" alt="{{ film.title }} film poster" />
+                <img src="/Images/{{ film.image }}" alt="{{ film.title }}" />
               {% endif %}
             </div>
-            <div class="film-info">
+            <div class="film-info-compact">
               <p class="item-label">{{ film.label }}</p>
               <h3>{{ film.title }}</h3>
               <p class="item-meta">{{ film.year }}</p>
-              {% for para in film.paragraphs %}
-                <p>{{ para }}</p>
-              {% endfor %}
-              {% if film.details %}
-              <div class="item-details">
-                {% for row in film.details %}
-                <div class="detail-row"><span>{{ row.key }}</span><span>{{ row.value }}</span></div>
-                {% endfor %}
-              </div>
+              {% if film.paragraphs %}
+                <p>{{ film.paragraphs[0] }}</p>
               {% endif %}
+              <p class="more-hint">Click for full details &rarr;</p>
             </div>
           </div>
 
@@ -198,11 +172,53 @@
           <h2>Recognition</h2>
           <div class="press-list">
             {% for item in content.press %}
+            {% if item.url %}
+            <a class="press-item press-item-link" href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+              <span class="press-year">{{ item.year }}</span>
+              <p>{{ item.text }}</p>
+              <span class="press-ext">&#8599;</span>
+            </a>
+            {% else %}
             <div class="press-item">
               <span class="press-year">{{ item.year }}</span>
               <p>{{ item.text }}</p>
             </div>
+            {% endif %}
             {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CV ── -->
+      <section id="cv" class="section cv-section section-alt">
+        <div class="container">
+          <div class="cv-layout">
+            <div class="cv-photo">
+              <img src="/Images/{{ content.hero.image if content.hero.image else 'Temo Image.jpeg' }}" alt="Temo Rekhviashvili" />
+            </div>
+            <div class="cv-text">
+              <p class="section-label">Biography / CV</p>
+              <h2>Temo<br />Rekhviashvili</h2>
+              <div class="cv-bio">
+                {% for para in content.about.paragraphs %}
+                  <p>{{ para }}</p>
+                {% endfor %}
+              </div>
+              {% if content.cv and content.cv.entries %}
+              <div class="cv-entries">
+                {% for entry in content.cv.entries %}
+                <div class="cv-entry">
+                  <span class="cv-entry-year">{{ entry.year }}</span>
+                  <span class="cv-entry-cat">{{ entry.category }}</span>
+                  <span class="cv-entry-text">{{ entry.text }}</span>
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %}
+              {% if content.cv and content.cv.download_url %}
+              <a href="{{ content.cv.download_url }}" class="cv-download" target="_blank" rel="noopener noreferrer">Download CV &rarr;</a>
+              {% endif %}
+            </div>
           </div>
         </div>
       </section>
@@ -264,6 +280,14 @@
       </section>
 
     </main>
+
+    <!-- ── DETAIL MODAL ── -->
+    <div class="detail-modal-overlay" id="detailModal" onclick="closeModalOnOverlay(event)">
+      <div class="detail-modal">
+        <button class="modal-x" onclick="closeDetailModal()" aria-label="Close">&times;</button>
+        <div class="modal-inner" id="modalInner"></div>
+      </div>
+    </div>
 
     <footer class="site-footer">
       <div class="container footer-content">
