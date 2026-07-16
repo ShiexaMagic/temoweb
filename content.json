@@ -62,39 +62,6 @@
     {
       "details": [
         {
-          "key": "Year",
-          "value": "coming soon"
-        },
-        {
-          "key": "Genre",
-          "value": "Poetry"
-        },
-        {
-          "key": "Publisher",
-          "value": "Intelekti Publishing"
-        },
-        {
-          "key": "cover",
-          "value": "Anano Tabaghua"
-        },
-        {
-          "key": "Editor",
-          "value": "Gvantsa Shubitidze"
-        }
-      ],
-      "id": "neo-tbilisian",
-      "image": "7fb6624f-7758-45b7-ad13-020881a5b109.png",
-      "label": "Poetry",
-      "meta_line1": "Intelekti Publishing",
-      "meta_line2": "",
-      "paragraphs": [
-        "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
-      ],
-      "title": "Neo-Tbilisian Mukhambazebi"
-    },
-    {
-      "details": [
-        {
           "key": "Original Title",
           "value": "კურიერის ამბები"
         },
@@ -142,6 +109,39 @@
         "At once local and European, Courier’s Tales is a portrait of a young man trying to find his place between work and art, survival and longing, the city he comes from and the places he imagines as escape."
       ],
       "title": "Courier’s Tales"
+    },
+    {
+      "details": [
+        {
+          "key": "Year",
+          "value": "coming soon"
+        },
+        {
+          "key": "Genre",
+          "value": "Poetry"
+        },
+        {
+          "key": "Publisher",
+          "value": "Intelekti Publishing"
+        },
+        {
+          "key": "cover",
+          "value": "Anano Tabaghua"
+        },
+        {
+          "key": "Editor",
+          "value": "Gvantsa Shubitidze"
+        }
+      ],
+      "id": "neo-tbilisian",
+      "image": "7fb6624f-7758-45b7-ad13-020881a5b109.png",
+      "label": "Poetry",
+      "meta_line1": "Intelekti Publishing",
+      "meta_line2": "",
+      "paragraphs": [
+        "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
+      ],
+      "title": "Neo-Tbilisian Mukhambazebi"
     }
   ],
   "theatre_plays": [
