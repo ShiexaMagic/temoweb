@@ -59,39 +59,6 @@
       "details": [
         {
           "key": "Year",
-          "value": "coming soon"
-        },
-        {
-          "key": "Genre",
-          "value": "Poetry"
-        },
-        {
-          "key": "Publisher",
-          "value": "Intelekti Publishing"
-        },
-        {
-          "key": "cover",
-          "value": "Anano Tabaghua"
-        },
-        {
-          "key": "Editor",
-          "value": "Gvantsa Shubitidze"
-        }
-      ],
-      "id": "neo-tbilisian",
-      "image": "7fb6624f-7758-45b7-ad13-020881a5b109.png",
-      "label": "Poetry",
-      "meta_line1": "Intelekti Publishing",
-      "meta_line2": "",
-      "paragraphs": [
-        "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
-      ],
-      "title": "Neo-Tbilisian Mukhambazebi"
-    },
-    {
-      "details": [
-        {
-          "key": "Year",
           "value": "2025"
         },
         {
@@ -142,6 +109,39 @@
         "CO₂ is a darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying - often too late - to understand themselves.\nBoth plays have been staged in Georgia: Pathetic Monologues premiered at Theatre Company Haraki in December 2023, while CO₂ premiered at Theatre on Atoneli in April 2025.\n"
       ],
       "title": "Two Plays"
+    },
+    {
+      "details": [
+        {
+          "key": "Year",
+          "value": "coming soon"
+        },
+        {
+          "key": "Genre",
+          "value": "Poetry"
+        },
+        {
+          "key": "Publisher",
+          "value": "Intelekti Publishing"
+        },
+        {
+          "key": "cover",
+          "value": "Anano Tabaghua"
+        },
+        {
+          "key": "Editor",
+          "value": "Gvantsa Shubitidze"
+        }
+      ],
+      "id": "neo-tbilisian",
+      "image": "7fb6624f-7758-45b7-ad13-020881a5b109.png",
+      "label": "Poetry",
+      "meta_line1": "Intelekti Publishing",
+      "meta_line2": "",
+      "paragraphs": [
+        "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
+      ],
+      "title": "Neo-Tbilisian Mukhambazebi"
     }
   ],
   "theatre_plays": [
