@@ -156,43 +156,6 @@
   ],
   "theatre_plays": [
     {
-      "description": "A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.",
-      "details": [
-        {
-          "key": "Director",
-          "value": "Ilia Korkashvili"
-        },
-        {
-          "key": "Set Desing",
-          "value": "Keti Nadibaidze"
-        },
-        {
-          "key": "Composer",
-          "value": "Davit Khorbaladze"
-        },
-        {
-          "key": "starring",
-          "value": "Giorgi Razmadze, Beka Khachidze, Vaniko Tarkhnishvili, Sopiko gvimradze, Natalia Gabisonia, Gvantsa Enukidze, Lasha Lashkhi. "
-        },
-        {
-          "key": "Technical Group",
-          "value": "Irakli Sirbilashvili, Achi arganashvili, Saba Padiurashvili, Mariam Paichadze, Lizi Tkeshelashvili."
-        },
-        {
-          "key": "Touring group",
-          "value": "18 people"
-        },
-        {
-          "key": "Awards",
-          "value": "Tsinandali Award for Theatre Arts, 2024 -Natalia Gabisonia; Liberty Award for Best Actress, 2024 - Natalia Gabisonia"
-        }
-      ],
-      "id": "pathetic-monologues-play",
-      "image": "Pathetique Theater.jpeg",
-      "title": "Pathetic Monologues",
-      "year": "Play, 2023"
-    },
-    {
       "description": "A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves.",
       "details": [
         {
@@ -232,6 +195,43 @@
       "image": "CO2.jpeg",
       "title": "CO₂",
       "year": "Play, 2025"
+    },
+    {
+      "description": "A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.",
+      "details": [
+        {
+          "key": "Director",
+          "value": "Ilia Korkashvili"
+        },
+        {
+          "key": "Set Desing",
+          "value": "Keti Nadibaidze"
+        },
+        {
+          "key": "Composer",
+          "value": "Davit Khorbaladze"
+        },
+        {
+          "key": "starring",
+          "value": "Giorgi Razmadze, Beka Khachidze, Vaniko Tarkhnishvili, Sopiko gvimradze, Natalia Gabisonia, Gvantsa Enukidze, Lasha Lashkhi. "
+        },
+        {
+          "key": "Technical Group",
+          "value": "Irakli Sirbilashvili, Achi arganashvili, Saba Padiurashvili, Mariam Paichadze, Lizi Tkeshelashvili."
+        },
+        {
+          "key": "Touring group",
+          "value": "18 people"
+        },
+        {
+          "key": "Awards",
+          "value": "Tsinandali Award for Theatre Arts, 2024 -Natalia Gabisonia; Liberty Award for Best Actress, 2024 - Natalia Gabisonia"
+        }
+      ],
+      "id": "pathetic-monologues-play",
+      "image": "Pathetique Theater.jpeg",
+      "title": "Pathetic Monologues",
+      "year": "Play, 2023"
     }
   ],
   "theatre_credits": [
