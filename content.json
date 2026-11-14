@@ -5,7 +5,8 @@
     "seo_description": "Portfolio website for Temo Rekhviashvili, Georgian writer, playwright, and actor.",
     "url": "",
     "share_image": "",
-    "footer_text": "Writer · Playwright · Actor"
+    "footer_text": "Writer · Playwright · Actor",
+    "theme": "dark"
   },
   "hero": {
     "tagline": "Writer · Playwright · Actor",
