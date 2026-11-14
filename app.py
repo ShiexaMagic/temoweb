@@ -162,7 +162,9 @@ def too_large(_):
 
 # ── Local development only: on Vercel these paths are static files ──
 @app.route("/")
-def index():
+@app.route("/<any(books, theatre, cinema, press, about, contact):section>")
+@app.route("/<any(books, theatre, cinema):section>/<item>")
+def index(section=None, item=None):
     content = _load_content()
     names = [e["name"] for e in store.list_dir("Images")]
     return Response(site_content.render_site(content, names), mimetype="text/html")

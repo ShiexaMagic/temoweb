@@ -1,12 +1,12 @@
-/* Public page behaviour: mobile menu, active nav link, and the detail
-   pages for books / plays / films (opened at  #/<id>  so they can be linked). */
+/* Public site behaviour.  Every section is its own page with its own
+   address — /books, /theatre, /books/<id> … — all served from this one
+   file, so moving between them is instant. */
 (function () {
-  var view = document.getElementById('detailView');
+  var root = document.documentElement;
   var navLinks = document.getElementById('navLinks');
   var navToggle = document.getElementById('navToggle');
   var baseTitle = document.title;
-  var pageScroll = 0;
-  var openedHere = false;   // true when the detail was opened by a click on this page
+  var scrollMemory = {};          // address -> scroll position, for Back / Forward
 
   /* ── Mobile menu ── */
   function setMenu(open) {
@@ -17,78 +17,72 @@
   navToggle.addEventListener('click', function () {
     setMenu(!navLinks.classList.contains('open'));
   });
-  navLinks.addEventListener('click', function (e) {
-    if (e.target.closest('a')) setMenu(false);
-  });
 
-  /* ── Detail pages ── */
-  function currentDetail() {
-    var m = location.hash.match(/^#\/(.+)$/);
-    return m ? document.getElementById('detail-' + decodeURIComponent(m[1])) : null;
+  /* ── Which page does this address show? ── */
+  function resolve(pathname) {
+    var parts = pathname.replace(/^\/+|\/+$/g, '').split('/');
+    var section = parts[0] && document.getElementById(parts[0]);
+    if (!section || !section.classList.contains('page') || parts[0] === 'home') {
+      return { view: 'home', section: '', title: '' };
+    }
+    if (parts[1]) {
+      var detail = document.getElementById('detail-' + decodeURIComponent(parts[1]));
+      if (detail) return { view: 'detail', section: parts[0], detail: detail, title: detail.dataset.title };
+    }
+    return { view: parts[0], section: parts[0], title: section.dataset.title };
   }
 
-  function sync() {
-    var target = currentDetail();
-    var wasOpen = !view.hidden;
-    view.querySelectorAll('.detail').forEach(function (el) { el.hidden = el !== target; });
-
-    if (target) {
-      if (!wasOpen) pageScroll = window.scrollY;
-      view.hidden = false;
-      view.scrollTop = 0;
-      document.body.classList.add('detail-open');
-      document.title = target.dataset.title + ' — ' + baseTitle;
-      return;
-    }
-    if (wasOpen) {
-      view.hidden = true;
-      document.body.classList.remove('detail-open');
-      document.title = baseTitle;
-      // Closed with Back: return to where the reader was. A link to a
-      // section (#books) scrolls there by itself.
-      if (location.hash.length < 2) window.scrollTo(0, pageScroll);
-    }
-  }
-
-  function closeDetail() {
-    if (view.hidden) return;
-    if (openedHere) { history.back(); return; }
-    var back = currentDetail() && currentDetail().querySelector('.back-link');
-    location.hash = back ? back.getAttribute('href') : '#home';
-  }
-
-  document.addEventListener('click', function (e) {
-    var a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    if (a.getAttribute('href').indexOf('#/') === 0) { openedHere = true; return; }
-    // "Back to …" returns to the exact spot the reader left.
-    if (a.classList.contains('back-link') && openedHere) {
-      e.preventDefault();
-      history.back();
-    }
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { setMenu(false); closeDetail(); }
-  });
-  window.addEventListener('hashchange', function () {
-    if (!currentDetail()) openedHere = false;
-    sync();
-  });
-  sync();
-
-  /* ── Highlight the section being read ── */
-  var links = {};
-  navLinks.querySelectorAll('a[data-section]').forEach(function (a) { links[a.dataset.section] = a; });
-  if ('IntersectionObserver' in window) {
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        var link = links[entry.target.id];
-        if (link) link.classList.toggle('active', entry.isIntersecting);
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-    Object.keys(links).forEach(function (id) {
-      var section = document.getElementById(id);
-      if (section) observer.observe(section);
+  function show(pathname) {
+    var page = resolve(pathname);
+    root.setAttribute('data-view', page.view);
+    document.querySelectorAll('.detail').forEach(function (el) { el.hidden = el !== page.detail; });
+    navLinks.querySelectorAll('a[data-section]').forEach(function (a) {
+      var on = a.dataset.section === page.section;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
+    document.title = page.title ? page.title + ' — ' + baseTitle : baseTitle;
+    setMenu(false);
   }
+
+  function go(pathname) {
+    if (pathname === location.pathname) { window.scrollTo(0, 0); return; }
+    scrollMemory[location.pathname] = window.scrollY;
+    history.pushState(null, '', pathname);
+    show(pathname);
+    window.scrollTo(0, 0);
+  }
+
+  /* Links inside the site switch pages without reloading. */
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest('a[href]');
+    if (!a || a.target || a.origin !== location.origin) return;
+    if (/^\/(Images|admin|api)(\/|$)/.test(a.pathname) || a.hash) return;
+    e.preventDefault();
+    go(a.pathname);
+  });
+
+  window.addEventListener('popstate', function () {
+    show(location.pathname);
+    window.scrollTo(0, scrollMemory[location.pathname] || 0);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    setMenu(false);
+    var page = resolve(location.pathname);
+    if (page.view === 'detail') go('/' + page.section);
+  });
+
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  /* Old links (#books, #/couriers-tales) keep working. */
+  var old = location.hash.replace(/^#\/?/, '');
+  if (old && location.pathname === '/') {
+    var detail = document.getElementById('detail-' + decodeURIComponent(old));
+    var target = detail ? '/' + detail.dataset.section + '/' + old : (document.getElementById(old) ? '/' + old : null);
+    if (target && old !== 'home') history.replaceState(null, '', target);
+  }
+  show(location.pathname);
 })();

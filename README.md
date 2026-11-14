@@ -15,6 +15,10 @@ Everything runs on Vercel, on the free plan.
 
 Vercel keeps no files between requests, so the GitHub repository is the
 storage. The editor reads `content.json` and the image list from GitHub.
+Each section is its own page with its own address (`/books`, `/theatre`,
+`/books/<id>` …); `vercel.json` serves the same `index.html` for all of them
+and `script.js` shows the right one.
+
 Pressing **Save & publish** rebuilds `index.html` from `templates/index.html`
 and commits it, `content.json` and any newly uploaded images in a single
 commit. Vercel then redeploys the public site (about a minute).
@@ -23,7 +27,7 @@ commit. Vercel then redeploys the public site (about a minute).
 
 - Name, tagline, intro and photo on the first screen
 - Books, plays and films: add, delete, reorder, hide; cover, texts, details
-  table, buttons/links. Each one gets its own page at `/#/<id>`
+  table, buttons/links. Each one gets its own page, e.g. `/books/<id>`
 - Acting credits, press list, biography, highlights, fields, CV file, contact
   details and extra links
 - Every section heading, label and footnote; which sections are shown, their

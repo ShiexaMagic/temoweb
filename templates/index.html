@@ -17,12 +17,13 @@
 {%- endmacro -%}
 
 {#- One book / play / film in a section list. -#}
-{%- macro work(item, facts=false) -%}
+{%- macro work(item, section, facts=false) -%}
+{%- set url = '/' ~ section ~ '/' ~ item.id -%}
 <article class="work{% if facts %} work-boxed{% endif %}">
-  <a class="work-cover" href="#/{{ item.id }}" tabindex="-1" aria-hidden="true">{{ cover(item) }}</a>
+  <a class="work-cover" href="{{ url }}" tabindex="-1" aria-hidden="true">{{ cover(item) }}</a>
   <div class="work-main">
     {% if item.label %}<p class="kicker">{{ item.label }}</p>{% endif %}
-    <h3 class="work-title"><a href="#/{{ item.id }}">{{ item.title }}</a></h3>
+    <h3 class="work-title"><a href="{{ url }}">{{ item.title }}</a></h3>
     {% if item.meta_line1 or item.meta_line2 %}
     <p class="work-meta">{{ item.meta_line1 }}{% if item.meta_line1 and item.meta_line2 %}<br />{% endif %}{{ item.meta_line2 }}</p>
     {% endif %}
@@ -30,7 +31,7 @@
     {% if blurb %}<p class="work-summary">{{ blurb | rich }}</p>{% endif %}
     <p class="work-links">
       {{ link_list(item.links) }}
-      <a class="arrow-link" href="#/{{ item.id }}">More info</a>
+      <a class="arrow-link" href="{{ url }}">More info</a>
     </p>
   </div>
   {% if facts and item.details %}
@@ -45,7 +46,7 @@
 
 {#- The full page for one book / play / film (shown when it is opened). -#}
 {%- macro detail(item, section_key) -%}
-<article class="detail" id="detail-{{ item.id }}" data-title="{{ item.title }}" hidden>
+<article class="detail" id="detail-{{ item.id }}" data-title="{{ item.title }}" data-section="{{ section_key }}" hidden>
   <div class="detail-text">
     <p class="kicker">{{ S[section_key].nav or S[section_key].heading }}{% if item.label %} / {{ item.label }}{% endif %}</p>
     <h2 class="detail-title">{{ item.title }}</h2>
@@ -65,7 +66,7 @@
     </dl>
     {% endif %}
     {% if item.links %}<p class="work-links">{{ link_list(item.links) }}</p>{% endif %}
-    <p><a class="arrow-link back-link" href="#{{ section_key }}">Back to {{ S[section_key].nav or S[section_key].heading }}</a></p>
+    <p><a class="arrow-link back-link" href="/{{ section_key }}">Back to {{ S[section_key].nav or S[section_key].heading }}</a></p>
   </div>
   <figure class="detail-figure">{{ cover(item, 'cover-blank-lg') }}</figure>
 </article>
@@ -97,19 +98,28 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Noto+Serif+Georgian:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles.css?v={{ v }}" />
+    <script>
+      /* Each section is its own page: /books, /theatre, /books/<id> … */
+      (function () {
+        var parts = location.pathname.replace(/^\/+|\/+$/g, '').split('/');
+        var known = {{ content.visible_sections | tojson }};
+        var view = known.indexOf(parts[0]) < 0 ? 'home' : (parts[1] ? 'detail' : parts[0]);
+        document.documentElement.setAttribute('data-view', view);
+      })();
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="site-header" id="siteHeader">
       <nav class="nav wrap" aria-label="Main">
-        <a class="brand" href="#home">{{ site.name }}</a>
+        <a class="brand" href="/">{{ site.name }}</a>
         <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">
           <span class="nav-toggle-label">Menu</span>
         </button>
         <div class="nav-links" id="navLinks">
           {% for key in content.visible_sections %}
-          <a href="#{{ key }}" data-section="{{ key }}">{{ S[key].nav or S[key].heading }}</a>
+          <a href="/{{ key }}" data-section="{{ key }}">{{ S[key].nav or S[key].heading }}</a>
           {% endfor %}
         </div>
       </nav>
@@ -118,7 +128,7 @@
     <main id="main">
 
       <!-- ── HERO ── -->
-      <section class="hero" id="home">
+      <section class="hero page" id="home">
         <div class="hero-text">
           <h1>{{ site.name }}</h1>
           {% if content.hero.tagline %}<p class="hero-tagline">{{ content.hero.tagline }}</p>{% endif %}
@@ -135,11 +145,11 @@
 
       {% if key == 'books' %}
       <!-- ── BOOKS ── -->
-      <section id="books" class="section">
+      <section id="books" class="section page" data-title="{{ S.books.nav or S.books.heading }}">
         <div class="wrap">
           {{ section_head('books') }}
           <div class="work-list">
-            {% for item in content.books %}{{ work(item) }}{% endfor %}
+            {% for item in content.books %}{{ work(item, 'books') }}{% endfor %}
           </div>
         </div>
         {% set rn = content.rights_note %}
@@ -163,14 +173,14 @@
 
       {% elif key == 'theatre' %}
       <!-- ── THEATRE ── -->
-      <section id="theatre" class="section">
+      <section id="theatre" class="section page" data-title="{{ S.theatre.nav or S.theatre.heading }}">
         <div class="wrap">
           {{ section_head('theatre') }}
 
           {% if content.theatre_plays %}
           {% if S.theatre.plays_label %}<p class="kicker sub-kicker">{{ S.theatre.plays_label }}</p>{% endif %}
           <div class="work-list work-list-boxed">
-            {% for item in content.theatre_plays %}{{ work(item, facts=true) }}{% endfor %}
+            {% for item in content.theatre_plays %}{{ work(item, 'theatre', facts=true) }}{% endfor %}
           </div>
           {% endif %}
 
@@ -198,14 +208,14 @@
 
       {% elif key == 'cinema' %}
       <!-- ── CINEMA ── -->
-      <section id="cinema" class="section">
+      <section id="cinema" class="section page" data-title="{{ S.cinema.nav or S.cinema.heading }}">
         <div class="wrap">
           {{ section_head('cinema') }}
 
           {% if content.films %}
           {% if S.cinema.films_label %}<p class="kicker sub-kicker">{{ S.cinema.films_label }}</p>{% endif %}
           <div class="work-list work-list-boxed">
-            {% for item in content.films %}{{ work(item, facts=true) }}{% endfor %}
+            {% for item in content.films %}{{ work(item, 'cinema', facts=true) }}{% endfor %}
           </div>
           {% endif %}
 
@@ -236,7 +246,7 @@
 
       {% elif key == 'press' %}
       <!-- ── PRESS ── -->
-      <section id="press" class="section">
+      <section id="press" class="section page" data-title="{{ S.press.nav or S.press.heading }}">
         <div class="wrap">
           {{ section_head('press') }}
           <ul class="rows press-rows">
@@ -263,7 +273,7 @@
       {% elif key == 'about' %}
       <!-- ── ABOUT ── -->
       {% set about = content.about %}
-      <section id="about" class="section">
+      <section id="about" class="section page" data-title="{{ S.about.nav or S.about.heading }}">
         <div class="wrap">
           <header class="section-head">
             <h2>{{ S.about.heading }}</h2>
@@ -309,7 +319,7 @@
 
       {% elif key == 'contact' %}
       <!-- ── CONTACT ── -->
-      <section id="contact" class="section section-contact">
+      <section id="contact" class="section section-contact page" data-title="{{ S.contact.nav or S.contact.heading }}">
         <div class="wrap">
           <header class="section-head">
             <h2>{{ S.contact.heading }}</h2>
@@ -326,6 +336,15 @@
       {% endif %}
 
       {% endfor %}
+
+    <!-- ── DETAIL PAGES (one per book / play / film) ── -->
+      <div class="detail-view page" id="detailView">
+        <div class="wrap">
+          {% for item in content.books %}{{ detail(item, 'books') }}{% endfor %}
+          {% for item in content.theatre_plays %}{{ detail(item, 'theatre') }}{% endfor %}
+          {% for item in content.films %}{{ detail(item, 'cinema') }}{% endfor %}
+        </div>
+      </div>
     </main>
 
     <footer class="site-footer">
@@ -334,15 +353,6 @@
         {% if site.footer_text %}<p>{{ site.footer_text }}</p>{% endif %}
       </div>
     </footer>
-
-    <!-- ── DETAIL PAGES (one per book / play / film) ── -->
-    <div class="detail-view" id="detailView" hidden>
-      <div class="wrap">
-        {% for item in content.books %}{{ detail(item, 'books') }}{% endfor %}
-        {% for item in content.theatre_plays %}{{ detail(item, 'theatre') }}{% endfor %}
-        {% for item in content.films %}{{ detail(item, 'cinema') }}{% endfor %}
-      </div>
-    </div>
 
     <script src="/script.js?v={{ v }}"></script>
   </body>
