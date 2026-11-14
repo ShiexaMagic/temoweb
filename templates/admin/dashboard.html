@@ -630,22 +630,42 @@ function libraryGrid(kind, opt = {}) {
   return grid;
 }
 
-/* Photos are shrunk here in the browser: the server accepts 4 MB at most. */
+/* Automatic image downsizer.  Every photo is made web-sized here in the
+   browser before it is sent: at most 2000 px on its long side and about
+   600 KB, so pages load fast and uploads fit the server's 4 MB limit. */
 const MAX_UPLOAD = 4 * 1024 * 1024;
+const IMAGE_MAX_SIDE = 2000;
+const IMAGE_TARGET_BYTES = 600 * 1024;
+const fmtSize = n => (n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB');
+
 async function prepareUpload(file) {
   const tooBig = () => new Error('This file is larger than 4 MB. Please make it smaller and try again.');
-  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { if (file.size > MAX_UPLOAD) throw tooBig(); return file; }
+  const asIs = () => { if (file.size > MAX_UPLOAD) throw tooBig(); return file; };
+  // Animated GIFs, SVGs and non-images (PDF) are sent unchanged.
+  if (!file.type.startsWith('image/') || /gif|svg/.test(file.type)) return asIs();
   let bmp;
   try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
-  catch (e) { if (file.size > MAX_UPLOAD) throw tooBig(); return file; }
-  const scale = Math.min(1, 2400 / Math.max(bmp.width, bmp.height));
-  if (scale === 1 && file.size <= 1.5 * 1024 * 1024) return file;
+  catch (e) {
+    if (/hei[cf]/i.test(file.type + file.name)) throw new Error('This browser cannot read iPhone HEIC photos. Please save it as JPG first.');
+    return asIs();
+  }
+  const scale = Math.min(1, IMAGE_MAX_SIDE / Math.max(bmp.width, bmp.height));
+  if (scale === 1 && file.size <= IMAGE_TARGET_BYTES) return file;   // already small enough
+
   const canvas = h('canvas', { width: Math.round(bmp.width * scale), height: Math.round(bmp.height * scale) });
   const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingQuality = 'high';
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.86));
-  if (!blob || blob.size > MAX_UPLOAD) throw tooBig();
+  // Lower the quality step by step until the file is small enough.
+  let blob = null;
+  for (const quality of [0.86, 0.8, 0.72, 0.64]) {
+    blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+    if (blob && blob.size <= IMAGE_TARGET_BYTES) break;
+  }
+  if (!blob) return asIs();
+  if (blob.size >= file.size) return asIs();                          // no gain: keep the original
+  if (blob.size > MAX_UPLOAD) throw tooBig();
   return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' });
 }
 
@@ -654,11 +674,12 @@ function uploadButton(kind, ondone) {
   const btn = h('button', { class: 'btn btn-dark', type: 'button', onclick: () => input.click() }, 'Upload from this device');
   input.addEventListener('change', async () => {
     const files = [...input.files]; if (!files.length) return;
-    btn.disabled = true; let last = null;
+    btn.disabled = true; let last = null, before = 0, after = 0;
     for (const [i, original] of files.entries()) {
       btn.textContent = 'Uploading ' + (i + 1) + ' of ' + files.length + '…';
       try {
         const file = await prepareUpload(original);
+        if (file !== original) { before += original.size; after += file.size; }
         const fd = new FormData(); fd.append('file', file, file.name);
         const d = await api('POST', '/api/upload', fd);
         // Staged on the server; it joins the site at the next "Save & publish".
@@ -671,15 +692,19 @@ function uploadButton(kind, ondone) {
       } catch (e) { toast(original.name + ': ' + e.message, true); }
     }
     btn.disabled = false; btn.textContent = 'Upload from this device'; input.value = '';
-    if (last) ondone(last, files.length);
+    if (last) {
+      ondone(last, files.length);
+      toast(after ? 'Image made smaller: ' + fmtSize(before) + ' → ' + fmtSize(after) + '. Press “Save & publish” to keep it.'
+                  : 'Uploaded. Press “Save & publish” to keep it.');
+    }
   });
   return h('span', {}, btn, input);
 }
 
 function libraryPage() {
   return h('section', { class: 'card' },
-    h('div', { class: 'upload-bar' }, uploadButton(null, () => { render(); toast('Uploaded. Press “Save & publish” to keep it.'); }),
-      h('span', { class: 'hint', style: 'margin:0' }, 'JPG, PNG, WebP, GIF or PDF. Large photos are resized automatically; other files can be up to 4 MB.')),
+    h('div', { class: 'upload-bar' }, uploadButton(null, () => render()),
+      h('span', { class: 'hint', style: 'margin:0' }, 'JPG, PNG, WebP, GIF or PDF. Photos are made smaller automatically (2000 px, about 600 KB); other files can be up to 4 MB.')),
     libraryGrid(null));
 }
 
@@ -690,7 +715,7 @@ function pickFile(kind, selected, onpick) {
   const choose = name => { close(); onpick(name); };
   const draw = () => fill(body, 
     h('div', { class: 'upload-bar' }, uploadButton(kind, (name, count) => { count === 1 ? choose(name) : draw(); }),
-      h('span', { class: 'hint', style: 'margin:0' }, kind === 'file' ? 'PDF files.' : 'Or pick one you uploaded before:')),
+      h('span', { class: 'hint', style: 'margin:0' }, kind === 'file' ? 'PDF files.' : 'Photos are made smaller automatically. Or pick one you uploaded before:')),
     libraryGrid(kind, { onpick: choose, selected }));
   const overlay = h('div', { class: 'overlay', onclick: e => { if (e.target === overlay) close(); } },
     h('div', { class: 'modal', role: 'dialog', 'aria-modal': 'true' },
