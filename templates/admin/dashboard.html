@@ -346,6 +346,16 @@ function toggle(obj, key, label, onchange) {
 
 function row(...fields) { return h('div', { class: 'field-row' }, fields); }
 
+/* Pick one of a few options. */
+function choice(obj, key, label, options, hint) {
+  const name = 'choice-' + key;
+  return h('div', { class: 'field' }, h('span', { class: 'field-label' }, label),
+    h('div', { style: 'display:flex;flex-wrap:wrap;gap:0.5rem 1.5rem' }, options.map(([value, text]) =>
+      h('label', { class: 'toggle' },
+        h('input', { type: 'radio', name, checked: obj[key] === value, onchange: () => { obj[key] = value; markDirty(); } }), text))),
+    hint && h('p', { class: 'hint' }, hint));
+}
+
 function image(obj, key, label, hint) {
   const box = h('div', { class: 'field' });
   const draw = () => {
@@ -557,6 +567,10 @@ const PAGES = [
   { group: 'Website' },
   { id: 'menu', name: 'Menu & order', sub: 'Choose which sections appear on the page and in what order.', build: () => [menuPage()] },
   { id: 'site', name: 'Site settings', sub: 'Things outside the page itself: the footer, and how the site looks on Google and when shared.', build: () => [
+    card('Design', null,
+      choice(content.site, 'theme', 'Colours visitors see first',
+        [['dark', 'Black'], ['light', 'White'], ['auto', 'Same as the visitor’s device']],
+        'Visitors can switch with the round button in the top menu; their choice is remembered on their device.')),
     card('Footer', null, text(content.site, 'footer_text', 'Text on the right of the footer')),
     card('Google & sharing', null,
       text(content.site, 'seo_title', 'Title in the browser tab and on Google'),

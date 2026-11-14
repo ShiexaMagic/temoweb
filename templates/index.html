@@ -99,6 +99,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Noto+Serif+Georgian:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles.css?v={{ v }}" />
     <script>
+      /* Black or white design: the visitor's own choice wins, else the site default. */
+      (function () {
+        var theme = {{ site.theme | tojson }};
+        try { theme = localStorage.getItem('theme') || theme; } catch (e) {}
+        if (theme !== 'dark' && theme !== 'light') {
+          theme = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
       /* Each section is its own page: /books, /theatre, /books/<id> … */
       (function () {
         var parts = location.pathname.replace(/^\/+|\/+$/g, '').split('/');
@@ -114,6 +123,10 @@
     <header class="site-header" id="siteHeader">
       <nav class="nav wrap" aria-label="Main">
         <a class="brand" href="/">{{ site.name }}</a>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch between black and white design" title="Black / white">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
         <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">
           <span class="nav-toggle-label">Menu</span>
         </button>

@@ -32,6 +32,8 @@ DEFAULTS = {
         "url": "",
         "share_image": "",
         "footer_text": "Writer · Playwright · Actor",
+        # Look visitors get first: "dark", "light" or "auto" (follow their device).
+        "theme": "dark",
     },
     "hero": {"tagline": "", "bio": "", "image": ""},
     "section_order": SECTION_KEYS,
@@ -220,6 +222,8 @@ def normalize(raw):
 
     out["site"] = _merge(DEFAULTS["site"], raw.get("site"))
     out["site"]["url"] = _url(out["site"]["url"]).rstrip("/")
+    if out["site"]["theme"] not in ("dark", "light", "auto"):
+        out["site"]["theme"] = DEFAULTS["site"]["theme"]
     out["hero"] = _merge(DEFAULTS["hero"], raw.get("hero"))
 
     stored_sections = raw.get("sections") if isinstance(raw.get("sections"), dict) else {}
