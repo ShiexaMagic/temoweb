@@ -163,7 +163,7 @@
   <header class="topbar">
     <span class="topbar-brand">Site editor</span>
     <button class="status" id="status" data-state="idle" type="button">Loading…</button>
-    <a class="btn btn-ghost hide-sm" href="/" target="_blank" rel="noopener">Preview ↗</a>
+    <a class="btn btn-ghost hide-sm" href="/" target="_blank" rel="noopener">View site ↗</a>
     <button class="btn btn-primary" id="saveBtn" type="button" disabled>Save &amp; publish</button>
     <a class="btn btn-ghost hide-sm" href="/admin/logout" id="logout">Sign out</a>
   </header>
@@ -184,7 +184,9 @@ let uploads = [];
 let hosted = false;
 let dirty = false;
 let saving = false;
-let publish = { status: 'idle', message: '' };
+let publishes = true;      // false when the server cannot publish (local development)
+let savedOnce = false;
+const pending = {};        // uploads not saved yet: filename -> { sha, url }
 let currentPage = location.hash.slice(1) || 'home';
 const openItems = new WeakSet();
 
@@ -207,7 +209,14 @@ function fill(el, ...children) {
     .map(c => (c.nodeType ? c : document.createTextNode(c))));
   return el;
 }
-const imgUrl = name => '/Images/' + encodeURIComponent(name);
+/* An <img> for an uploaded file.  Files saved a moment ago may not be on the
+   public site yet, so fall back to reading them through the editor. */
+function img(name, attrs) {
+  const p = pending[name];
+  const el = h('img', { ...attrs, alt: '', src: p ? p.url : '/Images/' + encodeURIComponent(name) });
+  if (!p) el.addEventListener('error', () => { el.src = '/admin/file/' + encodeURIComponent(name); }, { once: true });
+  return el;
+}
 const uploadExists = name => uploads.some(u => u.name === name);
 
 function toast(msg, isError) {
@@ -240,57 +249,37 @@ window.addEventListener('beforeunload', warnUnsaved);
 function renderStatus() {
   const pill = document.getElementById('status');
   const btn = document.getElementById('saveBtn');
-  let state = publish.status, text = '';
+  let state = 'idle', text = 'Everything is published';
   if (saving) { state = 'pushing'; text = 'Saving…'; }
   else if (dirty) { state = 'dirty'; text = 'Unsaved changes'; }
-  else if (state === 'pushing') text = 'Publishing…';
-  else if (state === 'ok') text = 'Published ✓';
-  else if (state === 'error') text = 'Publish failed — tap to retry';
-  else if (state === 'local') text = 'Saved (not published)';
-  else text = publish.pending ? 'Changes waiting to publish' : 'Everything is published';
+  else if (!publishes) { state = 'local'; text = savedOnce ? 'Saved (not published)' : 'Not connected to the live site'; }
+  else if (savedOnce) { state = 'ok'; text = 'Published ✓'; }
   pill.dataset.state = state;
   pill.textContent = text;
-  pill.title = publish.message || '';
+  pill.title = state === 'ok' ? 'The live site updates in about a minute.' : '';
   btn.disabled = saving || !dirty;
   btn.textContent = saving ? 'Saving…' : 'Save & publish';
 }
-
-let pollTimer = null;
-function pollPublish() {
-  clearTimeout(pollTimer);
-  if (publish.status !== 'pushing') return;
-  pollTimer = setTimeout(async () => {
-    try { publish = await api('GET', '/api/publish-status'); } catch (e) { /* keep polling */ }
-    renderStatus();
-    if (publish.status === 'error') toast('Publishing failed: ' + publish.message, true);
-    pollPublish();
-  }, 1500);
-}
-
-document.getElementById('status').addEventListener('click', async () => {
-  if (publish.status === 'error' || (publish.status === 'idle' && publish.pending)) {
-    publish = await api('POST', '/api/publish-retry');
-    renderStatus(); pollPublish();
-  } else if (publish.message) toast(publish.message);
-});
 
 async function save() {
   if (saving || !dirty) return;
   saving = true; renderStatus();
   try {
-    const data = await api('PUT', '/api/content', content);
+    const new_files = Object.fromEntries(Object.entries(pending).map(([name, p]) => [name, p.sha]));
+    const data = await api('PUT', '/api/content', { content, new_files });
     // Keep editing the same objects (the form is bound to them); only take
     // over what the server decides: the ids of new items.
     for (const key of ['books', 'theatre_plays', 'films']) {
       content[key].forEach((it, i) => { if (data.content[key][i]) it.id = data.content[key][i].id; });
     }
-    uploads = data.uploads; publish = data.publish;
-    dirty = false;
-    toast(publish.status === 'local' ? 'Saved.' : 'Saved — publishing to the live site…');
+    uploads = data.uploads;
+    for (const name of Object.keys(new_files)) delete pending[name];
+    dirty = false; savedOnce = true;
+    toast(publishes ? 'Published. The live site updates in about a minute.' : 'Saved.');
   } catch (e) {
     toast(e.message, true);
   }
-  saving = false; renderStatus(); pollPublish();
+  saving = false; renderStatus();
 }
 document.getElementById('saveBtn').addEventListener('click', save);
 document.addEventListener('keydown', e => {
@@ -366,7 +355,7 @@ function image(obj, key, label, hint) {
       h('span', { class: 'field-label' }, label),
       h('div', { class: 'img-field' },
         name && !missing
-          ? h('img', { class: 'img-thumb', src: imgUrl(name), alt: '' })
+          ? img(name, { class: 'img-thumb' })
           : h('div', { class: 'img-thumb img-empty' }, missing ? 'File missing' : 'No image'),
         h('div', {},
           missing && h('p', { class: 'warn' }, 'The file “' + name + '” is no longer on the server. Please choose the image again.'),
@@ -451,7 +440,7 @@ function works(list, opt) {
     const el = h('div', { class: 'item' + (item.visible ? '' : ' is-hidden') },
       h('div', { class: 'item-head' },
         h('button', { class: 'item-open', type: 'button', 'aria-expanded': String(isOpen), onclick: () => { isOpen ? openItems.delete(item) : openItems.add(item); draw(); } },
-          thumbOk ? h('img', { class: 'item-thumb', src: imgUrl(item.image), alt: '' }) : h('span', { class: 'item-thumb' }),
+          thumbOk ? img(item.image, { class: 'item-thumb' }) : h('span', { class: 'item-thumb' }),
           h('span', { style: 'min-width:0' },
             h('span', { class: 'item-name', style: 'display:block' }, item.title || 'Untitled', !item.visible && h('span', { class: 'badge' }, 'Hidden')),
             h('span', { class: 'item-sub', style: 'display:block' }, [item.label, item.meta_line1].filter(Boolean).join(' · ') || (isOpen ? 'Editing' : 'Click to edit')))),
@@ -609,21 +598,41 @@ function libraryGrid(kind, opt = {}) {
   const list = uploads.filter(u => !kind || u.kind === kind);
   if (!list.length) return h('p', { class: 'card-sub' }, 'Nothing uploaded yet.');
   for (const u of list) {
-    const visual = u.kind === 'image' ? h('img', { src: imgUrl(u.name), alt: '', loading: 'lazy' }) : h('span', { class: 'tile-file' }, u.name.split('.').pop().toUpperCase());
+    const visual = u.kind === 'image' ? img(u.name, { loading: 'lazy' }) : h('span', { class: 'tile-file' }, u.name.split('.').pop().toUpperCase());
     const cap = h('span', { class: 'tile-cap', style: 'display:block' }, u.name);
     if (opt.onpick) {
       grid.append(h('button', { class: 'tile' + (opt.selected === u.name ? ' selected' : ''), type: 'button', onclick: () => opt.onpick(u.name) }, visual, cap));
     } else {
       grid.append(h('div', { class: 'tile' }, visual, cap,
         u.used ? h('span', { class: 'tile-used' }, 'In use')
+               : pending[u.name] ? h('span', { class: 'tile-used' }, 'Not saved yet')
                : h('button', { class: 'icon-btn danger tile-del', type: 'button', title: 'Delete', onclick: async () => {
                    if (!confirm('Delete “' + u.name + '”?')) return;
-                   try { const d = await api('DELETE', '/api/images/' + encodeURIComponent(u.name)); uploads = d.uploads; afterUpload(); render(); toast('Deleted.'); }
+                   try { const d = await api('DELETE', '/api/images/' + encodeURIComponent(u.name)); uploads = d.uploads.concat(uploads.filter(x => pending[x.name])); render(); toast('Deleted.'); }
                    catch (e) { toast(e.message, true); }
                  } }, '✕')));
     }
   }
   return grid;
+}
+
+/* Photos are shrunk here in the browser: the server accepts 4 MB at most. */
+const MAX_UPLOAD = 4 * 1024 * 1024;
+async function prepareUpload(file) {
+  const tooBig = () => new Error('This file is larger than 4 MB. Please make it smaller and try again.');
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { if (file.size > MAX_UPLOAD) throw tooBig(); return file; }
+  let bmp;
+  try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch (e) { if (file.size > MAX_UPLOAD) throw tooBig(); return file; }
+  const scale = Math.min(1, 2400 / Math.max(bmp.width, bmp.height));
+  if (scale === 1 && file.size <= 1.5 * 1024 * 1024) return file;
+  const canvas = h('canvas', { width: Math.round(bmp.width * scale), height: Math.round(bmp.height * scale) });
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.86));
+  if (!blob || blob.size > MAX_UPLOAD) throw tooBig();
+  return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' });
 }
 
 function uploadButton(kind, ondone) {
@@ -632,24 +641,31 @@ function uploadButton(kind, ondone) {
   input.addEventListener('change', async () => {
     const files = [...input.files]; if (!files.length) return;
     btn.disabled = true; let last = null;
-    for (const [i, file] of files.entries()) {
+    for (const [i, original] of files.entries()) {
       btn.textContent = 'Uploading ' + (i + 1) + ' of ' + files.length + '…';
-      const fd = new FormData(); fd.append('file', file);
-      try { const d = await api('POST', '/api/upload', fd); uploads = d.uploads; last = d.filename; }
-      catch (e) { toast(file.name + ': ' + e.message, true); }
+      try {
+        const file = await prepareUpload(original);
+        const fd = new FormData(); fd.append('file', file, file.name);
+        const d = await api('POST', '/api/upload', fd);
+        // Staged on the server; it joins the site at the next "Save & publish".
+        if (!uploads.some(u => u.name === d.filename)) {
+          pending[d.filename] = { sha: d.sha, url: URL.createObjectURL(file) };
+          uploads.push({ name: d.filename, kind: d.kind, size: d.size, used: false });
+          markDirty();
+        }
+        last = d.filename;
+      } catch (e) { toast(original.name + ': ' + e.message, true); }
     }
     btn.disabled = false; btn.textContent = 'Upload from this device'; input.value = '';
-    afterUpload();
     if (last) ondone(last, files.length);
   });
   return h('span', {}, btn, input);
 }
-function afterUpload() { api('GET', '/api/publish-status').then(p => { publish = p; renderStatus(); pollPublish(); }).catch(() => {}); }
 
 function libraryPage() {
   return h('section', { class: 'card' },
-    h('div', { class: 'upload-bar' }, uploadButton(null, () => { render(); toast('Uploaded.'); }),
-      h('span', { class: 'hint', style: 'margin:0' }, 'JPG, PNG, WebP, GIF or PDF. Large photos are resized automatically.')),
+    h('div', { class: 'upload-bar' }, uploadButton(null, () => { render(); toast('Uploaded. Press “Save & publish” to keep it.'); }),
+      h('span', { class: 'hint', style: 'margin:0' }, 'JPG, PNG, WebP, GIF or PDF. Large photos are resized automatically; other files can be up to 4 MB.')),
     libraryGrid(null));
 }
 
@@ -677,12 +693,12 @@ function accountPage() {
   const pw = { current: '', next: '', again: '' };
   const publishInfo = card('Publishing', null,
     h('p', { class: 'card-sub', style: 'margin:0' },
-      publish.enabled
+      publishes
         ? 'When you press “Save & publish”, the changes are sent to the live website. It updates in about a minute.'
-        : 'Publishing is not set up on this server (GITHUB_TOKEN is missing). Changes are saved here but do not reach the live website.'));
+        : 'This editor is not connected to the live website (GITHUB_TOKEN is missing). Changes are saved here only.'));
   if (hosted) {
     return h('div', {}, publishInfo,
-      card('Password', null, h('p', { class: 'card-sub', style: 'margin:0' }, 'The password for this editor is set in the hosting dashboard (ADMIN_PASSWORD_HASH). Ask whoever set up the site to change it.')),
+      card('Password', null, h('p', { class: 'card-sub', style: 'margin:0' }, 'The password for this editor is set in the Vercel project settings (ADMIN_PASSWORD_HASH). Ask whoever set up the site to change it.')),
       h('a', { class: 'btn', href: '/admin/logout' }, 'Sign out'));
   }
   return h('div', {}, publishInfo,
@@ -724,9 +740,9 @@ document.getElementById('logout').addEventListener('click', e => {
 (async function init() {
   try {
     const data = await api('GET', '/api/content');
-    content = data.content; uploads = data.uploads; publish = data.publish; hosted = data.hosted;
+    content = data.content; uploads = data.uploads; publishes = data.publishes; hosted = data.hosted;
     document.querySelector('.topbar-brand').textContent = 'Site editor — ' + content.site.name;
-    render(); pollPublish();
+    render();
   } catch (e) {
     fill(document.getElementById('main'), h('p', { class: 'warn' }, e.message));
   }

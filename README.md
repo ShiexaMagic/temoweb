@@ -5,16 +5,19 @@ everything on the page himself.
 
 ## How it works
 
-| Part | What it is | Where it runs |
-| --- | --- | --- |
-| Public site | Static `index.html` + `styles.css` + `script.js` + `Images/` | Vercel |
-| Editor | Flask app (`app.py`), at `/admin` | Railway |
-| Content | `content.json` — every text, link, image name, section order | this repo |
+Everything runs on Vercel, on the free plan.
 
-Pressing **Save & publish** in the editor writes `content.json`, rebuilds
-`index.html` from `templates/index.html`, and commits both — together with any
-uploaded or deleted images — to GitHub in a single commit. Vercel then
-redeploys the public site (about a minute).
+| Part | What it is |
+| --- | --- |
+| Public site | Static `index.html` + `styles.css` + `script.js` + `Images/` |
+| Editor | Flask app (`app.py`) at `/admin`, run as a serverless function (`api/index.py`) |
+| Content | `content.json` — every text, link, image name, section order |
+
+Vercel keeps no files between requests, so the GitHub repository is the
+storage. The editor reads `content.json` and the image list from GitHub.
+Pressing **Save & publish** rebuilds `index.html` from `templates/index.html`
+and commits it, `content.json` and any newly uploaded images in a single
+commit. Vercel then redeploys the public site (about a minute).
 
 ## What can be edited at `/admin`
 
@@ -26,18 +29,22 @@ redeploys the public site (about a minute).
 - Every section heading, label and footnote; which sections are shown, their
   order and their names in the menu
 - Footer, Google title/description, share image
-- Image library (large photos are resized on upload; PDFs are allowed)
+- Image library (large photos are resized in the browser before upload; PDFs
+  up to 4 MB are allowed)
 
 In text boxes, `*stars*` make italics and `[text](https://…)` makes a link.
 
-## Environment variables (Railway)
+## Environment variables
+
+Set these in the Vercel project under **Settings → Environment Variables**,
+then redeploy.
 
 | Variable | Purpose |
 | --- | --- |
 | `ADMIN_USERNAME` | Editor login name (default `admin`) |
-| `ADMIN_PASSWORD_HASH` | Password hash — see below. Setting it turns on hosted mode |
-| `SECRET_KEY` | Any long random string; keeps you signed in across restarts |
-| `GITHUB_TOKEN` | Token with **Contents: read and write** on this repo. Without it, saves stay on the server and are not published |
+| `ADMIN_PASSWORD_HASH` | Password hash — see below. Required |
+| `GITHUB_TOKEN` | Fine-grained token for this repo with **Contents: Read and write**. Required: it is how the editor reads and saves |
+| `SECRET_KEY` | Any long random string, used to sign the login cookie. Recommended |
 | `GITHUB_REPO` | `owner/name` (default `ShiexaMagic/temoweb`) |
 | `GITHUB_BRANCH` | Branch Vercel deploys from (default `main`) |
 
@@ -59,5 +66,5 @@ python app.py
 
 Open http://localhost:5000/admin. The first run creates `admin_config.json`
 with the login `admin` / `admin` — change it under **Account**. Without
-`GITHUB_TOKEN` nothing is pushed; run `python build.py` to regenerate
-`index.html` by hand.
+`GITHUB_TOKEN` the editor works on the files in this folder and pushes
+nothing; `python build.py` regenerates `index.html` by hand.

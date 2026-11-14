@@ -1,6 +1,6 @@
 """
-Content model shared by the admin app (app.py) and the static builder
-(build.py).
+Content model and page rendering, shared by the editor (app.py) and the
+command-line builder (build.py).
 
 content.json is the single source of truth for everything shown on the
 public page.  `normalize()` turns whatever is stored (including content
@@ -274,24 +274,14 @@ def normalize(raw):
     return out
 
 
-# ── Storage ─────────────────────────────────────────────────────
-def load_content():
-    with open(CONTENT_FILE, "r", encoding="utf-8") as f:
-        return normalize(json.load(f))
+# ── Helpers for storage ─────────────────────────────────────────
+def parse(raw_bytes):
+    """content.json bytes -> normalised content."""
+    return normalize(json.loads(raw_bytes.decode("utf-8")) if raw_bytes else {})
 
 
-def save_content(data):
-    data = normalize(data)
-    tmp = CONTENT_FILE + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-        f.write("\n")
-    os.replace(tmp, CONTENT_FILE)
-    return data
-
-
-def image_exists(name):
-    return bool(name) and os.path.isfile(os.path.join(IMAGES_DIR, name))
+def dump(content):
+    return (json.dumps(normalize(content), ensure_ascii=False, indent=2) + "\n").encode("utf-8")
 
 
 def referenced_images(content):
@@ -316,13 +306,13 @@ def rich(text):
     return Markup(html)
 
 
-def view_model(content):
+def view_model(content, image_names):
     """Content prepared for the template: hidden things removed, missing
     images blanked so the page shows a placeholder instead of a broken image."""
     c = copy.deepcopy(content)
 
     def img(name):
-        return name if image_exists(name) else ""
+        return name if name in image_names else ""
 
     c["hero"]["image"] = img(c["hero"]["image"]) or img("Temo Image.jpeg")
     c["about"]["image"] = img(c["about"]["image"])
@@ -354,18 +344,21 @@ def _asset_version():
     return digest.hexdigest()[:8]
 
 
-def render_site(content=None):
-    content = load_content() if content is None else normalize(content)
+def render_site(content, image_names):
+    """The complete public page as HTML.  `image_names` = files in Images/."""
     template = _env().get_template("index.html")
     return template.render(
-        content=view_model(content),
+        content=view_model(normalize(content), set(image_names)),
         year=time.gmtime().tm_year,
         v=_asset_version(),
     )
 
 
 def build():
-    html = render_site()
+    """Rebuild index.html from the files on disk (python build.py)."""
+    with open(CONTENT_FILE, "rb") as f:
+        content = parse(f.read())
+    html = render_site(content, os.listdir(IMAGES_DIR))
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     return OUTPUT_FILE

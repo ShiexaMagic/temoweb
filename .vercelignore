@@ -1,12 +1,4 @@
-# The public site is only index.html, styles.css, script.js and Images/.
-app.py
-build.py
-publisher.py
-site_content.py
-templates
-requirements.txt
-Procfile
-nixpacks.toml
+# Not needed on Vercel (the editor function needs the Python files and templates).
 reference_images
 *.docx
 README.md

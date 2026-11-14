@@ -1,16 +1,18 @@
 """
-Admin app for the portfolio site.
+The editor for the portfolio site.
 
-  /            live preview of the public page (rendered from content.json)
-  /admin       the editor — every text, image, link and section on the page
+  /admin       every text, image, link and section of the page
+  /api/*       what the editor page talks to
 
-Saving in the admin writes content.json, rebuilds the static index.html and
-commits both (plus any uploaded images) to GitHub, which redeploys the
-public site on Vercel.
+The public site is the static index.html.  Saving in the editor rebuilds
+that file from content.json + templates/index.html and commits it — with
+content.json and any new images — to GitHub in one commit; Vercel then
+redeploys.  Runs as a Vercel serverless function (api/index.py) or locally
+with `python app.py`.
 """
 import hashlib
-import io
 import json
+import mimetypes
 import os
 import re
 import secrets
@@ -32,39 +34,34 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import site_content
-from publisher import Publisher
+from store import StoreError, make_store
 
 # ── Configuration ───────────────────────────────────────────────
 BASE = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE, "admin_config.json")
-IMAGES_DIR = site_content.IMAGES_DIR
 
 IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp", "gif"}
 FILE_EXTENSIONS = {"pdf"}
-MAX_IMAGE_SIDE = 2400          # px — larger uploads are scaled down
-MAX_UPLOAD_BYTES = 25 * 1024 * 1024
+# Vercel rejects request bodies over 4.5 MB; the editor shrinks photos in
+# the browser before sending them.
+MAX_UPLOAD_BYTES = 4 * 1024 * 1024
+UPLOAD_NAME = re.compile(r"^[a-z0-9][a-z0-9-]*-[0-9a-f]{8}\.(jpg|jpeg|png|webp|gif|pdf)$")
+BLOB_SHA = re.compile(r"^[0-9a-f]{40}$")
 
-# Hosting env vars (set these in the Railway dashboard)
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "ShiexaMagic/temoweb")
-GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main")
+# Hosted mode: the login comes from environment variables (Vercel settings).
+HOSTED = bool(os.environ.get("ADMIN_PASSWORD_HASH"))
 
 app = Flask(__name__, template_folder="templates")
-publisher = Publisher(
-    BASE, GITHUB_REPO, GITHUB_TOKEN, GITHUB_BRANCH,
-    api_url=os.environ.get("GITHUB_API_URL", "https://api.github.com"),
-)
+store = make_store(BASE)
 
 
 def _load_admin_config():
-    # ── Hosted mode: credentials from environment variables ──────
-    if os.environ.get("ADMIN_PASSWORD_HASH"):
+    if HOSTED:
         return {
             "username": os.environ.get("ADMIN_USERNAME", "admin"),
             "password_hash": os.environ["ADMIN_PASSWORD_HASH"],
-            "hosted": True,
         }
-    # ── Local mode: credentials from admin_config.json ───────────
+    # Local mode: credentials in admin_config.json (never committed).
     if not os.path.exists(CONFIG_FILE):
         cfg = {
             "username": "admin",
@@ -80,14 +77,20 @@ def _load_admin_config():
         return json.load(f)
 
 
-HOSTED = bool(os.environ.get("ADMIN_PASSWORD_HASH"))
-app.secret_key = (
-    os.environ.get("SECRET_KEY")
-    or _load_admin_config().get("secret_key")
-    or secrets.token_hex(32)
-)
+def _secret_key():
+    if os.environ.get("SECRET_KEY"):
+        return os.environ["SECRET_KEY"]
+    if HOSTED:
+        # Must be identical on every serverless instance, so derive it from
+        # another secret rather than generating a random one.
+        seed = os.environ["ADMIN_PASSWORD_HASH"] + os.environ.get("GITHUB_TOKEN", "")
+        return hashlib.sha256(("session:" + seed).encode()).hexdigest()
+    return _load_admin_config().get("secret_key") or secrets.token_hex(32)
+
+
+app.secret_key = _secret_key()
 app.config.update(
-    MAX_CONTENT_LENGTH=MAX_UPLOAD_BYTES,
+    MAX_CONTENT_LENGTH=MAX_UPLOAD_BYTES + 64 * 1024,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
     SESSION_COOKIE_SECURE=HOSTED,
@@ -100,54 +103,29 @@ def _ext(filename):
     return filename.rsplit(".", 1)[1].lower() if "." in filename else ""
 
 
-def _safe_name(filename):
-    """Only plain filenames inside Images/ — no paths."""
-    name = os.path.basename(filename or "")
-    if not name or name.startswith(".") or name != filename:
-        return None
-    return name
+def _load_content():
+    return site_content.parse(store.read("content.json"))
 
 
-def _list_uploads():
-    used = site_content.referenced_images(site_content.load_content())
+def _uploads(content, extra_names=()):
+    """Files in Images/ (plus not-yet-saved uploads), for the editor."""
+    used = site_content.referenced_images(content)
     files = []
-    for name in sorted(os.listdir(IMAGES_DIR), key=str.lower):
-        ext = _ext(name)
+    for entry in store.list_dir("Images"):
+        ext = _ext(entry["name"])
         if ext in IMAGE_EXTENSIONS or ext in FILE_EXTENSIONS:
             files.append({
-                "name": name,
+                "name": entry["name"],
                 "kind": "image" if ext in IMAGE_EXTENSIONS else "file",
-                "size": os.path.getsize(os.path.join(IMAGES_DIR, name)),
-                "used": name in used,
+                "size": entry["size"],
+                "used": entry["name"] in used,
             })
-    return files
-
-
-def _process_image(data, ext):
-    """Fix phone-camera rotation and scale huge photos down.  Returns
-    (bytes, extension).  Falls back to the original bytes if anything fails."""
-    if ext == "gif":
-        return data, ext
-    try:
-        from PIL import Image, ImageOps
-
-        img = Image.open(io.BytesIO(data))
-        img = ImageOps.exif_transpose(img)
-        if max(img.size) <= MAX_IMAGE_SIDE and len(data) < 1_500_000:
-            return data, ext
-        img.thumbnail((MAX_IMAGE_SIDE, MAX_IMAGE_SIDE))
-        out = io.BytesIO()
-        if ext == "png" and img.mode in ("RGBA", "LA", "P"):
-            img.save(out, "PNG", optimize=True)
-        elif ext == "webp":
-            img.save(out, "WEBP", quality=86)
-        else:
-            img.convert("RGB").save(out, "JPEG", quality=86, optimize=True, progressive=True)
-            ext = "jpg"
-        return out.getvalue(), ext
-    except Exception as exc:  # noqa: BLE001 — never block an upload on this
-        print(f"[image processing skipped] {exc}")
-        return data, ext
+    known = {f["name"] for f in files}
+    for name in extra_names:
+        if name not in known:
+            files.append({"name": name, "kind": "image" if _ext(name) in IMAGE_EXTENSIONS else "file",
+                          "size": 0, "used": name in used})
+    return sorted(files, key=lambda f: f["name"].lower())
 
 
 def login_required(f):
@@ -157,19 +135,37 @@ def login_required(f):
             if request.path.startswith("/api/"):
                 return jsonify({"error": "Your session expired — please sign in again."}), 401
             return redirect(url_for("admin_login"))
-        # Changes must come from the admin page itself, not a foreign form.
-        if request.method != "GET" and request.path.startswith("/api/"):
-            if request.headers.get("X-Requested-With") != "admin":
-                return jsonify({"error": "Bad request"}), 400
+        # Changes must come from the editor page itself, not a foreign form.
+        if request.method != "GET" and request.headers.get("X-Requested-With") != "admin":
+            return jsonify({"error": "Bad request"}), 400
         return f(*args, **kwargs)
 
     return decorated
 
 
-# ── Public routes ────────────────────────────────────────────────
+@app.after_request
+def no_cache(resp):
+    if request.path.startswith(("/admin", "/api/")) and "Cache-Control" not in resp.headers:
+        resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+
+@app.errorhandler(StoreError)
+def store_error(exc):
+    return jsonify({"error": str(exc)}), 502
+
+
+@app.errorhandler(413)
+def too_large(_):
+    return jsonify({"error": "File is too large (4 MB maximum)."}), 413
+
+
+# ── Local development only: on Vercel these paths are static files ──
 @app.route("/")
 def index():
-    return Response(site_content.render_site(), mimetype="text/html")
+    content = _load_content()
+    names = [e["name"] for e in store.list_dir("Images")]
+    return Response(site_content.render_site(content, names), mimetype="text/html")
 
 
 @app.route("/styles.css")
@@ -184,10 +180,10 @@ def scriptjs():
 
 @app.route("/Images/<path:filename>")
 def images(filename):
-    return send_from_directory(IMAGES_DIR, filename)
+    return send_from_directory(os.path.join(BASE, "Images"), filename)
 
 
-# ── Admin auth ───────────────────────────────────────────────────
+# ── Sign in ──────────────────────────────────────────────────────
 _failed_logins = {}   # ip -> [timestamps]
 LOGIN_WINDOW, LOGIN_MAX = 300, 8
 
@@ -215,6 +211,7 @@ def admin_login():
                 session["logged_in"] = True
                 session.permanent = True
                 return redirect(url_for("admin_dashboard"))
+            time.sleep(0.6)   # slow down guessing
             recent.append(now)
             error = "Wrong username or password."
         _failed_logins[ip] = recent
@@ -234,48 +231,61 @@ def admin_dashboard():
     return render_template("admin/dashboard.html")
 
 
+@app.route("/admin/file/<path:filename>")
+@login_required
+def admin_file(filename):
+    """An image straight from storage — for files saved moments ago that the
+    public site has not finished deploying yet."""
+    if "/" in filename or filename.startswith("."):
+        return "", 404
+    data = store.read("Images/" + filename)
+    if data is None:
+        return "", 404
+    mime = mimetypes.guess_type(filename)[0] or "application/octet-stream"
+    return Response(data, mimetype=mime, headers={"Cache-Control": "private, max-age=86400"})
+
+
 # ── Content API ──────────────────────────────────────────────────
 @app.route("/api/content", methods=["GET"])
 @login_required
 def api_get_content():
+    content = _load_content()
     return jsonify({
-        "content": site_content.load_content(),
-        "uploads": _list_uploads(),
-        "publish": publisher.status(),
+        "content": content,
+        "uploads": _uploads(content),
         "hosted": HOSTED,
+        "publishes": store.publishes,
     })
 
 
 @app.route("/api/content", methods=["PUT"])
 @login_required
 def api_save_content():
-    data = request.get_json(force=True, silent=True)
-    if not isinstance(data, dict):
+    body = request.get_json(force=True, silent=True)
+    if not isinstance(body, dict) or not isinstance(body.get("content"), dict):
         return jsonify({"error": "Invalid data"}), 400
-    saved = site_content.save_content(data)
-    try:
-        site_content.build()
-    except Exception as exc:  # noqa: BLE001
-        return jsonify({"error": f"Saved, but the page could not be rebuilt: {exc}"}), 500
-    publisher.enqueue(["content.json", "index.html"], _s(data.get("_note")) or "update content")
-    return jsonify({"ok": True, "content": saved, "uploads": _list_uploads(),
-                    "publish": publisher.status()})
+    content = site_content.normalize(body["content"])
 
+    # Uploads made since the last save: filename -> staged blob.
+    new_files = body.get("new_files") or {}
+    changes = {}
+    for name, sha in new_files.items():
+        if not UPLOAD_NAME.match(str(name)) or not BLOB_SHA.match(str(sha)):
+            return jsonify({"error": "Invalid upload. Please upload the file again."}), 400
+        changes["Images/" + name] = {"blob": sha}
 
-def _s(value):
-    return re.sub(r"\s+", " ", str(value or "")).strip()[:80]
+    existing = [e["name"] for e in store.list_dir("Images")]
+    changes["content.json"] = site_content.dump(content)
+    changes["index.html"] = site_content.render_site(content, existing + list(new_files)).encode("utf-8")
+    store.commit(changes, "admin: update site")
+    return jsonify({"ok": True, "content": content, "uploads": _uploads(content, new_files)})
 
 
 # ── Uploads API ──────────────────────────────────────────────────
-@app.route("/api/images", methods=["GET"])
-@login_required
-def api_list_images():
-    return jsonify(_list_uploads())
-
-
 @app.route("/api/upload", methods=["POST"])
 @login_required
 def api_upload():
+    """Stage a file.  It becomes part of the site at the next save."""
     f = request.files.get("file")
     if not f or not f.filename:
         return jsonify({"error": "No file provided"}), 400
@@ -283,54 +293,41 @@ def api_upload():
     if ext not in IMAGE_EXTENSIONS and ext not in FILE_EXTENSIONS:
         return jsonify({"error": "Unsupported file type. Use JPG, PNG, WebP, GIF or PDF."}), 400
     data = f.read()
-    if ext in IMAGE_EXTENSIONS:
-        data, ext = _process_image(data, ext)
+    if len(data) > MAX_UPLOAD_BYTES:
+        return jsonify({"error": "File is too large (4 MB maximum)."}), 413
     # Content-hashed name: the public site caches images for a year, so a
     # changed image must always get a new name.
     stem = site_content._slug(os.path.basename(f.filename).rsplit(".", 1)[0]) or "file"
     filename = f"{stem}-{hashlib.sha1(data).hexdigest()[:8]}.{ext}"
-    with open(os.path.join(IMAGES_DIR, filename), "wb") as out:
-        out.write(data)
-    publisher.enqueue([f"Images/{filename}"], "upload file")
-    return jsonify({"filename": filename, "uploads": _list_uploads()})
+    return jsonify({
+        "filename": filename,
+        "sha": store.put_blob(data),
+        "kind": "image" if ext in IMAGE_EXTENSIONS else "file",
+        "size": len(data),
+    })
 
 
 @app.route("/api/images/<path:filename>", methods=["DELETE"])
 @login_required
 def api_delete_image(filename):
-    name = _safe_name(filename)
-    path = os.path.join(IMAGES_DIR, name) if name else None
-    if not path or not os.path.isfile(path):
+    content = _load_content()
+    names = {e["name"] for e in store.list_dir("Images")}
+    if "/" in filename or filename not in names:
         return jsonify({"error": "File not found"}), 404
-    if name in site_content.referenced_images(site_content.load_content()):
+    if filename in site_content.referenced_images(content):
         return jsonify({"error": "This image is used on the site. Replace it there first."}), 409
-    os.remove(path)
-    publisher.enqueue([f"Images/{name}"], "delete file")
-    return jsonify({"ok": True, "uploads": _list_uploads()})
+    store.commit({"Images/" + filename: None}, "admin: delete " + filename)
+    remaining = [u for u in _uploads(content) if u["name"] != filename]
+    return jsonify({"ok": True, "uploads": remaining})
 
 
-# ── Publishing / settings API ────────────────────────────────────
-@app.route("/api/publish-status", methods=["GET"])
-@login_required
-def api_publish_status():
-    return jsonify(publisher.status())
-
-
-@app.route("/api/publish-retry", methods=["POST"])
-@login_required
-def api_publish_retry():
-    publisher.retry()
-    return jsonify(publisher.status())
-
-
+# ── Account ──────────────────────────────────────────────────────
 @app.route("/api/change-password", methods=["POST"])
 @login_required
 def api_change_password():
     if HOSTED:
-        return jsonify({
-            "error": "On the hosted site the password is set by the ADMIN_PASSWORD_HASH "
-                     "environment variable in the Railway dashboard."
-        }), 400
+        return jsonify({"error": "On the hosted site the password is set by the "
+                                 "ADMIN_PASSWORD_HASH variable in the Vercel project settings."}), 400
     data = request.get_json(force=True, silent=True) or {}
     cfg = _load_admin_config()
     if not check_password_hash(cfg["password_hash"], data.get("current", "")):
@@ -341,11 +338,6 @@ def api_change_password():
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=2)
     return jsonify({"ok": True})
-
-
-@app.errorhandler(413)
-def too_large(_):
-    return jsonify({"error": "File is too large (25 MB maximum)."}), 413
 
 
 if __name__ == "__main__":
