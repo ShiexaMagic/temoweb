@@ -1,93 +1,94 @@
-/* ── Utilities ── */
-function htmlEsc(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+/* Public page behaviour: mobile menu, active nav link, and the detail
+   pages for books / plays / films (opened at  #/<id>  so they can be linked). */
+(function () {
+  var view = document.getElementById('detailView');
+  var navLinks = document.getElementById('navLinks');
+  var navToggle = document.getElementById('navToggle');
+  var baseTitle = document.title;
+  var pageScroll = 0;
+  var openedHere = false;   // true when the detail was opened by a click on this page
 
-function renderParas(paragraphs) {
-  if (!paragraphs || !paragraphs.length) return '';
-  return paragraphs
-    .map(p => p.split(/\n+/).filter(l => l.trim()).map(l => `<p>${htmlEsc(l.trim())}</p>`).join(''))
-    .join('');
-}
+  /* ── Mobile menu ── */
+  function setMenu(open) {
+    navLinks.classList.toggle('open', open);
+    navToggle.setAttribute('aria-expanded', String(open));
+    navToggle.firstElementChild.textContent = open ? 'Close' : 'Menu';
+  }
+  navToggle.addEventListener('click', function () {
+    setMenu(!navLinks.classList.contains('open'));
+  });
+  navLinks.addEventListener('click', function (e) {
+    if (e.target.closest('a')) setMenu(false);
+  });
 
-/* ── Year ── */
-document.addEventListener('DOMContentLoaded', () => {
-  const year = document.getElementById('year');
-  if (year) year.textContent = new Date().getFullYear();
-});
-
-/* ── Detail Modal ── */
-function openDetailModal(card) {
-  const raw = card.dataset.modal;
-  if (!raw) return;
-  let data;
-  try { data = JSON.parse(raw); } catch (e) { return; }
-
-  const inner = document.getElementById('modalInner');
-
-  // Cover image
-  let imageHtml = '';
-  if (data.image) {
-    imageHtml = `<div class="modal-cover"><img src="/Images/${htmlEsc(data.image)}" alt="${htmlEsc(data.title || '')}" /></div>`;
+  /* ── Detail pages ── */
+  function currentDetail() {
+    var m = location.hash.match(/^#\/(.+)$/);
+    return m ? document.getElementById('detail-' + decodeURIComponent(m[1])) : null;
   }
 
-  // Meta line
-  let metaHtml = '';
-  if (data.meta_line1) {
-    metaHtml = `<p class="item-meta">${htmlEsc(data.meta_line1)}${data.meta_line2 ? '<br />' + htmlEsc(data.meta_line2) : ''}</p>`;
-  } else if (data.year) {
-    metaHtml = `<p class="item-meta">${htmlEsc(data.year)}</p>`;
+  function sync() {
+    var target = currentDetail();
+    var wasOpen = !view.hidden;
+    view.querySelectorAll('.detail').forEach(function (el) { el.hidden = el !== target; });
+
+    if (target) {
+      if (!wasOpen) pageScroll = window.scrollY;
+      view.hidden = false;
+      view.scrollTop = 0;
+      document.body.classList.add('detail-open');
+      document.title = target.dataset.title + ' — ' + baseTitle;
+      return;
+    }
+    if (wasOpen) {
+      view.hidden = true;
+      document.body.classList.remove('detail-open');
+      document.title = baseTitle;
+      // Closed with Back: return to where the reader was. A link to a
+      // section (#books) scrolls there by itself.
+      if (location.hash.length < 2) window.scrollTo(0, pageScroll);
+    }
   }
 
-  // Paragraphs / description
-  let contentHtml = '';
-  if (data.paragraphs && data.paragraphs.length) {
-    contentHtml = renderParas(data.paragraphs);
-  } else if (data.description) {
-    contentHtml = `<p>${htmlEsc(data.description)}</p>`;
+  function closeDetail() {
+    if (view.hidden) return;
+    if (openedHere) { history.back(); return; }
+    var back = currentDetail() && currentDetail().querySelector('.back-link');
+    location.hash = back ? back.getAttribute('href') : '#home';
   }
 
-  // Details table
-  let detailsHtml = '';
-  if (data.details && data.details.length) {
-    detailsHtml = '<div class="modal-details">' +
-      data.details.map(d =>
-        `<div class="detail-row"><span>${htmlEsc(d.key)}</span><span>${htmlEsc(d.value)}</span></div>`
-      ).join('') +
-      '</div>';
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    if (a.getAttribute('href').indexOf('#/') === 0) { openedHere = true; return; }
+    // "Back to …" returns to the exact spot the reader left.
+    if (a.classList.contains('back-link') && openedHere) {
+      e.preventDefault();
+      history.back();
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { setMenu(false); closeDetail(); }
+  });
+  window.addEventListener('hashchange', function () {
+    if (!currentDetail()) openedHere = false;
+    sync();
+  });
+  sync();
+
+  /* ── Highlight the section being read ── */
+  var links = {};
+  navLinks.querySelectorAll('a[data-section]').forEach(function (a) { links[a.dataset.section] = a; });
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = links[entry.target.id];
+        if (link) link.classList.toggle('active', entry.isIntersecting);
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    Object.keys(links).forEach(function (id) {
+      var section = document.getElementById(id);
+      if (section) observer.observe(section);
+    });
   }
-
-  inner.innerHTML = `
-    <div class="modal-layout">
-      ${imageHtml}
-      <div class="modal-body-text">
-        <p class="item-label">${htmlEsc(data.label || '')}</p>
-        <h2>${htmlEsc(data.title || '')}</h2>
-        ${metaHtml}
-        ${contentHtml}
-        ${detailsHtml}
-      </div>
-    </div>`;
-
-  document.getElementById('detailModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeDetailModal() {
-  document.getElementById('detailModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function closeModalOnOverlay(e) {
-  if (e.target === e.currentTarget) closeDetailModal();
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeDetailModal();
-});
+})();

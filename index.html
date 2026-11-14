@@ -5,435 +5,699 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Temo Rekhviashvili | Writer, Playwright, Actor</title>
     <meta name="description" content="Portfolio website for Temo Rekhviashvili, Georgian writer, playwright, and actor." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Temo Rekhviashvili | Writer, Playwright, Actor" />
+    <meta property="og:description" content="Portfolio website for Temo Rekhviashvili, Georgian writer, playwright, and actor." />
+    
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Noto+Serif+Georgian:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css?v=7e3f80ad" />
   </head>
   <body>
-    <header class="site-header">
-      <nav class="nav container">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" id="siteHeader">
+      <nav class="nav wrap" aria-label="Main">
         <a class="brand" href="#home">Temo Rekhviashvili</a>
-        <div class="nav-links">
-          <a href="#books">Books</a>
-          <a href="#theatre">Theatre</a>
-          <a href="#cinema">Cinema</a>
-          <a href="#press">Press</a>
-          <a href="#cv">CV</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
+        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">
+          <span class="nav-toggle-label">Menu</span>
+        </button>
+        <div class="nav-links" id="navLinks">
+          
+          <a href="#books" data-section="books">Books</a>
+          
+          <a href="#theatre" data-section="theatre">Theatre</a>
+          
+          <a href="#cinema" data-section="cinema">Cinema</a>
+          
+          <a href="#press" data-section="press">Press</a>
+          
+          <a href="#about" data-section="about">About</a>
+          
+          <a href="#contact" data-section="contact">Contact</a>
+          
         </div>
       </nav>
     </header>
 
-    <main id="home">
+    <main id="main">
 
       <!-- ── HERO ── -->
-      <section class="hero">
-        <div class="hero-text-panel">
-          <div class="hero-text-inner">
-            <p class="hero-tagline">Writer · Playwright · Actor</p>
-            <h1>Temo<br />Rekhviashvili</h1>
-            <p class="hero-bio">Temo Rekhviashvili is a Georgian writer, playwright and actor working across literature, theatre and cinema. He is the author of the novel &#34;Courier&#39;s Tales&#34; and the collection &#34;Two Plays&#34;, and the co-screenwriter and lead actor of the film &#34;Temo Re&#34;. His work has been published, staged and screened in Georgia and internationally.</p>
-          </div>
+      <section class="hero" id="home">
+        <div class="hero-text">
+          <h1>Temo Rekhviashvili</h1>
+          <p class="hero-tagline">Writer · Playwright · Actor</p>
+          <p class="hero-bio">Temo Rekhviashvili is a Georgian writer, playwright and actor working across literature, theatre and cinema. He is the author of the novel &#34;Courier&#39;s Tales&#34; and the collection &#34;Two Plays&#34;, and the co-screenwriter and lead actor of the film &#34;Temo Re&#34;. His work has been published, staged and screened in Georgia and internationally.</p>
         </div>
-        <div class="hero-image-panel">
-          <img src="/Images/LMP_9716.JPG" alt="Temo Rekhviashvili" />
+        <div class="hero-image">
+          
+          <img src="/Images/Temo%20Image.jpeg" alt="Temo Rekhviashvili" fetchpriority="high" />
+          
         </div>
       </section>
 
+      
+
+      
       <!-- ── BOOKS ── -->
       <section id="books" class="section">
-        <div class="container">
-          <div class="section-header">
-            <p class="section-label">Books</p>
-            <h2>Publications</h2>
-            <p class="section-note">Three books in Georgian. Translation rights are held by the author. English samples and synopses are available.</p>
-          </div>
-
-          <div class="items-grid">
-            
-            <article class="grid-card" data-modal='{"details": [{"key": "Year", "value": "coming soon"}, {"key": "Genre", "value": "Poetry"}, {"key": "Publisher", "value": "Intelekti Publishing"}, {"key": "cover", "value": "Anano Tabaghua"}, {"key": "Editor", "value": "Gvantsa Shubitidze"}], "id": "neo-tbilisian", "image": "7fb6624f-7758-45b7-ad13-020881a5b109.png", "label": "Poetry", "meta_line1": "Intelekti Publishing", "meta_line2": "", "paragraphs": ["A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."], "title": "Neo-Tbilisian Mukhambazebi"}' onclick="openDetailModal(this)">
-              <div class="card-cover ">
-                
-                  <img src="/Images/7fb6624f-7758-45b7-ad13-020881a5b109.png" alt="Neo-Tbilisian Mukhambazebi" />
-                
-              </div>
-              <div class="card-foot">
-                <p class="item-label">Poetry</p>
-                <p class="card-title">Neo-Tbilisian Mukhambazebi</p>
-              </div>
-            </article>
-            
-            <article class="grid-card" data-modal='{"details": [{"key": "Year", "value": "2025"}, {"key": "Genre", "value": "plays"}, {"key": "Plays Included", "value": "Pathetic Monologues \u00b7 CO\u2082"}, {"key": "Publisher", "value": "Sulakauri Publishing"}, {"key": "Editor", "value": "Nino Gogaladze"}, {"key": "Cover design", "value": "Keti Nadibaidze"}, {"key": "Technical designer", "value": "Lado Lomadze"}, {"key": "ORiginal title", "value": "\u10de\u10d0\u10d7\u10d4\u10e2\u10d8\u10d9\u10e3\u10e0\u10d8 \u10db\u10dd\u10dc\u10dd\u10da\u10dd\u10d2\u10d4\u10d1\u10d8 - \u10dd\u10e0\u10d8 \u10de\u10d8\u10d4\u10e1\u10d0"}, {"key": "ISBN", "value": "978-9941-37-810-2"}, {"key": "Award", "value": "CO\u2082 received the Friedrich Ebert Stiftung Prize in Dramaturgy in 2025."}], "id": "pathetic-monologues-book", "image": "Patetique Book.jpeg", "label": "Plays / Collection", "meta_line1": "Published by Sulakauri Publishing, 2025", "meta_line2": "A collection of two plays by Temo Rekhviashvili", "paragraphs": ["\"Pathetic Monologues - Two Plays\" brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.\n \n", "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. One of its voices dreams of leaving Georgia for Berlin, turning emigration into both a comic obsession and a symptom of deeper personal and social despair.\n \n", "CO\u2082 is a darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying - often too late - to understand themselves.\nBoth plays have been staged in Georgia: Pathetic Monologues premiered at Theatre Company Haraki in December 2023, while CO\u2082 premiered at Theatre on Atoneli in April 2025.\n"], "title": "Two Plays"}' onclick="openDetailModal(this)">
-              <div class="card-cover ">
-                
-                  <img src="/Images/Patetique Book.jpeg" alt="Two Plays" />
-                
-              </div>
-              <div class="card-foot">
-                <p class="item-label">Plays / Collection</p>
-                <p class="card-title">Two Plays</p>
-              </div>
-            </article>
-            
-            <article class="grid-card" data-modal='{"details": [{"key": "Original Title", "value": "\u10d9\u10e3\u10e0\u10d8\u10d4\u10e0\u10d8\u10e1 \u10d0\u10db\u10d1\u10d4\u10d1\u10d8"}, {"key": "Year", "value": "2021"}, {"key": "Genre", "value": "Novella"}, {"key": "Award", "value": "SABA Literary Award \u2014 Best Debut, 2022"}, {"key": "Publisher", "value": "Sulakauri Publishing"}, {"key": "Editor", "value": "Ana Tchabashvili"}, {"key": "Cover design", "value": "Ana Jibladze"}, {"key": "ISBN:", "value": "978-9941-30-750-8"}, {"key": "technical designer", "value": "Giorgi Lomsadze"}], "id": "couriers-tales", "image": "Carrier Tales.jpeg", "label": "NOVELLA", "meta_line1": "", "meta_line2": "", "paragraphs": ["Courier\u2019s Tales is the debut novella by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.\n", "Set mostly in contemporary Tbilisi, the novel moves through streets, staircases, rehearsal rooms and precarious jobs. In its final part, the story opens toward Germany: the narrator travels from Georgia to Berlin and then to Hamburg, where his desperate attempt to reach a Nick Cave concert turns into a comic and painful episode of disorientation, language failure, humiliation and desire.", "At once local and European, Courier\u2019s Tales is a portrait of a young man trying to find his place between work and art, survival and longing, the city he comes from and the places he imagines as escape."], "title": "Courier\u2019s Tales"}' onclick="openDetailModal(this)">
-              <div class="card-cover ">
-                
-                  <img src="/Images/Carrier Tales.jpeg" alt="Courier’s Tales" />
-                
-              </div>
-              <div class="card-foot">
-                <p class="item-label">NOVELLA</p>
-                <p class="card-title">Courier’s Tales</p>
-              </div>
-            </article>
-            
-            <article class="grid-card" data-modal='{"details": [], "id": "book-1784191164615", "image": "", "label": "", "meta_line1": "", "meta_line2": "", "paragraphs": [], "title": "New Book"}' onclick="openDetailModal(this)">
-              <div class="card-cover card-cover-placeholder">
-                
-                  <div class="cover-placeholder"><p>New Book</p></div>
-                
-              </div>
-              <div class="card-foot">
-                <p class="item-label"></p>
-                <p class="card-title">New Book</p>
-              </div>
-            </article>
-            
-          </div>
-
-          <div class="rights-bar">
-            <div>
-              <p class="rights-label">Rights &amp; Samples</p>
-              <p></p>
-            </div>
-            <div>
-              <p>For publishing, translation and adaptation inquiries please get in touch.</p>
-              <a href="mailto:temmorekhviashvili@gmail.com" class="text-link">temmorekhviashvili@gmail.com &rarr;</a>
-            </div>
+        <div class="wrap">
+          <header class="section-head">
+  <h2>Books</h2>
+  <p class="section-note">Three books in Georgian. Translation rights are held by the author. English samples and synopses are available.</p>
+</header>
+          <div class="work-list">
+            <article class="work">
+  <a class="work-cover" href="#/neo-tbilisian" tabindex="-1" aria-hidden="true"><span class="cover-blank "><span>Neo-Tbilisian Mukhambazebi</span></span></a>
+  <div class="work-main">
+    <p class="kicker">Poetry</p>
+    <h3 class="work-title"><a href="#/neo-tbilisian">Neo-Tbilisian Mukhambazebi</a></h3>
+    
+    <p class="work-meta">Intelekti Publishing</p>
+    
+    
+    <p class="work-summary">A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life.</p>
+    <p class="work-links">
+      
+      <a class="arrow-link" href="#/neo-tbilisian">More info</a>
+    </p>
+  </div>
+  
+</article><article class="work">
+  <a class="work-cover" href="#/pathetic-monologues-book" tabindex="-1" aria-hidden="true"><img src="/Images/Patetique%20Book.jpeg" alt="Two Plays" loading="lazy" /></a>
+  <div class="work-main">
+    <p class="kicker">Plays / Collection</p>
+    <h3 class="work-title"><a href="#/pathetic-monologues-book">Two Plays</a></h3>
+    
+    <p class="work-meta">Published by Sulakauri Publishing, 2025<br />A collection of two plays by Temo Rekhviashvili</p>
+    
+    
+    <p class="work-summary">&#34;Pathetic Monologues - Two Plays&#34; brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.</p>
+    <p class="work-links">
+      
+      <a class="arrow-link" href="#/pathetic-monologues-book">More info</a>
+    </p>
+  </div>
+  
+</article><article class="work">
+  <a class="work-cover" href="#/couriers-tales" tabindex="-1" aria-hidden="true"><img src="/Images/Carrier%20Tales.jpeg" alt="Courier’s Tales" loading="lazy" /></a>
+  <div class="work-main">
+    <p class="kicker">NOVELLA</p>
+    <h3 class="work-title"><a href="#/couriers-tales">Courier’s Tales</a></h3>
+    
+    
+    <p class="work-summary">Courier’s Tales is the debut novella by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.</p>
+    <p class="work-links">
+      
+      <a class="arrow-link" href="#/couriers-tales">More info</a>
+    </p>
+  </div>
+  
+</article>
           </div>
         </div>
+        
+        
+        <aside class="rights">
+          <div class="wrap rights-grid">
+            <div>
+              <p class="kicker">Rights &amp; Samples</p>
+              
+            </div>
+            <div><p>For publishing, translation and adaptation inquiries please get in touch.</p></div>
+            <div>
+              
+              <a class="arrow-link" href="mailto:temmorekhviashvili@gmail.com">temmorekhviashvili@gmail.com</a>
+              
+            </div>
+          </div>
+        </aside>
+        
       </section>
 
+      
+
+      
+
+      
       <!-- ── THEATRE ── -->
-      <section id="theatre" class="section section-alt">
-        <div class="container">
-          <p class="section-label">Theatre</p>
-          <h2>Stage work as playwright and actor.</h2>
-
-          <div class="subsection-label">Playwright / Dramatic Writing</div>
-
-          <div class="items-grid plays-grid">
-            
-            <article class="grid-card" data-modal='{"description": "A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying \u2014 often too late \u2014 to understand themselves.", "details": [{"key": "Director", "value": "Ilia Korkashvili"}, {"key": "Set desinger", "value": "Keti Nadibaidze"}, {"key": "Composer", "value": "Ana Kublashvili"}, {"key": "starring", "value": "Vano Tarkhnishvili, Giorgi Korganashvili, Beka Khachidze, Paata Inauri."}, {"key": "Technical group", "value": "Tika Salukvadze, Nato Mchedlishvili, Dima Jikia, Dati Sakhokia, Mariam Jorjoliani, Mariam Kartvelishvili"}, {"key": "touring Group", "value": "10 people"}, {"key": "premiered", "value": "Theatre On Atoneli 2025 "}, {"key": "Recognation", "value": "Friedrich Ebert Stiftung Prize in Dramaturgy, 2025"}], "id": "co2", "image": "CO2.jpeg", "title": "CO\u2082", "year": "Play, 2025"}' onclick="openDetailModal(this)">
-              <div class="card-cover">
-                
-                  <img src="/Images/CO2.jpeg" alt="CO₂" />
-                
-              </div>
-              <div class="card-foot">
-                <p class="item-label">Play, 2025</p>
-                <p class="card-title">CO₂</p>
-              </div>
-            </article>
-            
-            <article class="grid-card" data-modal='{"description": "A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.", "details": [{"key": "Director", "value": "Ilia Korkashvili"}, {"key": "Set Desing", "value": "Keti Nadibaidze"}, {"key": "Composer", "value": "Davit Khorbaladze"}, {"key": "starring", "value": "Giorgi Razmadze, Beka Khachidze, Vaniko Tarkhnishvili, Sopiko gvimradze, Natalia Gabisonia, Gvantsa Enukidze, Lasha Lashkhi. "}, {"key": "Technical Group", "value": "Irakli Sirbilashvili, Achi arganashvili, Saba Padiurashvili, Mariam Paichadze, Lizi Tkeshelashvili."}, {"key": "Touring group", "value": "18 people"}, {"key": "Awards", "value": "Tsinandali Award for Theatre Arts, 2024 -Natalia Gabisonia; Liberty Award for Best Actress, 2024 - Natalia Gabisonia"}], "id": "pathetic-monologues-play", "image": "Pathetique Theater.jpeg", "title": "Pathetic Monologues", "year": "Play, 2023"}' onclick="openDetailModal(this)">
-              <div class="card-cover">
-                
-                  <img src="/Images/Pathetique Theater.jpeg" alt="Pathetic Monologues" />
-                
-              </div>
-              <div class="card-foot">
-                <p class="item-label">Play, 2023</p>
-                <p class="card-title">Pathetic Monologues</p>
-              </div>
-            </article>
-            
-          </div>
-
-          <div class="subsection-label">Actor</div>
-          <h3 class="subsection-title">Selected stage acting credits</h3>
-          <p class="subsection-subtitle">A concise selection of theatre roles.</p>
-
-          <table class="credits-table">
-            <tbody>
-              
-              <tr>
-                <td class="credit-title">Berserkers II: Sunny Night</td>
-                <td class="credit-venue">City Theatre</td>
-                <td class="credit-detail">2023 · Psychiatrist / Guga / Elizabar</td>
-              </tr>
-              
-              <tr>
-                <td class="credit-title">Berserkers I: The Mission</td>
-                <td class="credit-venue">Theatre Company Haraki</td>
-                <td class="credit-detail">2020–2021 · The Man in the Elevator</td>
-              </tr>
-              
-              <tr>
-                <td class="credit-title">Life x3</td>
-                <td class="credit-venue">Theatre Company Haraki</td>
-                <td class="credit-detail">2022 · Henry</td>
-              </tr>
-              
-              <tr>
-                <td class="credit-title">The Tenant</td>
-                <td class="credit-venue">Theatre Company Haraki</td>
-                <td class="credit-detail">2022 · The Tenant / Varden Mekvabishvili / Kote Enukidze</td>
-              </tr>
-              
-              <tr>
-                <td class="credit-title">Hamlet</td>
-                <td class="credit-venue">Club “Mtkvarze”</td>
-                <td class="credit-detail">2019 · Laertes / Guildenstern</td>
-              </tr>
-              
-              <tr>
-                <td class="credit-title">Parents’ Meeting</td>
-                <td class="credit-venue">Open Space</td>
-                <td class="credit-detail">2018 · Himself</td>
-              </tr>
-              
-              <tr>
-                <td class="credit-title">The God of Hunger</td>
-                <td class="credit-venue">Open Space</td>
-                <td class="credit-detail">2017 · Erisikhton / Giorgi</td>
-              </tr>
-              
-            </tbody>
-          </table>
-          <p class="table-note">Full theatre CV available on request.</p>
-        </div>
-      </section>
-
-      <!-- ── CINEMA ── -->
-      <section id="cinema" class="section">
-        <div class="container">
-          <p class="section-label">Cinema</p>
-          <h2>Film work as writer, co-screenwriter and actor.</h2>
+      <section id="theatre" class="section">
+        <div class="wrap">
+          <header class="section-head">
+  <h2>Theatre</h2>
+  <p class="section-note">Stage work as playwright and actor.</p>
+</header>
 
           
-          <div class="featured-film-compact" data-modal='{"details": [{"key": "Director", "value": "Anka Gujabidze"}, {"key": "Writers", "value": "Temo Rekhviashvili, Anka Gujabidze, Salome Asatiani"}, {"key": "Based On", "value": "Courier\u2019s Tales by Temo Rekhviashvili"}, {"key": "Country", "value": "Georgia"}, {"key": "Runtime", "value": "50 minutes"}, {"key": "Awards", "value": "Tiger Short Award \u00b7 KNF Award \u00b7 IFFR \u00b7 SFCC Critics\u2019 Award \u00b7 Golden Prometheus \u00b7 Eliso Award"}, {"key": "Cast", "value": "Natalia Gabisonia, Mikheil Abramishvili, Sandro Kalandadze, Tamara Chumashvili and others"}], "image": "Temo Re Movie.jpeg", "label": "Featured Film", "paragraphs": ["Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili\u2019s debut novel Courier\u2019s Tales. Rekhviashvili co-wrote the film and plays the leading role.", "The film follows Temo, a young actor who also works as a courier. Over the course of a single day, he travels across Tbilisi on a moped and performs in a suburban theatre in the evening. The poverty, injustice, corruption and alienation he encounters during the day gradually transform into disturbing visions that haunt him at night.", "Constructed as a black-and-white photomontage, Temo Re combines fiction and documentary elements to create a fragmented portrait of contemporary Tbilisi and a young man moving between work, theatre, exhaustion and imagination"], "title": "Temo Re", "year": "Short film, 2025"}' onclick="openDetailModal(this)">
-            <div class="film-poster-compact">
-              
-                <img src="/Images/Temo Re Movie.jpeg" alt="Temo Re" />
-              
-            </div>
-            <div class="film-info-compact">
-              <p class="item-label">Featured Film</p>
-              <h3>Temo Re</h3>
-              <p class="item-meta">Short film, 2025</p>
-              
-                <p>Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili’s debut novel Courier’s Tales. Rekhviashvili co-wrote the film and plays the leading role.</p>
-              
-              <p class="more-hint">Click for full details &rarr;</p>
-            </div>
+          <p class="kicker sub-kicker">Playwright / Dramatic Writing</p>
+          <div class="work-list work-list-boxed">
+            <article class="work work-boxed">
+  <a class="work-cover" href="#/co2" tabindex="-1" aria-hidden="true"><img src="/Images/CO2.jpeg" alt="CO₂" loading="lazy" /></a>
+  <div class="work-main">
+    
+    <h3 class="work-title"><a href="#/co2">CO₂</a></h3>
+    
+    <p class="work-meta">Play, 2025</p>
+    
+    
+    <p class="work-summary">A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves.</p>
+    <p class="work-links">
+      
+      <a class="arrow-link" href="#/co2">More info</a>
+    </p>
+  </div>
+  
+  <dl class="facts work-facts">
+    
+    <div><dt>Director</dt><dd>Ilia Korkashvili</dd></div>
+    
+    <div><dt>Set desinger</dt><dd>Keti Nadibaidze</dd></div>
+    
+    <div><dt>Composer</dt><dd>Ana Kublashvili</dd></div>
+    
+  </dl>
+  
+</article><article class="work work-boxed">
+  <a class="work-cover" href="#/pathetic-monologues-play" tabindex="-1" aria-hidden="true"><img src="/Images/Pathetique%20Theater.jpeg" alt="Pathetic Monologues" loading="lazy" /></a>
+  <div class="work-main">
+    
+    <h3 class="work-title"><a href="#/pathetic-monologues-play">Pathetic Monologues</a></h3>
+    
+    <p class="work-meta">Play, 2023</p>
+    
+    
+    <p class="work-summary">A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.</p>
+    <p class="work-links">
+      
+      <a class="arrow-link" href="#/pathetic-monologues-play">More info</a>
+    </p>
+  </div>
+  
+  <dl class="facts work-facts">
+    
+    <div><dt>Director</dt><dd>Ilia Korkashvili</dd></div>
+    
+    <div><dt>Set Desing</dt><dd>Keti Nadibaidze</dd></div>
+    
+    <div><dt>Composer</dt><dd>Davit Khorbaladze</dd></div>
+    
+  </dl>
+  
+</article>
           </div>
+          
 
-          <div class="subsection-label">Selected Screen Acting Credits</div>
-          <table class="credits-table">
-            <tbody>
+          
+          <div class="credits">
+            <p class="kicker sub-kicker">Actor</p>
+            <header class="credits-head">
+              <h3>Selected stage acting credits</h3>
+              <p>A concise selection of theatre roles.</p>
+            </header>
+            <ul class="rows">
               
-              <tr>
-                <td class="credit-title">Congratulations Once Again</td>
-                <td class="credit-venue">Directed by Luka Beradze</td>
-                <td class="credit-detail">2025</td>
-              </tr>
+              <li class="row">
+                <span class="row-title">Berserkers II: Sunny Night</span>
+                <span class="row-mid">City Theatre</span>
+                <span class="row-end">2023 · Psychiatrist / Guga / Elizabar</span>
+              </li>
               
-              <tr>
-                <td class="credit-title">Natia</td>
-                <td class="credit-venue">Directed by Anna Parcerisas Casanovas</td>
-                <td class="credit-detail">2017</td>
-              </tr>
+              <li class="row">
+                <span class="row-title">Berserkers I: The Mission</span>
+                <span class="row-mid">Theatre Company Haraki</span>
+                <span class="row-end">2020–2021 · The Man in the Elevator</span>
+              </li>
               
-              <tr>
-                <td class="credit-title">The Box</td>
-                <td class="credit-venue">Directed by Elene Khuntsaria</td>
-                <td class="credit-detail">2015</td>
-              </tr>
+              <li class="row">
+                <span class="row-title">Life x3</span>
+                <span class="row-mid">Theatre Company Haraki</span>
+                <span class="row-end">2022 · Henry</span>
+              </li>
               
-              <tr>
-                <td class="credit-title">The Version</td>
-                <td class="credit-venue">Directed by Ilia Beria</td>
-                <td class="credit-detail">2013</td>
-              </tr>
+              <li class="row">
+                <span class="row-title">The Tenant</span>
+                <span class="row-mid">Theatre Company Haraki</span>
+                <span class="row-end">2022 · The Tenant / Varden Mekvabishvili / Kote Enukidze</span>
+              </li>
               
-              <tr>
-                <td class="credit-title">The Wheels</td>
-                <td class="credit-venue">Directed by Giorgi Khechuashvili</td>
-                <td class="credit-detail">2013</td>
-              </tr>
+              <li class="row">
+                <span class="row-title">Hamlet</span>
+                <span class="row-mid">Club “Mtkvarze”</span>
+                <span class="row-end">2019 · Laertes / Guildenstern</span>
+              </li>
               
-            </tbody>
-          </table>
-          <p class="table-note">Full filmography available on IMDb.</p>
+              <li class="row">
+                <span class="row-title">Parents’ Meeting</span>
+                <span class="row-mid">Open Space</span>
+                <span class="row-end">2018 · Himself</span>
+              </li>
+              
+              <li class="row">
+                <span class="row-title">The God of Hunger</span>
+                <span class="row-mid">Open Space</span>
+                <span class="row-end">2017 · Erisikhton / Giorgi</span>
+              </li>
+              
+            </ul>
+            <p class="footnote">Full theatre CV available on request.</p>
+          </div>
+          
         </div>
       </section>
 
+      
+
+      
+
+      
+      <!-- ── CINEMA ── -->
+      <section id="cinema" class="section">
+        <div class="wrap">
+          <header class="section-head">
+  <h2>Cinema</h2>
+  <p class="section-note">Film work as writer, co-screenwriter and actor.</p>
+</header>
+
+          
+          <p class="kicker sub-kicker">Films</p>
+          <div class="work-list work-list-boxed">
+            <article class="work work-boxed">
+  <a class="work-cover" href="#/temo-re" tabindex="-1" aria-hidden="true"><img src="/Images/Temo%20Re%20Movie.jpeg" alt="Temo Re" loading="lazy" /></a>
+  <div class="work-main">
+    <p class="kicker">Featured Film</p>
+    <h3 class="work-title"><a href="#/temo-re">Temo Re</a></h3>
+    
+    <p class="work-meta">Short film, 2025</p>
+    
+    
+    <p class="work-summary">Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili’s debut novel Courier’s Tales. Rekhviashvili co-wrote the film and plays the leading role.</p>
+    <p class="work-links">
+      
+      <a class="arrow-link" href="#/temo-re">More info</a>
+    </p>
+  </div>
+  
+  <dl class="facts work-facts">
+    
+    <div><dt>Director</dt><dd>Anka Gujabidze</dd></div>
+    
+    <div><dt>Writers</dt><dd>Temo Rekhviashvili, Anka Gujabidze, Salome Asatiani</dd></div>
+    
+    <div><dt>Based On</dt><dd>Courier’s Tales by Temo Rekhviashvili</dd></div>
+    
+  </dl>
+  
+</article>
+          </div>
+          
+
+          
+          <div class="credits">
+            <p class="kicker sub-kicker">Selected screen acting credits</p>
+            <ul class="rows">
+              
+              <li class="row">
+                <span class="row-title">Congratulations Once Again</span>
+                <span class="row-mid">Directed by Luka Beradze</span>
+                <span class="row-end">2025</span>
+              </li>
+              
+              <li class="row">
+                <span class="row-title">Natia</span>
+                <span class="row-mid">Directed by Anna Parcerisas Casanovas</span>
+                <span class="row-end">2017</span>
+              </li>
+              
+              <li class="row">
+                <span class="row-title">The Box</span>
+                <span class="row-mid">Directed by Elene Khuntsaria</span>
+                <span class="row-end">2015</span>
+              </li>
+              
+              <li class="row">
+                <span class="row-title">The Version</span>
+                <span class="row-mid">Directed by Ilia Beria</span>
+                <span class="row-end">2013</span>
+              </li>
+              
+              <li class="row">
+                <span class="row-title">The Wheels</span>
+                <span class="row-mid">Directed by Giorgi Khechuashvili</span>
+                <span class="row-end">2013</span>
+              </li>
+              
+            </ul>
+            
+            <p class="footnote">
+              Full filmography available on IMDb.
+              
+            </p>
+            
+          </div>
+          
+        </div>
+      </section>
+
+      
+
+      
+
+      
       <!-- ── PRESS ── -->
-      <section id="press" class="section section-alt">
-        <div class="container">
-          <p class="section-label">Press</p>
-          <h2>Recognition</h2>
-          <div class="press-list">
+      <section id="press" class="section">
+        <div class="wrap">
+          <header class="section-head">
+  <h2>Press</h2>
+  
+</header>
+          <ul class="rows press-rows">
             
-            
-            <a class="press-item press-item-link" href="https://oc-media.org/review-pathetic-monologues-georgian-theatre-that-finally-laughs-at-itself/" target="_blank" rel="noopener noreferrer">
-              <span class="press-year">2025</span>
-              <p>OC Media — Review: Pathetic Monologues</p>
-              <span class="press-ext">&#8599;</span>
-            </a>
-            
-            
-            
-            <a class="press-item press-item-link" href="https://taz.de/Theater-in-Georgien/!6165909/" target="_blank" rel="noopener noreferrer">
-              <span class="press-year">2026</span>
-              <p>taz — Theater in Georgien</p>
-              <span class="press-ext">&#8599;</span>
-            </a>
-            
-            
-            
-            <a class="press-item press-item-link" href="https://denostalgiamagazine.com/magazine-3/read-magazine-3/" target="_blank" rel="noopener noreferrer">
-              <span class="press-year">2025</span>
-              <p>De Nostalgia Magazine</p>
-              <span class="press-ext">&#8599;</span>
-            </a>
-            
-            
-            
-            <a class="press-item press-item-link" href="https://tbilvino.ge/culture" target="_blank" rel="noopener noreferrer">
-              <span class="press-year">2024</span>
-              <p>Tbilvino — Culture</p>
-              <span class="press-ext">&#8599;</span>
-            </a>
-            
-            
-          </div>
-        </div>
-      </section>
-
-      <!-- ── CV ── -->
-      <section id="cv" class="section cv-section section-alt">
-        <div class="container">
-          <div class="cv-layout">
-            <div class="cv-photo">
-              <img src="/Images/LMP_9716.JPG" alt="Temo Rekhviashvili" />
-            </div>
-            <div class="cv-text">
-              <p class="section-label">Biography / CV</p>
-              <h2>Temo<br />Rekhviashvili</h2>
-              <div class="cv-bio">
-                
-                  <p>Temo Rekhviashvili is a Georgian writer, playwright and actor, born in 1993.
-
-</p>
-                
-                  <p>He graduated from the Faculty of Drama at Shota Rustaveli Theatre and Film Georgia State University in 2015 and has since worked as an independent actor with several theatres. 
-In 2016, he took part in founding Open Space Of Experimental Art, and in 2019 became one of the co-founders of Theatre Company Haraki, an independent theatre company based in Tbilisi. 
-In 2017, together with Gvantsa Enukidze, he founded the poetry collective Universally Accessible Dramatic Poetry. </p>
-                
-                  <p>Since 2019, he has been a member of Temur Chkheidze’s Studio.</p>
-                
-                  <p>Rekhviashvili works across prose, theatre, poetry, performance and cinema. His writing often begins with ordinary situations - a delivery, a rehearsal, a conversation, a failed relationship, or a room shared by two men - and follows them until they reveal something larger about the society surrounding the characters.</p>
-                
-                  <p>His debut novella, Courier’s Tales, was published by Sulakauri Publishing in 2021 and received the SABA Literary Award for Best Debut in 2022. Narrated by a young actor working as a courier, the book portrays contemporary Tbilisi through daily work, exhaustion, humour and encounters across the city.</p>
-                
-                  <p>His book Two Plays, published by Sulakauri Publishing in 2025, brings together Pathetic Monologues and CO₂. The plays use satire, confession and theatrical absurdity to explore public speech, masculinity, intimacy, alcohol dependency and fantasies of escape.</p>
-                
-                  <p>Courier’s Tales later inspired the film Temo Re, directed by Anka Gujabidze. Rekhviashvili co-wrote the film and played the lead role. It premiered at the International Film Festival Rotterdam, where it received the Tiger Short Award and the KNF Award.</p>
-                
-              </div>
+            <li>
               
-              
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── ABOUT ── -->
-      <section id="about" class="section">
-        <div class="container">
-          <p class="section-label">About</p>
-          <div class="about-layout">
-            <div class="about-main">
-              <h2>About</h2>
-              <p class="about-intro"></p>
-              
-                <p>Temo Rekhviashvili is a Georgian writer, playwright and actor, born in 1993.
-
-</p>
-              
-                <p>He graduated from the Faculty of Drama at Shota Rustaveli Theatre and Film Georgia State University in 2015 and has since worked as an independent actor with several theatres. 
-In 2016, he took part in founding Open Space Of Experimental Art, and in 2019 became one of the co-founders of Theatre Company Haraki, an independent theatre company based in Tbilisi. 
-In 2017, together with Gvantsa Enukidze, he founded the poetry collective Universally Accessible Dramatic Poetry. </p>
-              
-                <p>Since 2019, he has been a member of Temur Chkheidze’s Studio.</p>
-              
-                <p>Rekhviashvili works across prose, theatre, poetry, performance and cinema. His writing often begins with ordinary situations - a delivery, a rehearsal, a conversation, a failed relationship, or a room shared by two men - and follows them until they reveal something larger about the society surrounding the characters.</p>
-              
-                <p>His debut novella, Courier’s Tales, was published by Sulakauri Publishing in 2021 and received the SABA Literary Award for Best Debut in 2022. Narrated by a young actor working as a courier, the book portrays contemporary Tbilisi through daily work, exhaustion, humour and encounters across the city.</p>
-              
-                <p>His book Two Plays, published by Sulakauri Publishing in 2025, brings together Pathetic Monologues and CO₂. The plays use satire, confession and theatrical absurdity to explore public speech, masculinity, intimacy, alcohol dependency and fantasies of escape.</p>
-              
-                <p>Courier’s Tales later inspired the film Temo Re, directed by Anka Gujabidze. Rekhviashvili co-wrote the film and played the lead role. It premiered at the International Film Festival Rotterdam, where it received the Tiger Short Award and the KNF Award.</p>
-              
-              <p class="about-closing"></p>
-            </div>
-
-            <div class="about-sidebar">
-              <div class="highlights-box">
-                <p class="highlights-label">Selected Highlights</p>
-                <div class="timeline">
-                  
-                </div>
-              </div>
-
-              <div class="fields-box">
-                <p class="highlights-label">Fields</p>
-                <div class="fields-list">
-                  
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── CONTACT ── -->
-      <section id="contact" class="section section-alt">
-        <div class="container">
-          <p class="section-label">Contact</p>
-          <h2>Get in touch</h2>
-          <div class="contact-layout">
-            <p>For literary, theatrical, and film collaborations, publishing inquiries, translation rights, and professional engagements.</p>
-            <div>
-              <a href="mailto:temmorekhviashvili@gmail.com" class="contact-email">
-                temmorekhviashvili@gmail.com &rarr;
+              <a class="row row-link" href="https://oc-media.org/review-pathetic-monologues-georgian-theatre-that-finally-laughs-at-itself/" target="_blank" rel="noopener noreferrer">
+                <span class="row-year">2025</span>
+                <span class="row-title">OC Media — Review: Pathetic Monologues</span>
+                <span class="row-ext" aria-hidden="true">&#8599;</span>
               </a>
+              
+            </li>
+            
+            <li>
+              
+              <a class="row row-link" href="https://taz.de/Theater-in-Georgien/!6165909/" target="_blank" rel="noopener noreferrer">
+                <span class="row-year">2026</span>
+                <span class="row-title">taz — Theater in Georgien</span>
+                <span class="row-ext" aria-hidden="true">&#8599;</span>
+              </a>
+              
+            </li>
+            
+            <li>
+              
+              <a class="row row-link" href="https://denostalgiamagazine.com/magazine-3/read-magazine-3/" target="_blank" rel="noopener noreferrer">
+                <span class="row-year">2025</span>
+                <span class="row-title">De Nostalgia Magazine</span>
+                <span class="row-ext" aria-hidden="true">&#8599;</span>
+              </a>
+              
+            </li>
+            
+            <li>
+              
+              <a class="row row-link" href="https://tbilvino.ge/culture" target="_blank" rel="noopener noreferrer">
+                <span class="row-year">2024</span>
+                <span class="row-title">Tbilvino — Culture</span>
+                <span class="row-ext" aria-hidden="true">&#8599;</span>
+              </a>
+              
+            </li>
+            
+          </ul>
+        </div>
+      </section>
+
+      
+
+      
+
+      
+      <!-- ── ABOUT ── -->
+      
+      <section id="about" class="section">
+        <div class="wrap">
+          <header class="section-head">
+            <h2>About</h2>
+            
+          </header>
+          
+          <div class="about-grid about-grid-solo">
+            <div class="prose">
+              <p>Temo Rekhviashvili is a Georgian writer, playwright and actor, born in 1993.</p><p>He graduated from the Faculty of Drama at Shota Rustaveli Theatre and Film Georgia State University in 2015 and has since worked as an independent actor with several theatres.</p><p>In 2016, he took part in founding Open Space Of Experimental Art, and in 2019 became one of the co-founders of Theatre Company Haraki, an independent theatre company based in Tbilisi.</p><p>In 2017, together with Gvantsa Enukidze, he founded the poetry collective Universally Accessible Dramatic Poetry.</p><p>Since 2019, he has been a member of Temur Chkheidze’s Studio.</p><p>Rekhviashvili works across prose, theatre, poetry, performance and cinema. His writing often begins with ordinary situations - a delivery, a rehearsal, a conversation, a failed relationship, or a room shared by two men - and follows them until they reveal something larger about the society surrounding the characters.</p><p>His debut novella, Courier’s Tales, was published by Sulakauri Publishing in 2021 and received the SABA Literary Award for Best Debut in 2022. Narrated by a young actor working as a courier, the book portrays contemporary Tbilisi through daily work, exhaustion, humour and encounters across the city.</p><p>His book Two Plays, published by Sulakauri Publishing in 2025, brings together Pathetic Monologues and CO₂. The plays use satire, confession and theatrical absurdity to explore public speech, masculinity, intimacy, alcohol dependency and fantasies of escape.</p><p>Courier’s Tales later inspired the film Temo Re, directed by Anka Gujabidze. Rekhviashvili co-wrote the film and played the lead role. It premiered at the International Film Festival Rotterdam, where it received the Tiger Short Award and the KNF Award.</p>
+              
+              
             </div>
+            
           </div>
         </div>
       </section>
 
+      
+
+      
+
+      
+      <!-- ── CONTACT ── -->
+      <section id="contact" class="section section-contact">
+        <div class="wrap">
+          <header class="section-head">
+            <h2>Get in touch</h2>
+            <p class="section-note">For literary, theatrical, and film collaborations, publishing inquiries, translation rights, and professional engagements.</p>
+          </header>
+          
+          <a class="contact-email" href="mailto:temmorekhviashvili@gmail.com">temmorekhviashvili@gmail.com</a>
+          
+          
+        </div>
+      </section>
+      
+
+      
     </main>
 
-    <!-- ── DETAIL MODAL ── -->
-    <div class="detail-modal-overlay" id="detailModal" onclick="closeModalOnOverlay(event)">
-      <div class="detail-modal">
-        <button class="modal-x" onclick="closeDetailModal()" aria-label="Close">&times;</button>
-        <div class="modal-inner" id="modalInner"></div>
-      </div>
-    </div>
-
     <footer class="site-footer">
-      <div class="container footer-content">
-        <p>&copy; <span id="year"></span> Temo Rekhviashvili</p>
-        <p>Writer &middot; Playwright &middot; Actor</p>
+      <div class="wrap footer-grid">
+        <p>&copy; 2026 Temo Rekhviashvili</p>
+        <p>Writer · Playwright · Actor</p>
       </div>
     </footer>
 
-    <script src="/script.js"></script>
+    <!-- ── DETAIL PAGES (one per book / play / film) ── -->
+    <div class="detail-view" id="detailView" hidden>
+      <div class="wrap">
+        <article class="detail" id="detail-neo-tbilisian" data-title="Neo-Tbilisian Mukhambazebi" hidden>
+  <div class="detail-text">
+    <p class="kicker">Books / Poetry</p>
+    <h2 class="detail-title">Neo-Tbilisian Mukhambazebi</h2>
+    
+    <p class="detail-meta">Intelekti Publishing</p>
+    
+    
+    <div class="prose">
+      <p>A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life.</p>
+    </div>
+    
+    
+    <dl class="facts detail-facts">
+      
+      <div><dt>Year</dt><dd>coming soon</dd></div>
+      
+      <div><dt>Genre</dt><dd>Poetry</dd></div>
+      
+      <div><dt>Publisher</dt><dd>Intelekti Publishing</dd></div>
+      
+      <div><dt>cover</dt><dd>Anano Tabaghua</dd></div>
+      
+      <div><dt>Editor</dt><dd>Gvantsa Shubitidze</dd></div>
+      
+    </dl>
+    
+    
+    <p><a class="arrow-link back-link" href="#books">Back to Books</a></p>
+  </div>
+  <figure class="detail-figure"><span class="cover-blank cover-blank-lg"><span>Neo-Tbilisian Mukhambazebi</span></span></figure>
+</article><article class="detail" id="detail-pathetic-monologues-book" data-title="Two Plays" hidden>
+  <div class="detail-text">
+    <p class="kicker">Books / Plays / Collection</p>
+    <h2 class="detail-title">Two Plays</h2>
+    
+    <p class="detail-meta">Published by Sulakauri Publishing, 2025<br />A collection of two plays by Temo Rekhviashvili</p>
+    
+    
+    <div class="prose">
+      <p>&#34;Pathetic Monologues - Two Plays&#34; brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.</p><p>Pathetic Monologues is a satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. One of its voices dreams of leaving Georgia for Berlin, turning emigration into both a comic obsession and a symptom of deeper personal and social despair.</p><p>CO₂ is a darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying - often too late - to understand themselves.</p><p>Both plays have been staged in Georgia: Pathetic Monologues premiered at Theatre Company Haraki in December 2023, while CO₂ premiered at Theatre on Atoneli in April 2025.</p>
+    </div>
+    
+    
+    <dl class="facts detail-facts">
+      
+      <div><dt>Year</dt><dd>2025</dd></div>
+      
+      <div><dt>Genre</dt><dd>plays</dd></div>
+      
+      <div><dt>Plays Included</dt><dd>Pathetic Monologues · CO₂</dd></div>
+      
+      <div><dt>Publisher</dt><dd>Sulakauri Publishing</dd></div>
+      
+      <div><dt>Editor</dt><dd>Nino Gogaladze</dd></div>
+      
+      <div><dt>Cover design</dt><dd>Keti Nadibaidze</dd></div>
+      
+      <div><dt>Technical designer</dt><dd>Lado Lomadze</dd></div>
+      
+      <div><dt>ORiginal title</dt><dd>პათეტიკური მონოლოგები - ორი პიესა</dd></div>
+      
+      <div><dt>ISBN</dt><dd>978-9941-37-810-2</dd></div>
+      
+      <div><dt>Award</dt><dd>CO₂ received the Friedrich Ebert Stiftung Prize in Dramaturgy in 2025.</dd></div>
+      
+    </dl>
+    
+    
+    <p><a class="arrow-link back-link" href="#books">Back to Books</a></p>
+  </div>
+  <figure class="detail-figure"><img src="/Images/Patetique%20Book.jpeg" alt="Two Plays" loading="lazy" /></figure>
+</article><article class="detail" id="detail-couriers-tales" data-title="Courier’s Tales" hidden>
+  <div class="detail-text">
+    <p class="kicker">Books / NOVELLA</p>
+    <h2 class="detail-title">Courier’s Tales</h2>
+    
+    
+    <div class="prose">
+      <p>Courier’s Tales is the debut novella by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.</p><p>Set mostly in contemporary Tbilisi, the novel moves through streets, staircases, rehearsal rooms and precarious jobs. In its final part, the story opens toward Germany: the narrator travels from Georgia to Berlin and then to Hamburg, where his desperate attempt to reach a Nick Cave concert turns into a comic and painful episode of disorientation, language failure, humiliation and desire.</p><p>At once local and European, Courier’s Tales is a portrait of a young man trying to find his place between work and art, survival and longing, the city he comes from and the places he imagines as escape.</p>
+    </div>
+    
+    
+    <dl class="facts detail-facts">
+      
+      <div><dt>Original Title</dt><dd>კურიერის ამბები</dd></div>
+      
+      <div><dt>Year</dt><dd>2021</dd></div>
+      
+      <div><dt>Genre</dt><dd>Novella</dd></div>
+      
+      <div><dt>Award</dt><dd>SABA Literary Award — Best Debut, 2022</dd></div>
+      
+      <div><dt>Publisher</dt><dd>Sulakauri Publishing</dd></div>
+      
+      <div><dt>Editor</dt><dd>Ana Tchabashvili</dd></div>
+      
+      <div><dt>Cover design</dt><dd>Ana Jibladze</dd></div>
+      
+      <div><dt>ISBN:</dt><dd>978-9941-30-750-8</dd></div>
+      
+      <div><dt>technical designer</dt><dd>Giorgi Lomsadze</dd></div>
+      
+    </dl>
+    
+    
+    <p><a class="arrow-link back-link" href="#books">Back to Books</a></p>
+  </div>
+  <figure class="detail-figure"><img src="/Images/Carrier%20Tales.jpeg" alt="Courier’s Tales" loading="lazy" /></figure>
+</article>
+        <article class="detail" id="detail-co2" data-title="CO₂" hidden>
+  <div class="detail-text">
+    <p class="kicker">Theatre</p>
+    <h2 class="detail-title">CO₂</h2>
+    
+    <p class="detail-meta">Play, 2025</p>
+    
+    
+    <div class="prose">
+      <p>A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves.</p>
+    </div>
+    
+    
+    <dl class="facts detail-facts">
+      
+      <div><dt>Director</dt><dd>Ilia Korkashvili</dd></div>
+      
+      <div><dt>Set desinger</dt><dd>Keti Nadibaidze</dd></div>
+      
+      <div><dt>Composer</dt><dd>Ana Kublashvili</dd></div>
+      
+      <div><dt>starring</dt><dd>Vano Tarkhnishvili, Giorgi Korganashvili, Beka Khachidze, Paata Inauri.</dd></div>
+      
+      <div><dt>Technical group</dt><dd>Tika Salukvadze, Nato Mchedlishvili, Dima Jikia, Dati Sakhokia, Mariam Jorjoliani, Mariam Kartvelishvili</dd></div>
+      
+      <div><dt>touring Group</dt><dd>10 people</dd></div>
+      
+      <div><dt>premiered</dt><dd>Theatre On Atoneli 2025</dd></div>
+      
+      <div><dt>Recognation</dt><dd>Friedrich Ebert Stiftung Prize in Dramaturgy, 2025</dd></div>
+      
+    </dl>
+    
+    
+    <p><a class="arrow-link back-link" href="#theatre">Back to Theatre</a></p>
+  </div>
+  <figure class="detail-figure"><img src="/Images/CO2.jpeg" alt="CO₂" loading="lazy" /></figure>
+</article><article class="detail" id="detail-pathetic-monologues-play" data-title="Pathetic Monologues" hidden>
+  <div class="detail-text">
+    <p class="kicker">Theatre</p>
+    <h2 class="detail-title">Pathetic Monologues</h2>
+    
+    <p class="detail-meta">Play, 2023</p>
+    
+    
+    <div class="prose">
+      <p>A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.</p>
+    </div>
+    
+    
+    <dl class="facts detail-facts">
+      
+      <div><dt>Director</dt><dd>Ilia Korkashvili</dd></div>
+      
+      <div><dt>Set Desing</dt><dd>Keti Nadibaidze</dd></div>
+      
+      <div><dt>Composer</dt><dd>Davit Khorbaladze</dd></div>
+      
+      <div><dt>starring</dt><dd>Giorgi Razmadze, Beka Khachidze, Vaniko Tarkhnishvili, Sopiko gvimradze, Natalia Gabisonia, Gvantsa Enukidze, Lasha Lashkhi.</dd></div>
+      
+      <div><dt>Technical Group</dt><dd>Irakli Sirbilashvili, Achi arganashvili, Saba Padiurashvili, Mariam Paichadze, Lizi Tkeshelashvili.</dd></div>
+      
+      <div><dt>Touring group</dt><dd>18 people</dd></div>
+      
+      <div><dt>Awards</dt><dd>Tsinandali Award for Theatre Arts, 2024 -Natalia Gabisonia; Liberty Award for Best Actress, 2024 - Natalia Gabisonia</dd></div>
+      
+    </dl>
+    
+    
+    <p><a class="arrow-link back-link" href="#theatre">Back to Theatre</a></p>
+  </div>
+  <figure class="detail-figure"><img src="/Images/Pathetique%20Theater.jpeg" alt="Pathetic Monologues" loading="lazy" /></figure>
+</article>
+        <article class="detail" id="detail-temo-re" data-title="Temo Re" hidden>
+  <div class="detail-text">
+    <p class="kicker">Cinema / Featured Film</p>
+    <h2 class="detail-title">Temo Re</h2>
+    
+    <p class="detail-meta">Short film, 2025</p>
+    
+    
+    <div class="prose">
+      <p>Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili’s debut novel Courier’s Tales. Rekhviashvili co-wrote the film and plays the leading role.</p><p>The film follows Temo, a young actor who also works as a courier. Over the course of a single day, he travels across Tbilisi on a moped and performs in a suburban theatre in the evening. The poverty, injustice, corruption and alienation he encounters during the day gradually transform into disturbing visions that haunt him at night.</p><p>Constructed as a black-and-white photomontage, Temo Re combines fiction and documentary elements to create a fragmented portrait of contemporary Tbilisi and a young man moving between work, theatre, exhaustion and imagination</p>
+    </div>
+    
+    
+    <dl class="facts detail-facts">
+      
+      <div><dt>Director</dt><dd>Anka Gujabidze</dd></div>
+      
+      <div><dt>Writers</dt><dd>Temo Rekhviashvili, Anka Gujabidze, Salome Asatiani</dd></div>
+      
+      <div><dt>Based On</dt><dd>Courier’s Tales by Temo Rekhviashvili</dd></div>
+      
+      <div><dt>Country</dt><dd>Georgia</dd></div>
+      
+      <div><dt>Runtime</dt><dd>50 minutes</dd></div>
+      
+      <div><dt>Awards</dt><dd>Tiger Short Award · KNF Award · IFFR · SFCC Critics’ Award · Golden Prometheus · Eliso Award</dd></div>
+      
+      <div><dt>Cast</dt><dd>Natalia Gabisonia, Mikheil Abramishvili, Sandro Kalandadze, Tamara Chumashvili and others</dd></div>
+      
+    </dl>
+    
+    
+    <p><a class="arrow-link back-link" href="#cinema">Back to Cinema</a></p>
+  </div>
+  <figure class="detail-figure"><img src="/Images/Temo%20Re%20Movie.jpeg" alt="Temo Re" loading="lazy" /></figure>
+</article>
+      </div>
+    </div>
+
+    <script src="/script.js?v=7e3f80ad"></script>
   </body>
 </html>
