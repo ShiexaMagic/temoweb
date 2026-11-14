@@ -13,30 +13,39 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Noto+Serif+Georgian:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/styles.css?v=7e3f80ad" />
+    <link rel="stylesheet" href="/styles.css?v=374a18d4" />
+    <script>
+      /* Each section is its own page: /books, /theatre, /books/<id> … */
+      (function () {
+        var parts = location.pathname.replace(/^\/+|\/+$/g, '').split('/');
+        var known = ["books", "theatre", "cinema", "press", "about", "contact"];
+        var view = known.indexOf(parts[0]) < 0 ? 'home' : (parts[1] ? 'detail' : parts[0]);
+        document.documentElement.setAttribute('data-view', view);
+      })();
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="site-header" id="siteHeader">
       <nav class="nav wrap" aria-label="Main">
-        <a class="brand" href="#home">Temo Rekhviashvili</a>
+        <a class="brand" href="/">Temo Rekhviashvili</a>
         <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">
           <span class="nav-toggle-label">Menu</span>
         </button>
         <div class="nav-links" id="navLinks">
           
-          <a href="#books" data-section="books">Books</a>
+          <a href="/books" data-section="books">Books</a>
           
-          <a href="#theatre" data-section="theatre">Theatre</a>
+          <a href="/theatre" data-section="theatre">Theatre</a>
           
-          <a href="#cinema" data-section="cinema">Cinema</a>
+          <a href="/cinema" data-section="cinema">Cinema</a>
           
-          <a href="#press" data-section="press">Press</a>
+          <a href="/press" data-section="press">Press</a>
           
-          <a href="#about" data-section="about">About</a>
+          <a href="/about" data-section="about">About</a>
           
-          <a href="#contact" data-section="contact">Contact</a>
+          <a href="/contact" data-section="contact">Contact</a>
           
         </div>
       </nav>
@@ -45,7 +54,7 @@
     <main id="main">
 
       <!-- ── HERO ── -->
-      <section class="hero" id="home">
+      <section class="hero page" id="home">
         <div class="hero-text">
           <h1>Temo Rekhviashvili</h1>
           <p class="hero-tagline">Writer · Playwright · Actor</p>
@@ -62,7 +71,7 @@
 
       
       <!-- ── BOOKS ── -->
-      <section id="books" class="section">
+      <section id="books" class="section page" data-title="Books">
         <div class="wrap">
           <header class="section-head">
   <h2>Books</h2>
@@ -70,10 +79,10 @@
 </header>
           <div class="work-list">
             <article class="work">
-  <a class="work-cover" href="#/neo-tbilisian" tabindex="-1" aria-hidden="true"><span class="cover-blank "><span>Neo-Tbilisian Mukhambazebi</span></span></a>
+  <a class="work-cover" href="/books/neo-tbilisian" tabindex="-1" aria-hidden="true"><span class="cover-blank "><span>Neo-Tbilisian Mukhambazebi</span></span></a>
   <div class="work-main">
     <p class="kicker">Poetry</p>
-    <h3 class="work-title"><a href="#/neo-tbilisian">Neo-Tbilisian Mukhambazebi</a></h3>
+    <h3 class="work-title"><a href="/books/neo-tbilisian">Neo-Tbilisian Mukhambazebi</a></h3>
     
     <p class="work-meta">Intelekti Publishing</p>
     
@@ -81,15 +90,15 @@
     <p class="work-summary">A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life.</p>
     <p class="work-links">
       
-      <a class="arrow-link" href="#/neo-tbilisian">More info</a>
+      <a class="arrow-link" href="/books/neo-tbilisian">More info</a>
     </p>
   </div>
   
 </article><article class="work">
-  <a class="work-cover" href="#/pathetic-monologues-book" tabindex="-1" aria-hidden="true"><img src="/Images/Patetique%20Book.jpeg" alt="Two Plays" loading="lazy" /></a>
+  <a class="work-cover" href="/books/pathetic-monologues-book" tabindex="-1" aria-hidden="true"><img src="/Images/Patetique%20Book.jpeg" alt="Two Plays" loading="lazy" /></a>
   <div class="work-main">
     <p class="kicker">Plays / Collection</p>
-    <h3 class="work-title"><a href="#/pathetic-monologues-book">Two Plays</a></h3>
+    <h3 class="work-title"><a href="/books/pathetic-monologues-book">Two Plays</a></h3>
     
     <p class="work-meta">Published by Sulakauri Publishing, 2025<br />A collection of two plays by Temo Rekhviashvili</p>
     
@@ -97,21 +106,21 @@
     <p class="work-summary">&#34;Pathetic Monologues - Two Plays&#34; brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.</p>
     <p class="work-links">
       
-      <a class="arrow-link" href="#/pathetic-monologues-book">More info</a>
+      <a class="arrow-link" href="/books/pathetic-monologues-book">More info</a>
     </p>
   </div>
   
 </article><article class="work">
-  <a class="work-cover" href="#/couriers-tales" tabindex="-1" aria-hidden="true"><img src="/Images/Carrier%20Tales.jpeg" alt="Courier’s Tales" loading="lazy" /></a>
+  <a class="work-cover" href="/books/couriers-tales" tabindex="-1" aria-hidden="true"><img src="/Images/Carrier%20Tales.jpeg" alt="Courier’s Tales" loading="lazy" /></a>
   <div class="work-main">
     <p class="kicker">NOVELLA</p>
-    <h3 class="work-title"><a href="#/couriers-tales">Courier’s Tales</a></h3>
+    <h3 class="work-title"><a href="/books/couriers-tales">Courier’s Tales</a></h3>
     
     
     <p class="work-summary">Courier’s Tales is the debut novella by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.</p>
     <p class="work-links">
       
-      <a class="arrow-link" href="#/couriers-tales">More info</a>
+      <a class="arrow-link" href="/books/couriers-tales">More info</a>
     </p>
   </div>
   
@@ -143,7 +152,7 @@
 
       
       <!-- ── THEATRE ── -->
-      <section id="theatre" class="section">
+      <section id="theatre" class="section page" data-title="Theatre">
         <div class="wrap">
           <header class="section-head">
   <h2>Theatre</h2>
@@ -154,10 +163,10 @@
           <p class="kicker sub-kicker">Playwright / Dramatic Writing</p>
           <div class="work-list work-list-boxed">
             <article class="work work-boxed">
-  <a class="work-cover" href="#/co2" tabindex="-1" aria-hidden="true"><img src="/Images/CO2.jpeg" alt="CO₂" loading="lazy" /></a>
+  <a class="work-cover" href="/theatre/co2" tabindex="-1" aria-hidden="true"><img src="/Images/CO2.jpeg" alt="CO₂" loading="lazy" /></a>
   <div class="work-main">
     
-    <h3 class="work-title"><a href="#/co2">CO₂</a></h3>
+    <h3 class="work-title"><a href="/theatre/co2">CO₂</a></h3>
     
     <p class="work-meta">Play, 2025</p>
     
@@ -165,7 +174,7 @@
     <p class="work-summary">A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves.</p>
     <p class="work-links">
       
-      <a class="arrow-link" href="#/co2">More info</a>
+      <a class="arrow-link" href="/theatre/co2">More info</a>
     </p>
   </div>
   
@@ -180,10 +189,10 @@
   </dl>
   
 </article><article class="work work-boxed">
-  <a class="work-cover" href="#/pathetic-monologues-play" tabindex="-1" aria-hidden="true"><img src="/Images/Pathetique%20Theater.jpeg" alt="Pathetic Monologues" loading="lazy" /></a>
+  <a class="work-cover" href="/theatre/pathetic-monologues-play" tabindex="-1" aria-hidden="true"><img src="/Images/Pathetique%20Theater.jpeg" alt="Pathetic Monologues" loading="lazy" /></a>
   <div class="work-main">
     
-    <h3 class="work-title"><a href="#/pathetic-monologues-play">Pathetic Monologues</a></h3>
+    <h3 class="work-title"><a href="/theatre/pathetic-monologues-play">Pathetic Monologues</a></h3>
     
     <p class="work-meta">Play, 2023</p>
     
@@ -191,7 +200,7 @@
     <p class="work-summary">A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.</p>
     <p class="work-links">
       
-      <a class="arrow-link" href="#/pathetic-monologues-play">More info</a>
+      <a class="arrow-link" href="/theatre/pathetic-monologues-play">More info</a>
     </p>
   </div>
   
@@ -273,7 +282,7 @@
 
       
       <!-- ── CINEMA ── -->
-      <section id="cinema" class="section">
+      <section id="cinema" class="section page" data-title="Cinema">
         <div class="wrap">
           <header class="section-head">
   <h2>Cinema</h2>
@@ -284,10 +293,10 @@
           <p class="kicker sub-kicker">Films</p>
           <div class="work-list work-list-boxed">
             <article class="work work-boxed">
-  <a class="work-cover" href="#/temo-re" tabindex="-1" aria-hidden="true"><img src="/Images/Temo%20Re%20Movie.jpeg" alt="Temo Re" loading="lazy" /></a>
+  <a class="work-cover" href="/cinema/temo-re" tabindex="-1" aria-hidden="true"><img src="/Images/Temo%20Re%20Movie.jpeg" alt="Temo Re" loading="lazy" /></a>
   <div class="work-main">
     <p class="kicker">Featured Film</p>
-    <h3 class="work-title"><a href="#/temo-re">Temo Re</a></h3>
+    <h3 class="work-title"><a href="/cinema/temo-re">Temo Re</a></h3>
     
     <p class="work-meta">Short film, 2025</p>
     
@@ -295,7 +304,7 @@
     <p class="work-summary">Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili’s debut novel Courier’s Tales. Rekhviashvili co-wrote the film and plays the leading role.</p>
     <p class="work-links">
       
-      <a class="arrow-link" href="#/temo-re">More info</a>
+      <a class="arrow-link" href="/cinema/temo-re">More info</a>
     </p>
   </div>
   
@@ -366,7 +375,7 @@
 
       
       <!-- ── PRESS ── -->
-      <section id="press" class="section">
+      <section id="press" class="section page" data-title="Press">
         <div class="wrap">
           <header class="section-head">
   <h2>Press</h2>
@@ -425,7 +434,7 @@
       
       <!-- ── ABOUT ── -->
       
-      <section id="about" class="section">
+      <section id="about" class="section page" data-title="About">
         <div class="wrap">
           <header class="section-head">
             <h2>About</h2>
@@ -449,7 +458,7 @@
 
       
       <!-- ── CONTACT ── -->
-      <section id="contact" class="section section-contact">
+      <section id="contact" class="section section-contact page" data-title="Contact">
         <div class="wrap">
           <header class="section-head">
             <h2>Get in touch</h2>
@@ -464,19 +473,11 @@
       
 
       
-    </main>
-
-    <footer class="site-footer">
-      <div class="wrap footer-grid">
-        <p>&copy; 2026 Temo Rekhviashvili</p>
-        <p>Writer · Playwright · Actor</p>
-      </div>
-    </footer>
 
     <!-- ── DETAIL PAGES (one per book / play / film) ── -->
-    <div class="detail-view" id="detailView" hidden>
-      <div class="wrap">
-        <article class="detail" id="detail-neo-tbilisian" data-title="Neo-Tbilisian Mukhambazebi" hidden>
+      <div class="detail-view page" id="detailView">
+        <div class="wrap">
+          <article class="detail" id="detail-neo-tbilisian" data-title="Neo-Tbilisian Mukhambazebi" data-section="books" hidden>
   <div class="detail-text">
     <p class="kicker">Books / Poetry</p>
     <h2 class="detail-title">Neo-Tbilisian Mukhambazebi</h2>
@@ -504,10 +505,10 @@
     </dl>
     
     
-    <p><a class="arrow-link back-link" href="#books">Back to Books</a></p>
+    <p><a class="arrow-link back-link" href="/books">Back to Books</a></p>
   </div>
   <figure class="detail-figure"><span class="cover-blank cover-blank-lg"><span>Neo-Tbilisian Mukhambazebi</span></span></figure>
-</article><article class="detail" id="detail-pathetic-monologues-book" data-title="Two Plays" hidden>
+</article><article class="detail" id="detail-pathetic-monologues-book" data-title="Two Plays" data-section="books" hidden>
   <div class="detail-text">
     <p class="kicker">Books / Plays / Collection</p>
     <h2 class="detail-title">Two Plays</h2>
@@ -545,10 +546,10 @@
     </dl>
     
     
-    <p><a class="arrow-link back-link" href="#books">Back to Books</a></p>
+    <p><a class="arrow-link back-link" href="/books">Back to Books</a></p>
   </div>
   <figure class="detail-figure"><img src="/Images/Patetique%20Book.jpeg" alt="Two Plays" loading="lazy" /></figure>
-</article><article class="detail" id="detail-couriers-tales" data-title="Courier’s Tales" hidden>
+</article><article class="detail" id="detail-couriers-tales" data-title="Courier’s Tales" data-section="books" hidden>
   <div class="detail-text">
     <p class="kicker">Books / NOVELLA</p>
     <h2 class="detail-title">Courier’s Tales</h2>
@@ -582,11 +583,11 @@
     </dl>
     
     
-    <p><a class="arrow-link back-link" href="#books">Back to Books</a></p>
+    <p><a class="arrow-link back-link" href="/books">Back to Books</a></p>
   </div>
   <figure class="detail-figure"><img src="/Images/Carrier%20Tales.jpeg" alt="Courier’s Tales" loading="lazy" /></figure>
 </article>
-        <article class="detail" id="detail-co2" data-title="CO₂" hidden>
+          <article class="detail" id="detail-co2" data-title="CO₂" data-section="theatre" hidden>
   <div class="detail-text">
     <p class="kicker">Theatre</p>
     <h2 class="detail-title">CO₂</h2>
@@ -620,10 +621,10 @@
     </dl>
     
     
-    <p><a class="arrow-link back-link" href="#theatre">Back to Theatre</a></p>
+    <p><a class="arrow-link back-link" href="/theatre">Back to Theatre</a></p>
   </div>
   <figure class="detail-figure"><img src="/Images/CO2.jpeg" alt="CO₂" loading="lazy" /></figure>
-</article><article class="detail" id="detail-pathetic-monologues-play" data-title="Pathetic Monologues" hidden>
+</article><article class="detail" id="detail-pathetic-monologues-play" data-title="Pathetic Monologues" data-section="theatre" hidden>
   <div class="detail-text">
     <p class="kicker">Theatre</p>
     <h2 class="detail-title">Pathetic Monologues</h2>
@@ -655,11 +656,11 @@
     </dl>
     
     
-    <p><a class="arrow-link back-link" href="#theatre">Back to Theatre</a></p>
+    <p><a class="arrow-link back-link" href="/theatre">Back to Theatre</a></p>
   </div>
   <figure class="detail-figure"><img src="/Images/Pathetique%20Theater.jpeg" alt="Pathetic Monologues" loading="lazy" /></figure>
 </article>
-        <article class="detail" id="detail-temo-re" data-title="Temo Re" hidden>
+          <article class="detail" id="detail-temo-re" data-title="Temo Re" data-section="cinema" hidden>
   <div class="detail-text">
     <p class="kicker">Cinema / Featured Film</p>
     <h2 class="detail-title">Temo Re</h2>
@@ -691,13 +692,21 @@
     </dl>
     
     
-    <p><a class="arrow-link back-link" href="#cinema">Back to Cinema</a></p>
+    <p><a class="arrow-link back-link" href="/cinema">Back to Cinema</a></p>
   </div>
   <figure class="detail-figure"><img src="/Images/Temo%20Re%20Movie.jpeg" alt="Temo Re" loading="lazy" /></figure>
 </article>
+        </div>
       </div>
-    </div>
+    </main>
 
-    <script src="/script.js?v=7e3f80ad"></script>
+    <footer class="site-footer">
+      <div class="wrap footer-grid">
+        <p>&copy; 2026 Temo Rekhviashvili</p>
+        <p>Writer · Playwright · Actor</p>
+      </div>
+    </footer>
+
+    <script src="/script.js?v=374a18d4"></script>
   </body>
 </html>

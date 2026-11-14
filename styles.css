@@ -29,7 +29,6 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-body.detail-open { overflow: hidden; }
 img { display: block; max-width: 100%; }
 a { color: inherit; }
 h1, h2, h3, p, ul, dl, dd, figure { margin: 0; }
@@ -92,6 +91,11 @@ p { text-wrap: pretty; }
   min-height: min(calc(100vh - var(--header-h)), 860px);
   border-bottom: 1px solid var(--rule);
 }
+@media (min-width: 861px) {
+  html[data-view="home"] .hero { height: calc(100dvh - var(--header-h) - 1px); min-height: 0; border-bottom: 0; }
+  html[data-view="home"] body { overflow: hidden; }
+  html[data-view="home"] .site-footer { display: none; }
+}
 .hero-text {
   display: flex; flex-direction: column; justify-content: center;
   padding: clamp(3rem, 7vw, 6rem) var(--gutter);
@@ -104,10 +108,29 @@ p { text-wrap: pretty; }
 .hero-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; filter: grayscale(1) contrast(1.04); }
 
 /* ── Sections ── */
-.section { padding: clamp(4rem, 9vw, 7.5rem) 0; }
+/* ── Pages: one section at a time, each at its own address ── */
+html[data-view] .page { display: none; }
+html[data-view="home"] #home { display: grid; }
+html[data-view="books"] #books,
+html[data-view="theatre"] #theatre,
+html[data-view="cinema"] #cinema,
+html[data-view="press"] #press,
+html[data-view="about"] #about,
+html[data-view="contact"] #contact,
+html[data-view="detail"] #detailView { display: block; }
+html[data-view] body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+html[data-view] main { flex: 1; }
+.page { animation: page-in 320ms ease both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.section { padding: clamp(3rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 6rem); }
 .section + .section { border-top: 1px solid var(--rule); }
+html[data-view] .section + .section { border-top: 0; }
 .section:has(> .rights) { padding-bottom: 0; }
-.section:has(> .rights) + .section { border-top: 0; }
+html[data-view] .section:has(> .rights) { display: none; }
+html[data-view="books"] #books { display: flex; flex-direction: column; min-height: calc(100dvh - var(--header-h) - 4.5rem); }
+html[data-view="books"] #books > .rights { margin-top: auto; }
+html[data-view="books"] #books > .wrap { padding-bottom: clamp(3rem, 6vw, 5rem); }
 .section-head {
   display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 1.5rem clamp(2rem, 6vw, 6rem);
   align-items: end; margin-bottom: clamp(2.5rem, 5vw, 4rem);
@@ -224,24 +247,18 @@ p { text-wrap: pretty; }
 .footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 2rem; }
 
 /* ── Detail pages ── */
-.detail-view {
-  position: fixed; inset: var(--header-h) 0 0 0; z-index: 30;
-  background: var(--paper); overflow-y: auto; overscroll-behavior: contain;
-  animation: detail-in 260ms ease both;
-}
-@keyframes detail-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .detail {
   display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 3rem clamp(2rem, 6vw, 6rem);
   align-items: start; padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 6rem);
 }
-.detail[hidden], .detail-view[hidden] { display: none; }
+.detail[hidden] { display: none; }
 .detail-title { font-size: clamp(2.4rem, 5.2vw, 4.25rem); font-weight: 300; line-height: 1.02; letter-spacing: -0.025em; }
 .detail-meta { margin-top: 0.9rem; font-family: var(--sans); font-size: 0.82rem; line-height: 1.6; color: var(--muted); }
 .detail .prose { margin-top: 2rem; }
 .detail-facts { margin-top: 2.25rem; padding: 1.5rem 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); max-width: 40rem; }
 .detail .work-links { margin-top: 2rem; }
 .detail .back-link { margin-top: 2.5rem; }
-.detail-figure { position: sticky; top: clamp(2.5rem, 6vw, 5rem); }
+.detail-figure { position: sticky; top: calc(var(--header-h) + 2rem); }
 .detail-figure img, .detail-figure .cover-blank {
   width: 100%; max-height: calc(100vh - var(--header-h) - 6rem); object-fit: contain; object-position: top right; aspect-ratio: auto;
   filter: drop-shadow(0 14px 22px rgba(20, 20, 19, 0.2));
