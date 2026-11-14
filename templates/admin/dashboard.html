@@ -3,992 +3,750 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Temo Rekhviashvili</title>
+  <meta name="robots" content="noindex" />
+  <title>Site editor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset ── */
+    :root {
+      --paper: #f6f4ef; --panel: #fffefb; --ink: #151413; --ink-2: #4a4742; --muted: #85817a;
+      --rule: #dedbd3; --rule-2: #ebe8e1; --red: #b3261e; --green: #1f6b3a; --amber: #8a5a00;
+      --sans: "Inter", "Noto Sans Georgian", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --serif: "Newsreader", Georgia, serif;
+    }
     *, *::before, *::after { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: #f3f2ee; color: #111; font-size: 14px; line-height: 1.55; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: var(--sans); background: var(--paper); color: var(--ink); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    button, input, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    [hidden] { display: none !important; }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-    /* ── Layout ── */
-    .shell { display: grid; grid-template-rows: 52px 1fr; height: 100vh; }
-    .topbar { background: #111; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; gap: 1rem; }
-    .topbar-brand { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
-    .topbar-actions { display: flex; gap: 0.75rem; align-items: center; }
-    #git-badge { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; padding: 0.25rem 0.6rem; border-radius: 2px; opacity: 0; transition: opacity 400ms; }
-    #git-badge.show { opacity: 1; }
-    #git-badge.pushing { background: #333; color: #aaa; }
-    #git-badge.ok { background: #1a5c2a; color: #7edd9a; }
-    #git-badge.error { background: #5c1a1a; color: #eda7a7; cursor: pointer; }
-    .body { display: grid; grid-template-columns: 210px 1fr; overflow: hidden; height: 100%; }
-    .sidebar { background: #fafaf8; border-right: 1px solid #d8d8d3; overflow-y: auto; padding: 1rem 0; }
-    .sidebar-section { padding: 0.3rem 0.75rem; font-size: 0.67rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: #aaa; margin-top: 0.75rem; }
-    .sidebar-section:first-child { margin-top: 0; }
-    .nav-item { display: block; padding: 0.5rem 1rem; font-size: 0.85rem; color: #444; cursor: pointer; border-left: 3px solid transparent; transition: background 120ms, color 120ms; user-select: none; }
-    .nav-item:hover { background: #eee9e0; color: #111; }
-    .nav-item.active { background: #eee9e0; color: #111; border-left-color: #111; font-weight: 600; }
-    .main { overflow-y: auto; padding: 2rem; }
+    /* ── Shell ── */
+    .shell { display: grid; grid-template-rows: auto 1fr; height: 100%; }
+    .topbar { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 1.25rem; background: var(--ink); color: #fff; min-height: 56px; }
+    .topbar-brand { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .body { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 0; }
+    .sidebar { background: var(--panel); border-right: 1px solid var(--rule); overflow-y: auto; padding: 1rem 0 2rem; }
+    .side-label { padding: 0 1.1rem; margin: 1.1rem 0 0.35rem; font-size: 0.64rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .side-label:first-child { margin-top: 0; }
+    .side-item { display: block; width: 100%; text-align: left; background: none; border: 0; border-left: 3px solid transparent; padding: 0.5rem 1.1rem 0.5rem calc(1.1rem - 3px); font-size: 0.88rem; color: var(--ink-2); }
+    .side-item:hover { background: var(--paper); color: var(--ink); }
+    .side-item.active { background: var(--paper); border-left-color: var(--ink); color: var(--ink); font-weight: 600; }
+    .main { overflow-y: auto; padding: 2rem clamp(1rem, 4vw, 3rem) 6rem; }
+    .page { max-width: 820px; }
 
     /* ── Buttons ── */
-    .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; font-family: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: opacity 150ms, background 150ms; text-transform: uppercase; letter-spacing: 0.06em; }
-    .btn-primary { background: #111; color: #fff; }
-    .btn-primary:hover { opacity: 0.8; }
-    .btn-secondary { background: #fff; color: #111; border-color: #d8d8d3; }
-    .btn-secondary:hover { background: #f0ede8; }
-    .btn-danger { background: #c00; color: #fff; }
-    .btn-danger:hover { opacity: 0.8; }
-    .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.75rem; }
-    .btn-ghost { background: transparent; color: #666; border-color: transparent; }
-    .btn-ghost:hover { color: #111; background: #eee; }
-    a.btn { text-decoration: none; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem 0.95rem; border: 1px solid var(--rule); background: var(--panel); font-size: 0.8rem; font-weight: 600; border-radius: 4px; text-decoration: none; white-space: nowrap; transition: background 120ms, border-color 120ms, opacity 120ms; }
+    .btn:hover { border-color: #b9b5ab; }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn-primary { background: #fff; color: var(--ink); border-color: #fff; }
+    .btn-primary:hover { background: #e9e6df; }
+    .btn-dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .btn-dark:hover { opacity: 0.85; }
+    .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.28); color: #fff; }
+    .btn-ghost:hover { border-color: #fff; }
+    .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+    .btn-danger { color: var(--red); }
+    .icon-btn { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid transparent; background: none; border-radius: 4px; color: var(--muted); font-size: 0.9rem; line-height: 1; flex: none; }
+    .icon-btn:hover:not(:disabled) { color: var(--ink); background: var(--rule-2); }
+    .icon-btn.danger:hover { color: var(--red); }
+    .icon-btn:disabled { opacity: 0.3; cursor: default; }
 
-    /* ── Section header ── */
-    .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid #d8d8d3; padding-bottom: 1rem; }
-    .page-title { margin: 0; font-size: 1.25rem; font-weight: 600; }
-    .page-sub { margin: 0.2rem 0 0; font-size: 0.82rem; color: #888; }
+    /* ── Status pill ── */
+    .status { font-size: 0.74rem; font-weight: 600; padding: 0.3rem 0.65rem; border-radius: 999px; border: 0; background: rgba(255,255,255,0.12); color: #d7d3cb; white-space: nowrap; max-width: 44vw; overflow: hidden; text-overflow: ellipsis; }
+    .status[data-state="dirty"] { background: #f4d58a; color: #3d2a00; }
+    .status[data-state="ok"] { background: #1f6b3a; color: #d9f5e2; }
+    .status[data-state="error"] { background: var(--red); color: #fff; }
+    .status[data-state="local"] { background: #5a554c; color: #fff; }
 
-    /* ── Forms ── */
-    .form-group { margin-bottom: 1.1rem; }
-    .form-group label { display: block; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #666; margin-bottom: 0.3rem; }
-    .form-group input, .form-group textarea, .form-group select {
-      display: block; width: 100%; padding: 0.5rem 0.65rem; border: 1px solid #d8d8d3; background: #fff;
-      font-family: inherit; font-size: 0.9rem; color: #111; outline: none; transition: border-color 150ms; resize: vertical;
+    /* ── Page header ── */
+    .page-title { margin: 0; font-family: var(--serif); font-size: 2rem; font-weight: 400; letter-spacing: -0.01em; line-height: 1.1; }
+    .page-sub { margin: 0.4rem 0 1.75rem; color: var(--muted); max-width: 60ch; }
+
+    /* ── Cards & fields ── */
+    .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 1.25rem; margin-bottom: 1.25rem; }
+    .card-title { margin: 0 0 0.2rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+    .card-sub { margin: 0 0 1rem; font-size: 0.82rem; color: var(--muted); }
+    .card-title + .field, .card-title + .field-row { margin-top: 1rem; }
+    .field { margin-bottom: 1rem; min-width: 0; }
+    .field:last-child { margin-bottom: 0; }
+    .field > label, .field-label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--ink); }
+    .hint { font-size: 0.76rem; color: var(--muted); margin-top: 0.3rem; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .field-row .field { margin-bottom: 0; }
+    input[type="text"], input[type="url"], input[type="email"], input[type="password"], textarea {
+      display: block; width: 100%; padding: 0.5rem 0.65rem; border: 1px solid var(--rule); background: #fff; border-radius: 4px; font-size: 0.92rem; outline: none; transition: border-color 120ms;
     }
-    .form-group input:focus, .form-group textarea:focus { border-color: #111; }
-    .form-group textarea { min-height: 90px; }
-    .form-group .hint { font-size: 0.74rem; color: #999; margin-top: 0.25rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .form-actions { display: flex; gap: 0.75rem; padding-top: 0.5rem; }
+    textarea { resize: vertical; min-height: 4.5rem; line-height: 1.5; }
+    textarea.prose-input { font-family: var(--serif); font-size: 1.02rem; line-height: 1.55; }
+    input:focus, textarea:focus { border-color: var(--ink); }
+    .toggle { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.86rem; font-weight: 500; cursor: pointer; }
+    .toggle input { width: 1rem; height: 1rem; accent-color: var(--ink); }
 
-    /* ── Image picker ── */
-    .img-preview { width: 120px; height: 160px; object-fit: cover; border: 1px solid #d8d8d3; display: block; background: #e0ede8; }
-    .img-preview-placeholder { width: 120px; height: 160px; border: 1px dashed #bbb; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 0.75rem; text-align: center; background: #fafaf8; }
-    .img-pick-row { display: flex; gap: 1rem; align-items: flex-start; }
-    .img-pick-btn { margin-top: 0.5rem; }
+    /* ── Image field ── */
+    .img-field { display: flex; gap: 1rem; align-items: flex-start; }
+    .img-thumb { width: 96px; height: 128px; object-fit: cover; background: var(--rule-2); border: 1px solid var(--rule); border-radius: 3px; flex: none; }
+    .img-empty { display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.7rem; color: var(--muted); border-style: dashed; padding: 0.4rem; }
+    .img-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .img-name { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.5rem; overflow-wrap: anywhere; }
+    .warn { color: var(--red); font-size: 0.8rem; font-weight: 500; margin-bottom: 0.5rem; }
 
-    /* ── Card list (books, plays, etc.) ── */
-    .item-list { display: flex; flex-direction: column; gap: 0; border: 1px solid #d8d8d3; background: #fff; }
-    .list-item { border-bottom: 1px solid #d8d8d3; }
-    .list-item:last-child { border-bottom: none; }
-    .list-item-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; cursor: pointer; }
-    .list-item-header:hover { background: #fafaf8; }
-    .list-item-thumb { width: 36px; height: 48px; object-fit: cover; border: 1px solid #ddd; background: #eee; flex-shrink: 0; }
-    .list-item-thumb-ph { width: 36px; height: 48px; background: #e0ddd8; flex-shrink: 0; }
-    .list-item-label { flex: 1; font-weight: 600; font-size: 0.88rem; }
-    .list-item-sub { font-size: 0.75rem; color: #888; }
-    .list-item-controls { display: flex; gap: 0.4rem; flex-shrink: 0; }
-    .list-item-body { padding: 1rem 1rem 1.25rem; background: #fafaf8; border-top: 1px solid #d8d8d3; }
+    /* ── Row editor (credits, press, details, links…) ── */
+    .rows { border: 1px solid var(--rule); border-radius: 4px; background: #fff; }
+    .rows-head, .rows-row { display: grid; gap: 0; align-items: stretch; }
+    .rows-head { background: var(--paper); border-bottom: 1px solid var(--rule); border-radius: 4px 4px 0 0; }
+    .rows-head span { padding: 0.4rem 0.6rem; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .rows-row { border-bottom: 1px solid var(--rule-2); }
+    .rows-row:last-child { border-bottom: 0; }
+    .rows-row input, .rows-row textarea { border: 0; border-right: 1px solid var(--rule-2); border-radius: 0; background: transparent; font-size: 0.88rem; min-height: 0; resize: none; }
+    .rows-row input:focus, .rows-row textarea:focus { background: #fffbea; }
+    .rows-ctrl { display: flex; align-items: center; padding: 0 0.2rem; }
+    .rows-empty { padding: 0.8rem; font-size: 0.82rem; color: var(--muted); }
+    .add-row { margin-top: 0.6rem; }
 
-    /* ── Table editor ── */
-    .table-editor { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d8d8d3; }
-    .table-editor th { background: #f3f2ee; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #666; padding: 0.5rem 0.6rem; border-bottom: 1px solid #d8d8d3; text-align: left; }
-    .table-editor td { padding: 0.3rem 0.4rem; border-bottom: 1px solid #eee; vertical-align: middle; }
-    .table-editor tr:last-child td { border-bottom: none; }
-    .table-editor input { border: 1px solid transparent; background: transparent; width: 100%; font-family: inherit; font-size: 0.85rem; padding: 0.25rem 0.3rem; outline: none; }
-    .table-editor input:focus { border-color: #111; background: #fff; }
-    .table-editor .ctrl-col { width: 60px; text-align: center; }
+    /* ── Item list (books, plays, films) ── */
+    .item { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; margin-bottom: 0.6rem; }
+    .item.is-hidden .item-head { opacity: 0.55; }
+    .item-head { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; }
+    .item-open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem; background: none; border: 0; padding: 0; text-align: left; }
+    .item-thumb { width: 34px; height: 46px; object-fit: cover; background: var(--rule-2); border-radius: 2px; flex: none; }
+    .item-name { font-weight: 600; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-sub { font-size: 0.76rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-ctrl { display: flex; align-items: center; gap: 0.1rem; flex: none; }
+    .badge { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: var(--rule-2); color: var(--ink-2); padding: 0.15rem 0.45rem; border-radius: 3px; margin-left: 0.5rem; }
+    .item-body { border-top: 1px solid var(--rule); padding: 1.25rem; }
+    .item-foot { display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--rule-2); }
+    .list-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 1.75rem 0 0.75rem; }
+    .list-head h2 { margin: 0; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 
-    /* ── Details editor ── */
-    .details-editor { border: 1px solid #d8d8d3; background: #fff; }
-    .details-row { display: grid; grid-template-columns: 160px 1fr 36px; border-bottom: 1px solid #eee; }
-    .details-row:last-child { border-bottom: none; }
-    .details-row input { border: none; border-right: 1px solid #eee; padding: 0.4rem 0.5rem; font-family: inherit; font-size: 0.85rem; outline: none; background: transparent; width: 100%; }
-    .details-row input:first-child { color: #666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
-    .details-row input:focus { background: #fffef8; }
-    .details-row .del-btn { display: flex; align-items: center; justify-content: center; background: none; border: none; color: #ccc; font-size: 1rem; cursor: pointer; transition: color 150ms; }
-    .details-row .del-btn:hover { color: #c00; }
+    /* ── Image library / modal ── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.75rem; }
+    .tile { position: relative; background: #fff; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; padding: 0; text-align: left; display: block; width: 100%; }
+    button.tile:hover { border-color: var(--ink); }
+    .tile.selected { outline: 2px solid var(--ink); }
+    .tile img, .tile-file { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block; background: var(--rule-2); }
+    .tile-file { display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--muted); letter-spacing: 0.1em; }
+    .tile-cap { padding: 0.35rem 0.45rem; font-size: 0.68rem; color: var(--ink-2); overflow-wrap: anywhere; line-height: 1.3; }
+    .tile-del { position: absolute; top: 4px; right: 4px; background: rgba(255,255,255,0.92); border: 1px solid var(--rule); }
+    .tile-used { position: absolute; top: 6px; left: 6px; background: var(--ink); color: #fff; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    .overlay { position: fixed; inset: 0; background: rgba(21,20,19,0.55); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .modal { background: var(--panel); border-radius: 8px; width: min(760px, 100%); max-height: 86vh; display: flex; flex-direction: column; }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--rule); }
+    .modal-head strong { font-size: 0.95rem; }
+    .modal-body { padding: 1.1rem; overflow-y: auto; }
+    .upload-bar { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
 
     /* ── Toast ── */
-    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; padding: 0.7rem 1.2rem; border-radius: 0; font-size: 0.85rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 250ms; z-index: 999; }
-    #toast.show { opacity: 1; }
-    #toast.success { background: #111; color: #fff; }
-    #toast.error { background: #c00; color: #fff; }
+    #toast { position: fixed; left: 50%; bottom: 1.5rem; transform: translate(-50%, 1rem); background: var(--ink); color: #fff; padding: 0.65rem 1.1rem; border-radius: 6px; font-size: 0.86rem; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity 200ms, transform 200ms; z-index: 80; max-width: calc(100% - 2rem); }
+    #toast.show { opacity: 1; transform: translate(-50%, 0); }
+    #toast.error { background: var(--red); }
 
-    /* ── Image picker modal ── */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: #fff; width: min(640px, calc(100% - 2rem)); max-height: 80vh; display: flex; flex-direction: column; }
-    .modal-header { padding: 1rem 1.25rem; border-bottom: 1px solid #d8d8d3; display: flex; align-items: center; justify-content: space-between; }
-    .modal-title { font-weight: 600; font-size: 0.95rem; }
-    .modal-close { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #666; line-height: 1; }
-    .modal-close:hover { color: #111; }
-    .modal-body { overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
-    .modal-upload { border: 2px dashed #d8d8d3; padding: 1.25rem; text-align: center; cursor: pointer; transition: background 150ms; }
-    .modal-upload:hover { background: #f3f2ee; }
-    .modal-upload input { display: none; }
-    .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 0.6rem; }
-    .img-grid-item { aspect-ratio: 2/3; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color 150ms; position: relative; }
-    .img-grid-item:hover { border-color: #888; }
-    .img-grid-item.selected { border-color: #111; }
-    .img-grid-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .img-grid-item span { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.55); color: #fff; font-size: 0.6rem; padding: 0.2rem 0.25rem; word-break: break-all; }
-    .modal-footer { padding: 0.75rem 1rem; border-top: 1px solid #d8d8d3; display: flex; justify-content: flex-end; gap: 0.5rem; }
-
-    /* ── Misc ── */
-    .divider { border: none; border-top: 1px solid #d8d8d3; margin: 1.5rem 0; }
-    .section-block { margin-bottom: 2rem; }
-    .badge { display: inline-block; padding: 0.15rem 0.5rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; background: #e8e5de; color: #555; }
-    .tag-input-wrap { display: flex; flex-wrap: wrap; gap: 0.4rem; border: 1px solid #d8d8d3; padding: 0.4rem; background: #fff; min-height: 2.5rem; align-items: center; cursor: text; }
-    .tag { display: inline-flex; align-items: center; gap: 0.3rem; background: #e8e5de; padding: 0.15rem 0.5rem; font-size: 0.8rem; }
-    .tag-remove { background: none; border: none; cursor: pointer; color: #666; font-size: 0.9rem; padding: 0; line-height: 1; }
-    .tag-remove:hover { color: #c00; }
-    .tag-input { border: none; outline: none; font-family: inherit; font-size: 0.85rem; min-width: 80px; flex: 1; padding: 0.1rem 0.2rem; background: transparent; }
-    .para-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .para-item { display: flex; gap: 0.5rem; align-items: flex-start; }
-    .para-item textarea { flex: 1; min-height: 70px; }
-    .para-item .del-btn { flex-shrink: 0; margin-top: 0.2rem; background: none; border: 1px solid #ddd; color: #bbb; cursor: pointer; padding: 0.3rem 0.5rem; font-size: 0.8rem; transition: color 150ms, border-color 150ms; }
-    .para-item .del-btn:hover { color: #c00; border-color: #c00; }
+    @media (max-width: 760px) {
+      .body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .sidebar { display: flex; gap: 0.25rem; overflow-x: auto; padding: 0.5rem 0.75rem; border-right: 0; border-bottom: 1px solid var(--rule); }
+      .side-label { display: none; }
+      .side-item { width: auto; white-space: nowrap; border-left: 0; border-radius: 999px; padding: 0.4rem 0.8rem; }
+      .side-item.active { background: var(--ink); color: #fff; }
+      .field-row { grid-template-columns: 1fr; }
+      .topbar { padding: 0.5rem 0.75rem; flex-wrap: wrap; }
+      .hide-sm { display: none; }
+      .rows-head { display: none; }
+      .rows-row { grid-template-columns: 1fr auto !important; }
+      .rows-row > input, .rows-row > textarea { grid-column: 1; border-right: 0; border-bottom: 1px solid var(--rule-2); }
+      .rows-ctrl { grid-column: 2; grid-row: 1 / span 4; flex-direction: column; justify-content: center; border-left: 1px solid var(--rule-2); }
+    }
   </style>
 </head>
 <body>
 <div class="shell">
-
-  <!-- Top bar -->
-  <div class="topbar">
-    <span class="topbar-brand">Admin &mdash; Temo Rekhviashvili</span>
-    <div class="topbar-actions">
-      <span id="git-badge" title="Git push status"></span>
-      <a href="/" target="_blank" class="btn btn-ghost btn-sm" style="color:#aaa">View site &rarr;</a>
-      <a href="/admin/logout" class="btn btn-secondary btn-sm">Sign out</a>
-    </div>
-  </div>
-
+  <header class="topbar">
+    <span class="topbar-brand">Site editor</span>
+    <button class="status" id="status" data-state="idle" type="button">Loading…</button>
+    <a class="btn btn-ghost hide-sm" href="/" target="_blank" rel="noopener">View site ↗</a>
+    <button class="btn btn-primary" id="saveBtn" type="button" disabled>Save &amp; publish</button>
+    <a class="btn btn-ghost hide-sm" href="/admin/logout" id="logout">Sign out</a>
+  </header>
   <div class="body">
-
-    <!-- Sidebar -->
-    <nav class="sidebar">
-      <div class="sidebar-section">Content</div>
-      <div class="nav-item active" data-section="hero">Hero</div>
-      <div class="nav-item" data-section="books">Books</div>
-      <div class="nav-item" data-section="theatre_plays">Theatre &mdash; Plays</div>
-      <div class="nav-item" data-section="theatre_credits">Theatre &mdash; Credits</div>
-      <div class="nav-item" data-section="cinema">Cinema</div>
-      <div class="nav-item" data-section="press">Press</div>
-      <div class="nav-item" data-section="about">About</div>
-      <div class="nav-item" data-section="contact">Contact</div>
-
-      <div class="sidebar-section">Site</div>
-      <div class="nav-item" data-section="images">Images</div>
-      <div class="nav-item" data-section="settings">Settings</div>
-    </nav>
-
-    <!-- Main content -->
-    <main class="main" id="main">
-      <p style="color:#888;font-size:0.9rem">Loading&hellip;</p>
-    </main>
-
+    <nav class="sidebar" id="sidebar" aria-label="Editor pages"></nav>
+    <main class="main" id="main"><p class="page-sub">Loading…</p></main>
   </div>
 </div>
-
-<!-- Toast -->
-<div id="toast"></div>
-
-<!-- Image picker modal -->
-<div class="modal-overlay" id="imgModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Select Image</span>
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <label class="modal-upload" id="uploadZone">
-        <input type="file" id="uploadInput" accept="image/*" onchange="uploadImage(this)" />
-        <span style="font-size:0.9rem;color:#666">Click to upload a new image (JPG, PNG, WebP)</span>
-      </label>
-      <div class="img-grid" id="imgGrid"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary btn-sm" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="confirmImagePick()">Select</button>
-    </div>
-  </div>
-</div>
+<div id="toast" role="status"></div>
 
 <script>
-/* ── State ─────────────────────────────────────────────────── */
-let content = {};
-let currentSection = 'hero';
-let imgPickerCallback = null;
-let selectedImage = null;
+/* ════════════════════════════════════════════════════════════════
+   Site editor.  `content` mirrors content.json; every input writes
+   straight into it, and "Save & publish" sends the whole thing.
+   ════════════════════════════════════════════════════════════════ */
+let content = null;
+let uploads = [];
+let hosted = false;
+let dirty = false;
+let saving = false;
+let publishes = true;      // false when the server cannot publish (local development)
+let savedOnce = false;
+const pending = {};        // uploads not saved yet: filename -> { sha, url }
+let currentPage = location.hash.slice(1) || 'home';
+const openItems = new WeakSet();
 
-/* ── Init ─────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadContent();
-  document.querySelectorAll('.nav-item').forEach(el => {
-    el.addEventListener('click', () => {
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      el.classList.add('active');
-      currentSection = el.dataset.section;
-      renderSection(currentSection);
-    });
-  });
-  renderSection('hero');
-});
-
-async function loadContent() {
-  const res = await fetch('/api/content');
-  content = await res.json();
-}
-
-/* ── Router ────────────────────────────────────────────────── */
-function renderSection(section) {
-  const main = document.getElementById('main');
-  const renders = {
-    hero: renderHero,
-    books: renderBooks,
-    theatre_plays: renderTheatrePlays,
-    theatre_credits: renderTheatreCredits,
-    cinema: renderCinema,
-    press: renderPress,
-    about: renderAbout,
-    contact: renderContact,
-    images: renderImages,
-    settings: renderSettings,
-  };
-  if (renders[section]) renders[section](main);
-  else main.innerHTML = '<p>Section not found.</p>';
-}
-
-/* ── Save helper ───────────────────────────────────────────── */
-async function saveSection(section, data) {
-  try {
-    const res = await fetch(`/api/content/${section}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    const json = await res.json();
-    if (json.ok) {
-      content[section] = data;
-      showToast('Saved!', 'success');
-      pollGitStatus();
-    } else {
-      showToast('Error: ' + json.error, 'error');
-    }
-  } catch (e) {
-    showToast('Network error', 'error');
+/* ── Tiny DOM helper ───────────────────────────────────────────── */
+function h(tag, attrs, ...children) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k in el && k !== 'list') el[k] = v;
+    else el.setAttribute(k, v === true ? '' : v);
   }
+  return fill(el, children);
 }
-
-/* ── Git status badge ──────────────────────────────────────── */
-let gitPollTimer = null;
-async function pollGitStatus() {
-  const badge = document.getElementById('git-badge');
-  badge.className = 'show pushing';
-  badge.textContent = '↑ pushing…';
-  clearTimeout(gitPollTimer);
-  // Poll until status is no longer "pushing"
-  let attempts = 0;
-  async function check() {
-    try {
-      const res = await fetch('/api/git-status');
-      const json = await res.json();
-      if (json.status === 'pushing' && attempts < 20) {
-        attempts++;
-        gitPollTimer = setTimeout(check, 1500);
-      } else if (json.status === 'ok') {
-        badge.className = 'show ok';
-        badge.textContent = '✓ pushed';
-        gitPollTimer = setTimeout(() => badge.className = '', 5000);
-      } else if (json.status === 'error') {
-        badge.className = 'show error';
-        badge.textContent = '⚠ push failed';
-        badge.title = json.message;
-        showToast('Push failed: ' + json.message, 'error');
-      }
-    } catch (_) {}
-  }
-  gitPollTimer = setTimeout(check, 800);
+/* Replace an element's children; accepts nested arrays, skips null/false. */
+function fill(el, ...children) {
+  el.replaceChildren(...children.flat(Infinity)
+    .filter(c => c != null && c !== false)
+    .map(c => (c.nodeType ? c : document.createTextNode(c))));
+  return el;
 }
+/* An <img> for an uploaded file.  Files saved a moment ago may not be on the
+   public site yet, so fall back to reading them through the editor. */
+function img(name, attrs) {
+  const p = pending[name];
+  const el = h('img', { ...attrs, alt: '', src: p ? p.url : '/Images/' + encodeURIComponent(name) });
+  if (!p) el.addEventListener('error', () => { el.src = '/admin/file/' + encodeURIComponent(name); }, { once: true });
+  return el;
+}
+const uploadExists = name => uploads.some(u => u.name === name);
 
-/* ── Toast ─────────────────────────────────────────────────── */
-let toastTimer;
-function showToast(msg, type='success') {
+function toast(msg, isError) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = `show ${type}`;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.className = '', 2800);
+  t.className = 'show' + (isError ? ' error' : '');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => { t.className = ''; }, isError ? 6000 : 2600);
 }
 
-/* ─────────────── SECTION RENDERERS ───────────────────────── */
+async function api(method, url, body) {
+  const opts = { method, headers: { 'X-Requested-With': 'admin' } };
+  if (body instanceof FormData) opts.body = body;
+  else if (body !== undefined) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+  let res;
+  try { res = await fetch(url, opts); }
+  catch (e) { throw new Error('No connection to the server. Check your internet and try again.'); }
+  if (res.status === 401) { window.removeEventListener('beforeunload', warnUnsaved); location.href = '/admin/login'; throw new Error('Signed out'); }
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* not JSON */ }
+  if (!res.ok) throw new Error((data && data.error) || 'Something went wrong (' + res.status + ').');
+  return data;
+}
 
-/* ── Hero ─────────────────────────────────────────────────── */
-function renderHero(el) {
-  const h = content.hero || {};
-  el.innerHTML = `
-    <div class="page-header">
-      <div><h1 class="page-title">Hero</h1><p class="page-sub">Opening tagline, biography and portrait photo shown on the homepage.</p></div>
-    </div>
-    <div class="form-group"><label>Tagline</label><input id="h-tagline" value="${esc(h.tagline||'')}" /></div>
-    <div class="form-group"><label>Biography</label><textarea id="h-bio" style="min-height:130px">${esc(h.bio||'')}</textarea></div>
-    <div class="form-group">
-      <label>Hero / Portrait Image</label>
-      <div class="img-pick-row">
-        <div id="h-img-prev">
-          ${h.image ? `<img class="img-preview" src="/Images/${esc(h.image)}" style="width:120px;height:160px;object-fit:cover" />` : '<div class="img-preview-placeholder">No image</div>'}
-        </div>
-        <div>
-          <input type="hidden" id="h-img" value="${esc(h.image||'')}" />
-          <button class="btn btn-secondary btn-sm img-pick-btn" onclick="openImagePicker(fn=>{setHeroImage(fn)})">Choose image</button>
-          ${h.image ? `<button class="btn btn-ghost btn-sm img-pick-btn" onclick="clearHeroImage()">Remove</button>` : ''}
-        </div>
-      </div>
-    </div>
-    <div class="form-actions"><button class="btn btn-primary" onclick="saveHero()">Save Changes</button></div>`;
+/* ── Dirty state & status pill ─────────────────────────────────── */
+function markDirty() { if (!dirty) { dirty = true; renderStatus(); } }
+function warnUnsaved(e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } }
+window.addEventListener('beforeunload', warnUnsaved);
+
+function renderStatus() {
+  const pill = document.getElementById('status');
+  const btn = document.getElementById('saveBtn');
+  let state = 'idle', text = 'Everything is published';
+  if (saving) { state = 'pushing'; text = 'Saving…'; }
+  else if (dirty) { state = 'dirty'; text = 'Unsaved changes'; }
+  else if (!publishes) { state = 'local'; text = savedOnce ? 'Saved (not published)' : 'Not connected to the live site'; }
+  else if (savedOnce) { state = 'ok'; text = 'Published ✓'; }
+  pill.dataset.state = state;
+  pill.textContent = text;
+  pill.title = state === 'ok' ? 'The live site updates in about a minute.' : '';
+  btn.disabled = saving || !dirty;
+  btn.textContent = saving ? 'Saving…' : 'Save & publish';
 }
-function setHeroImage(fn) {
-  document.getElementById('h-img').value = fn;
-  document.getElementById('h-img-prev').innerHTML = `<img class="img-preview" src="/Images/${esc(fn)}" style="width:120px;height:160px;object-fit:cover" />`;
+
+async function save() {
+  if (saving || !dirty) return;
+  saving = true; renderStatus();
+  try {
+    const new_files = Object.fromEntries(Object.entries(pending).map(([name, p]) => [name, p.sha]));
+    const data = await api('PUT', '/api/content', { content, new_files });
+    // Keep editing the same objects (the form is bound to them); only take
+    // over what the server decides: the ids of new items.
+    for (const key of ['books', 'theatre_plays', 'films']) {
+      content[key].forEach((it, i) => { if (data.content[key][i]) it.id = data.content[key][i].id; });
+    }
+    uploads = data.uploads;
+    for (const name of Object.keys(new_files)) delete pending[name];
+    dirty = false; savedOnce = true;
+    toast(publishes ? 'Published. The live site updates in about a minute.' : 'Saved.');
+  } catch (e) {
+    toast(e.message, true);
+  }
+  saving = false; renderStatus();
 }
-function clearHeroImage() {
-  document.getElementById('h-img').value = '';
-  document.getElementById('h-img-prev').innerHTML = '<div class="img-preview-placeholder">No image</div>';
+document.getElementById('saveBtn').addEventListener('click', save);
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
+});
+
+/* ════════════════════════════════════════════════════════════════
+   Field builders — each returns a DOM node bound to obj[key].
+   ════════════════════════════════════════════════════════════════ */
+function autoGrow(ta) {
+  const fit = () => { ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight + 2) + 'px'; };
+  ta.addEventListener('input', fit);
+  requestAnimationFrame(fit);
 }
-function saveHero() {
-  saveSection('hero', {
-    tagline: val('h-tagline'),
-    bio: val('h-bio'),
-    image: val('h-img'),
+
+function wrap(label, control, hint) {
+  return h('div', { class: 'field' }, label && h('label', {}, label), control, hint && h('p', { class: 'hint' }, hint));
+}
+
+function text(obj, key, label, opt = {}) {
+  const input = h('input', {
+    type: opt.type || 'text', value: obj[key] || '', placeholder: opt.placeholder || '',
+    oninput: e => { obj[key] = e.target.value; markDirty(); if (opt.onchange) opt.onchange(); },
   });
+  return wrap(label, input, opt.hint);
 }
 
-/* ── Books ────────────────────────────────────────────────── */
-function renderBooks(el) {
-  const books = content.books || [];
-  el.innerHTML = `
-    <div class="page-header">
-      <div><h1 class="page-title">Books</h1><p class="page-sub">Manage book listings. Drag rows to reorder.</p></div>
-      <button class="btn btn-secondary" onclick="addBook()">+ Add Book</button>
-    </div>
-    <div class="item-list" id="bookList">
-      ${books.map((b, i) => bookListItem(b, i)).join('')}
-    </div>`;
+function area(obj, key, label, opt = {}) {
+  const ta = h('textarea', {
+    value: obj[key] || '', rows: opt.rows || 3, placeholder: opt.placeholder || '', class: opt.prose ? 'prose-input' : '',
+    oninput: e => { obj[key] = e.target.value; markDirty(); },
+  });
+  autoGrow(ta);
+  return wrap(label, ta, opt.hint);
 }
 
-function bookListItem(b, i) {
-  const thumb = b.image
-    ? `<img class="list-item-thumb" src="/Images/${esc(b.image)}" />`
-    : `<div class="list-item-thumb-ph"></div>`;
-  return `<div class="list-item" id="book-${i}">
-    <div class="list-item-header" onclick="toggleBook(${i})">
-      ${thumb}
-      <div class="list-item-label">${esc(b.title)}<div class="list-item-sub">${esc(b.label)}</div></div>
-      <div class="list-item-controls">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();moveBook(${i},-1)" title="Move up">&uarr;</button>
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();moveBook(${i},1)" title="Move down">&darr;</button>
-        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteBook(${i})">Delete</button>
-      </div>
-    </div>
-    <div class="list-item-body" id="book-body-${i}" style="display:none">
-      ${bookForm(b, i)}
-    </div>
-  </div>`;
+const RICH_HINT = 'Leave an empty line between paragraphs. *Stars* make italics; [text](https://…) makes a link.';
+
+/* A list of paragraphs edited as one text box. */
+function paragraphs(obj, key, label, opt = {}) {
+  const ta = h('textarea', {
+    class: 'prose-input', rows: 6, value: (obj[key] || []).join('\n\n'),
+    oninput: e => { obj[key] = e.target.value.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean); markDirty(); },
+  });
+  autoGrow(ta);
+  return wrap(label, ta, opt.hint || RICH_HINT);
 }
 
-function bookForm(b, i) {
-  const paragraphs = (b.paragraphs||[]).map((p, pi) => `
-    <div class="para-item" id="book-para-${i}-${pi}">
-      <textarea class="book-para" data-idx="${i}" data-pi="${pi}">${esc(p)}</textarea>
-      <button class="del-btn" onclick="deleteBookPara(${i},${pi})">✕</button>
-    </div>`).join('');
-
-  const details = (b.details||[]).map((d, di) => `
-    <div class="details-row" id="book-det-${i}-${di}">
-      <input value="${esc(d.key)}" placeholder="Label" class="book-det-key" data-i="${i}" data-di="${di}" />
-      <input value="${esc(d.value)}" placeholder="Value" class="book-det-val" data-i="${i}" data-di="${di}" />
-      <button class="del-btn" onclick="deleteBookDetail(${i},${di})">✕</button>
-    </div>`).join('');
-
-  return `
-    <div class="form-row">
-      <div class="form-group"><label>Title</label><input id="book-title-${i}" value="${esc(b.title||'')}" /></div>
-      <div class="form-group"><label>Genre / Label</label><input id="book-label-${i}" value="${esc(b.label||'')}" /></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Meta line 1</label><input id="book-meta1-${i}" value="${esc(b.meta_line1||'')}" /></div>
-      <div class="form-group"><label>Meta line 2</label><input id="book-meta2-${i}" value="${esc(b.meta_line2||'')}" /></div>
-    </div>
-    <div class="form-group">
-      <label>Cover Image</label>
-      <div class="img-pick-row">
-        <div id="book-img-prev-${i}">
-          ${b.image ? `<img class="img-preview" src="/Images/${esc(b.image)}" />` : '<div class="img-preview-placeholder">No image</div>'}
-        </div>
-        <div>
-          <input type="hidden" id="book-img-${i}" value="${esc(b.image||'')}" />
-          <button class="btn btn-secondary btn-sm img-pick-btn" onclick="openImagePicker(fn=>{setBookImage(${i},fn)})">Choose image</button>
-          ${b.image ? `<button class="btn btn-ghost btn-sm img-pick-btn" onclick="clearBookImage(${i})">Remove</button>` : ''}
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Description Paragraphs</label>
-      <div class="para-list" id="book-paras-${i}">${paragraphs}</div>
-      <button class="btn btn-ghost btn-sm" style="margin-top:0.4rem" onclick="addBookPara(${i})">+ Add paragraph</button>
-    </div>
-    <div class="form-group">
-      <label>Detail Rows</label>
-      <div class="details-editor" id="book-details-${i}">${details}</div>
-      <button class="btn btn-ghost btn-sm" style="margin-top:0.4rem" onclick="addBookDetail(${i})">+ Add detail row</button>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-primary" onclick="saveBook(${i})">Save Book</button>
-    </div>`;
+/* A list of short strings, one per line. */
+function lines(obj, key, label, hint) {
+  const ta = h('textarea', {
+    rows: 4, value: (obj[key] || []).join('\n'),
+    oninput: e => { obj[key] = e.target.value.split('\n').map(s => s.trim()).filter(Boolean); markDirty(); },
+  });
+  autoGrow(ta);
+  return wrap(label, ta, hint);
 }
 
-function toggleBook(i) {
-  const body = document.getElementById(`book-body-${i}`);
-  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+function toggle(obj, key, label, onchange) {
+  return h('label', { class: 'toggle' },
+    h('input', { type: 'checkbox', checked: !!obj[key], onchange: e => { obj[key] = e.target.checked; markDirty(); if (onchange) onchange(); } }),
+    label);
 }
 
-function saveBook(i) {
-  const books = [...(content.books||[])];
-  const paras = [...document.querySelectorAll(`#book-paras-${i} .book-para`)].map(t => t.value).filter(Boolean);
-  const details = [...document.querySelectorAll(`#book-details-${i} .details-row`)].map(row => ({
-    key: row.querySelector('.book-det-key').value,
-    value: row.querySelector('.book-det-val').value,
-  })).filter(d => d.key || d.value);
-  books[i] = {
-    ...books[i],
-    title: val(`book-title-${i}`),
-    label: val(`book-label-${i}`),
-    meta_line1: val(`book-meta1-${i}`),
-    meta_line2: val(`book-meta2-${i}`),
-    image: val(`book-img-${i}`),
-    paragraphs: paras,
-    details,
+function row(...fields) { return h('div', { class: 'field-row' }, fields); }
+
+function image(obj, key, label, hint) {
+  const box = h('div', { class: 'field' });
+  const draw = () => {
+    const name = obj[key];
+    const missing = name && !uploadExists(name);
+    fill(box, 
+      h('span', { class: 'field-label' }, label),
+      h('div', { class: 'img-field' },
+        name && !missing
+          ? img(name, { class: 'img-thumb' })
+          : h('div', { class: 'img-thumb img-empty' }, missing ? 'File missing' : 'No image'),
+        h('div', {},
+          missing && h('p', { class: 'warn' }, 'The file “' + name + '” is no longer on the server. Please choose the image again.'),
+          name && !missing && h('p', { class: 'img-name' }, name),
+          h('div', { class: 'img-actions' },
+            h('button', { class: 'btn btn-sm', type: 'button', onclick: () => pickFile('image', name, picked => { obj[key] = picked; markDirty(); draw(); refreshItemHeads(); }) }, name ? 'Change image' : 'Choose image'),
+            name && h('button', { class: 'btn btn-sm btn-danger', type: 'button', onclick: () => { obj[key] = ''; markDirty(); draw(); refreshItemHeads(); } }, 'Remove')),
+          hint && h('p', { class: 'hint' }, hint))));
   };
-  saveSection('books', books);
+  draw();
+  return box;
 }
 
-function addBook() {
-  const books = [...(content.books||[])];
-  books.push({ id: 'book-'+Date.now(), label:'', title:'New Book', image:'', meta_line1:'', meta_line2:'', paragraphs:[], details:[] });
-  content.books = books;
-  renderBooks(document.getElementById('main'));
-  setTimeout(() => toggleBook(books.length - 1), 50);
+/* A link that can be typed or filled by uploading a file (PDF). */
+function fileLink(obj, key, label, hint) {
+  const input = h('input', { type: 'text', value: obj[key] || '', placeholder: 'https://…  or upload a PDF', oninput: e => { obj[key] = e.target.value; markDirty(); } });
+  const btn = h('button', { class: 'btn btn-sm', type: 'button', style: 'margin-top:0.5rem', onclick: () => pickFile('file', '', picked => { obj[key] = '/Images/' + encodeURIComponent(picked); input.value = obj[key]; markDirty(); }) }, 'Upload / choose a file');
+  return h('div', { class: 'field' }, h('label', {}, label), input, btn, hint && h('p', { class: 'hint' }, hint));
 }
 
-function deleteBook(i) {
-  if (!confirm('Delete this book?')) return;
-  const books = [...(content.books||[])];
-  books.splice(i, 1);
-  saveSection('books', books);
-  renderBooks(document.getElementById('main'));
+/* Table-like editor for a list of small objects. */
+function rows(list, columns, opt = {}) {
+  const box = h('div', { class: 'field' });
+  const tpl = columns.map(c => (c.width || '1fr')).join(' ') + ' auto';
+  const draw = () => {
+    const table = h('div', { class: 'rows' },
+      h('div', { class: 'rows-head', style: 'grid-template-columns:' + tpl }, columns.map(c => h('span', {}, c.label)), h('span', {})),
+      list.length ? list.map((item, i) => h('div', { class: 'rows-row', style: 'grid-template-columns:' + tpl },
+        columns.map(c => {
+          const input = h(c.long ? 'textarea' : 'input', {
+            type: c.long ? null : 'text', rows: c.long ? 1 : null, value: item[c.key] || '', placeholder: c.label, 'aria-label': c.label,
+            oninput: e => { item[c.key] = e.target.value; markDirty(); },
+          });
+          if (c.long) autoGrow(input);
+          return input;
+        }),
+        h('div', { class: 'rows-ctrl' },
+          h('button', { class: 'icon-btn', type: 'button', title: 'Move up', disabled: i === 0, onclick: () => move(i, -1) }, '↑'),
+          h('button', { class: 'icon-btn', type: 'button', title: 'Move down', disabled: i === list.length - 1, onclick: () => move(i, 1) }, '↓'),
+          h('button', { class: 'icon-btn danger', type: 'button', title: 'Delete row', onclick: () => { list.splice(i, 1); markDirty(); draw(); } }, '✕'))))
+      : h('div', { class: 'rows-empty' }, opt.empty || 'Nothing here yet.'));
+    fill(box, 
+      opt.label && h('span', { class: 'field-label' }, opt.label),
+      table,
+      h('button', { class: 'btn btn-sm add-row', type: 'button', onclick: () => {
+        list.push(Object.fromEntries(columns.map(c => [c.key, '']))); markDirty(); draw();
+        const inputs = box.querySelectorAll('.rows-row:last-child input, .rows-row:last-child textarea');
+        if (inputs[0]) inputs[0].focus();
+      } }, '+ ' + (opt.add || 'Add row')),
+      opt.hint && h('p', { class: 'hint' }, opt.hint));
+  };
+  const move = (i, d) => { const [it] = list.splice(i, 1); list.splice(i + d, 0, it); markDirty(); draw(); };
+  draw();
+  return box;
 }
 
-function moveBook(i, dir) {
-  const books = [...(content.books||[])];
-  const j = i + dir;
-  if (j < 0 || j >= books.length) return;
-  [books[i], books[j]] = [books[j], books[i]];
-  saveSection('books', books);
-  renderBooks(document.getElementById('main'));
+function card(title, sub, ...children) {
+  return h('section', { class: 'card' }, title && h('h2', { class: 'card-title' }, title), sub && h('p', { class: 'card-sub' }, sub), children);
 }
 
-function setBookImage(i, filename) {
-  document.getElementById(`book-img-${i}`).value = filename;
-  document.getElementById(`book-img-prev-${i}`).innerHTML =
-    `<img class="img-preview" src="/Images/${esc(filename)}" />`;
-}
-function clearBookImage(i) {
-  document.getElementById(`book-img-${i}`).value = '';
-  document.getElementById(`book-img-prev-${i}`).innerHTML = '<div class="img-preview-placeholder">No image</div>';
+/* ── Works: books, plays, films ────────────────────────────────── */
+let refreshItemHeads = () => {};
+
+function works(list, opt) {
+  const box = h('div', {});
+  const draw = () => {
+    fill(box, 
+      h('div', { class: 'list-head' },
+        h('h2', {}, opt.title),
+        h('button', { class: 'btn btn-sm btn-dark', type: 'button', onclick: () => {
+          const item = { id: '', visible: true, label: '', title: '', image: '', meta_line1: '', meta_line2: '', summary: '', paragraphs: [], details: [], links: [] };
+          list.unshift(item); openItems.add(item); markDirty(); draw();
+          const first = box.querySelector('.item-body input'); if (first) first.focus();
+        } }, '+ Add ' + opt.noun)),
+      list.length ? list.map((item, i) => workItem(item, i)) : h('p', { class: 'card-sub' }, 'No ' + opt.noun + 's yet.'));
+  };
+  const move = (i, d) => { const [it] = list.splice(i, 1); list.splice(i + d, 0, it); markDirty(); draw(); };
+
+  function workItem(item, i) {
+    const isOpen = openItems.has(item);
+    const thumbOk = item.image && uploadExists(item.image);
+    const el = h('div', { class: 'item' + (item.visible ? '' : ' is-hidden') },
+      h('div', { class: 'item-head' },
+        h('button', { class: 'item-open', type: 'button', 'aria-expanded': String(isOpen), onclick: () => { isOpen ? openItems.delete(item) : openItems.add(item); draw(); } },
+          thumbOk ? img(item.image, { class: 'item-thumb' }) : h('span', { class: 'item-thumb' }),
+          h('span', { style: 'min-width:0' },
+            h('span', { class: 'item-name', style: 'display:block' }, item.title || 'Untitled', !item.visible && h('span', { class: 'badge' }, 'Hidden')),
+            h('span', { class: 'item-sub', style: 'display:block' }, [item.label, item.meta_line1].filter(Boolean).join(' · ') || (isOpen ? 'Editing' : 'Click to edit')))),
+        h('div', { class: 'item-ctrl' },
+          h('button', { class: 'icon-btn', type: 'button', title: 'Move up', disabled: i === 0, onclick: () => move(i, -1) }, '↑'),
+          h('button', { class: 'icon-btn', type: 'button', title: 'Move down', disabled: i === list.length - 1, onclick: () => move(i, 1) }, '↓'),
+          h('button', { class: 'btn btn-sm', type: 'button', onclick: () => { isOpen ? openItems.delete(item) : openItems.add(item); draw(); } }, isOpen ? 'Close' : 'Edit'))),
+      isOpen && h('div', { class: 'item-body' },
+        row(text(item, 'title', 'Title', { onchange: () => { el.querySelector('.item-name').firstChild.textContent = item.title || 'Untitled'; } }),
+            text(item, 'label', 'Small label above the title', { placeholder: opt.labelExample })),
+        image(item, 'image', opt.imageLabel),
+        row(text(item, 'meta_line1', 'Line under the title', { placeholder: opt.metaExample }),
+            text(item, 'meta_line2', 'Second line (optional)')),
+        area(item, 'summary', 'Short summary (shown in the list)', { rows: 2, hint: 'Optional. If empty, the beginning of the full text is shown.' }),
+        paragraphs(item, 'paragraphs', 'Full text (shown on the ' + opt.noun + '’s own page)'),
+        rows(item.details, [{ key: 'key', label: 'Name', width: '11rem' }, { key: 'value', label: 'Value', long: true }],
+          { label: 'Details', add: 'Add detail', empty: 'For example: Director, Year, Publisher, ISBN, Awards…', hint: opt.detailsHint }),
+        rows(item.links, [{ key: 'label', label: 'Button text', width: '12rem' }, { key: 'url', label: 'Link (https://…)' }],
+          { label: 'Buttons / links', add: 'Add link', empty: 'For example: ' + opt.linkExample }),
+        h('div', { class: 'item-foot' },
+          toggle(item, 'visible', 'Show on the website', draw),
+          h('button', { class: 'btn btn-sm btn-danger', type: 'button', onclick: () => {
+            if (confirm('Delete “' + (item.title || 'Untitled') + '”? This cannot be undone after saving.')) { list.splice(i, 1); markDirty(); draw(); }
+          } }, 'Delete ' + opt.noun))));
+    return el;
+  }
+  refreshItemHeads = draw;
+  draw();
+  return box;
 }
 
-function addBookPara(i) {
-  const wrap = document.getElementById(`book-paras-${i}`);
-  const pi = wrap.children.length;
-  const div = document.createElement('div');
-  div.className = 'para-item';
-  div.id = `book-para-${i}-${pi}`;
-  div.innerHTML = `<textarea class="book-para" data-idx="${i}" data-pi="${pi}"></textarea><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
-  wrap.appendChild(div);
+/* ════════════════════════════════════════════════════════════════
+   Pages
+   ════════════════════════════════════════════════════════════════ */
+function sectionCard(key, extra) {
+  const s = content.sections[key];
+  return card('Section heading', null,
+    row(text(s, 'heading', 'Big heading'), text(s, 'nav', 'Name in the top menu')),
+    key !== 'about' && key !== 'contact' && area(s, 'note', 'Short line next to the heading', { rows: 2 }),
+    extra,
+    h('div', { class: 'field' }, toggle(s, 'visible', 'Show this section on the website')));
 }
 
-function deleteBookPara(i, pi) {
-  document.getElementById(`book-para-${i}-${pi}`).remove();
+const PAGES = [
+  { group: 'Content' },
+  { id: 'home', name: 'Home / intro', sub: 'The first screen visitors see: the name, a short line and the photo.', build: () => [
+    card('Intro', null,
+      text(content.site, 'name', 'Name', { hint: 'Shown as the big title, in the top-left corner and in the footer.' }),
+      text(content.hero, 'tagline', 'Line under the name', { placeholder: 'Writer · Playwright · Actor' }),
+      area(content.hero, 'bio', 'Short introduction', { rows: 4, prose: true, hint: '*Stars* make italics; [text](https://…) makes a link.' }),
+      image(content.hero, 'image', 'Photo', 'Shown in black and white. A vertical portrait works best.')),
+  ] },
+  { id: 'books', name: 'Books', sub: 'Each book has a row in the list and its own page with the full text and details.', build: () => [
+    sectionCard('books'),
+    works(content.books, { title: 'Books', noun: 'book', imageLabel: 'Cover', labelExample: 'Novella', metaExample: 'Published by …, 2025',
+      linkExample: 'Buy book, Read English sample', detailsHint: 'Shown as a table on the book’s page.' }),
+    card('Rights & samples strip', 'The grey strip under the book list. It shows the contact e-mail automatically.',
+      row(text(content.rights_note, 'title', 'Title'), h('div', { class: 'field' }, h('span', { class: 'field-label' }, ' '), toggle(content.rights_note, 'visible', 'Show the strip'))),
+      area(content.rights_note, 'text', 'Text on the left', { rows: 2 }),
+      area(content.rights_note, 'inquiry_text', 'Text in the middle', { rows: 2 })),
+  ] },
+  { id: 'theatre', name: 'Theatre', sub: 'Plays you wrote, and your acting credits on stage.', build: () => [
+    sectionCard('theatre'),
+    works(content.theatre_plays, { title: 'Plays', noun: 'play', imageLabel: 'Poster', labelExample: 'Play', metaExample: 'Play, 2025',
+      linkExample: 'Tickets, Trailer, Review', detailsHint: 'The first three are also shown next to the play in the list.' }),
+    card('Stage acting credits', null,
+      rows(content.theatre_credits, [{ key: 'title', label: 'Production' }, { key: 'venue', label: 'Theatre' }, { key: 'detail', label: 'Year · Role' }], { add: 'Add credit' })),
+    card('Labels in this section', null,
+      row(text(content.sections.theatre, 'plays_label', 'Small label above the plays'), text(content.sections.theatre, 'credits_label', 'Small label above the credits')),
+      row(text(content.sections.theatre, 'credits_heading', 'Credits heading'), text(content.sections.theatre, 'credits_note', 'Line next to the credits heading')),
+      text(content.sections.theatre, 'credits_footnote', 'Note under the credits')),
+  ] },
+  { id: 'cinema', name: 'Cinema', sub: 'Films you wrote or starred in, and other screen credits.', build: () => [
+    sectionCard('cinema'),
+    works(content.films, { title: 'Films', noun: 'film', imageLabel: 'Poster', labelExample: 'Featured film', metaExample: 'Short film, 2025',
+      linkExample: 'Watch trailer, IMDb', detailsHint: 'The first three are also shown next to the film in the list.' }),
+    card('Screen acting credits', null,
+      rows(content.cinema_credits, [{ key: 'title', label: 'Film' }, { key: 'venue', label: 'Directed by' }, { key: 'year', label: 'Year', width: '6rem' }], { add: 'Add credit' })),
+    card('Labels in this section', null,
+      row(text(content.sections.cinema, 'films_label', 'Small label above the films'), text(content.sections.cinema, 'credits_label', 'Small label above the credits')),
+      text(content.sections.cinema, 'credits_footnote', 'Note under the credits'),
+      row(text(content.sections.cinema, 'credits_link_label', 'Link text', { placeholder: 'IMDb' }), text(content.sections.cinema, 'credits_link_url', 'Link address', { placeholder: 'https://www.imdb.com/name/…' }))),
+  ] },
+  { id: 'press', name: 'Press', sub: 'Articles, reviews and interviews. Rows with a link open the article in a new tab.', build: () => [
+    sectionCard('press'),
+    card('Press list', null,
+      rows(content.press, [{ key: 'year', label: 'Year', width: '5rem' }, { key: 'text', label: 'Title' }, { key: 'url', label: 'Link (https://…)' }], { add: 'Add article' })),
+  ] },
+  { id: 'about', name: 'About & CV', sub: 'The biography, with optional photo, highlights and a CV to download.', build: () => [
+    sectionCard('about'),
+    card('Biography', null,
+      area(content.about, 'intro', 'Opening line (shown large, next to the heading)', { rows: 2, prose: true }),
+      paragraphs(content.about, 'paragraphs', 'Biography'),
+      area(content.about, 'closing', 'Closing line (optional, shown slightly larger)', { rows: 2, prose: true }),
+      image(content.about, 'image', 'Photo next to the biography (optional)')),
+    card('Selected highlights', 'A short timeline shown beside the biography. Leave empty to hide it.',
+      rows(content.about.timeline, [{ key: 'year', label: 'Year', width: '5rem' }, { key: 'text', label: 'What happened' }], { add: 'Add highlight' }),
+      text(content.sections.about, 'highlights_label', 'Title of this box')),
+    card('Fields', 'For example: Prose, Drama, Poetry. Leave empty to hide it.',
+      lines(content.about, 'fields', 'One per line'),
+      text(content.sections.about, 'fields_label', 'Title of this box')),
+    card('CV', 'Adds a download link under the biography. Leave empty to hide it.',
+      fileLink(content.cv, 'download_url', 'CV file or link'),
+      text(content.sections.about, 'cv_label', 'Link text', { placeholder: 'Download CV' })),
+  ] },
+  { id: 'contact', name: 'Contact', sub: 'How people reach you.', build: () => [
+    sectionCard('contact'),
+    card('Contact details', null,
+      text(content.contact, 'email', 'E-mail', { type: 'email', hint: 'Also shown in the strip under the books.' }),
+      area(content.contact, 'description', 'Text next to the heading', { rows: 2 }),
+      rows(content.contact.links, [{ key: 'label', label: 'Name', width: '12rem' }, { key: 'url', label: 'Link (https://…)' }],
+        { label: 'Other links', add: 'Add link', empty: 'For example: Instagram, Facebook, IMDb, agent…' })),
+  ] },
+  { group: 'Website' },
+  { id: 'menu', name: 'Menu & order', sub: 'Choose which sections appear on the page and in what order.', build: () => [menuPage()] },
+  { id: 'site', name: 'Site settings', sub: 'Things outside the page itself: the footer, and how the site looks on Google and when shared.', build: () => [
+    card('Footer', null, text(content.site, 'footer_text', 'Text on the right of the footer')),
+    card('Google & sharing', null,
+      text(content.site, 'seo_title', 'Title in the browser tab and on Google'),
+      area(content.site, 'seo_description', 'Description on Google', { rows: 2, hint: 'One or two sentences.' }),
+      text(content.site, 'url', 'Website address', { placeholder: 'https://…', hint: 'The public address of the site. Needed for the preview image when the link is shared.' }),
+      image(content.site, 'share_image', 'Image shown when the link is shared (optional)', 'If empty, the home photo is used.')),
+  ] },
+  { id: 'images', name: 'Images & files', sub: 'Everything you have uploaded. Images in use on the site cannot be deleted.', build: () => [libraryPage()] },
+  { id: 'account', name: 'Account', sub: '', build: () => [accountPage()] },
+];
+
+function menuPage() {
+  const box = h('section', { class: 'card' });
+  const names = { books: 'Books', theatre: 'Theatre', cinema: 'Cinema', press: 'Press', about: 'About & CV', contact: 'Contact' };
+  const order = content.section_order;
+  const draw = () => fill(box, 
+    h('h2', { class: 'card-title' }, 'Sections'),
+    h('p', { class: 'card-sub' }, 'The intro with your name and photo always comes first.'),
+    order.map((key, i) => {
+      const s = content.sections[key];
+      return h('div', { class: 'item' + (s.visible ? '' : ' is-hidden') },
+        h('div', { class: 'item-head' },
+          h('span', { style: 'flex:1;min-width:0' },
+            h('span', { class: 'item-name', style: 'display:block' }, s.heading || names[key], !s.visible && h('span', { class: 'badge' }, 'Hidden')),
+            h('span', { class: 'item-sub', style: 'display:block' }, names[key] + ' · menu: ' + (s.nav || s.heading))),
+          h('div', { class: 'item-ctrl' },
+            h('button', { class: 'icon-btn', type: 'button', title: 'Move up', disabled: i === 0, onclick: () => move(i, -1) }, '↑'),
+            h('button', { class: 'icon-btn', type: 'button', title: 'Move down', disabled: i === order.length - 1, onclick: () => move(i, 1) }, '↓'),
+            h('button', { class: 'btn btn-sm', type: 'button', onclick: () => { s.visible = !s.visible; markDirty(); draw(); } }, s.visible ? 'Hide' : 'Show'),
+            h('button', { class: 'btn btn-sm', type: 'button', onclick: () => go(key) }, 'Edit'))));
+    }));
+  const move = (i, d) => { const [k] = order.splice(i, 1); order.splice(i + d, 0, k); markDirty(); draw(); };
+  draw();
+  return box;
 }
 
-function addBookDetail(i) {
-  const wrap = document.getElementById(`book-details-${i}`);
-  const di = wrap.children.length;
-  const div = document.createElement('div');
-  div.className = 'details-row';
-  div.id = `book-det-${i}-${di}`;
-  div.innerHTML = `<input value="" placeholder="Label" class="book-det-key" data-i="${i}" data-di="${di}" /><input value="" placeholder="Value" class="book-det-val" data-i="${i}" data-di="${di}" /><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
-  wrap.appendChild(div);
+function libraryGrid(kind, opt = {}) {
+  const grid = h('div', { class: 'grid' });
+  const list = uploads.filter(u => !kind || u.kind === kind);
+  if (!list.length) return h('p', { class: 'card-sub' }, 'Nothing uploaded yet.');
+  for (const u of list) {
+    const visual = u.kind === 'image' ? img(u.name, { loading: 'lazy' }) : h('span', { class: 'tile-file' }, u.name.split('.').pop().toUpperCase());
+    const cap = h('span', { class: 'tile-cap', style: 'display:block' }, u.name);
+    if (opt.onpick) {
+      grid.append(h('button', { class: 'tile' + (opt.selected === u.name ? ' selected' : ''), type: 'button', onclick: () => opt.onpick(u.name) }, visual, cap));
+    } else {
+      grid.append(h('div', { class: 'tile' }, visual, cap,
+        u.used ? h('span', { class: 'tile-used' }, 'In use')
+               : pending[u.name] ? h('span', { class: 'tile-used' }, 'Not saved yet')
+               : h('button', { class: 'icon-btn danger tile-del', type: 'button', title: 'Delete', onclick: async () => {
+                   if (!confirm('Delete “' + u.name + '”?')) return;
+                   try { const d = await api('DELETE', '/api/images/' + encodeURIComponent(u.name)); uploads = d.uploads.concat(uploads.filter(x => pending[x.name])); render(); toast('Deleted.'); }
+                   catch (e) { toast(e.message, true); }
+                 } }, '✕')));
+    }
+  }
+  return grid;
 }
 
-function deleteBookDetail(i, di) {
-  document.getElementById(`book-det-${i}-${di}`).remove();
+/* Photos are shrunk here in the browser: the server accepts 4 MB at most. */
+const MAX_UPLOAD = 4 * 1024 * 1024;
+async function prepareUpload(file) {
+  const tooBig = () => new Error('This file is larger than 4 MB. Please make it smaller and try again.');
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { if (file.size > MAX_UPLOAD) throw tooBig(); return file; }
+  let bmp;
+  try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch (e) { if (file.size > MAX_UPLOAD) throw tooBig(); return file; }
+  const scale = Math.min(1, 2400 / Math.max(bmp.width, bmp.height));
+  if (scale === 1 && file.size <= 1.5 * 1024 * 1024) return file;
+  const canvas = h('canvas', { width: Math.round(bmp.width * scale), height: Math.round(bmp.height * scale) });
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.86));
+  if (!blob || blob.size > MAX_UPLOAD) throw tooBig();
+  return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' });
 }
 
-/* ── Theatre Plays ────────────────────────────────────────── */
-function renderTheatrePlays(el) {
-  const plays = content.theatre_plays || [];
-  el.innerHTML = `
-    <div class="page-header">
-      <div><h1 class="page-title">Theatre &mdash; Plays</h1><p class="page-sub">Playwright work shown in the Theatre section.</p></div>
-      <button class="btn btn-secondary" onclick="addPlay()">+ Add Play</button>
-    </div>
-    <div class="item-list" id="playList">
-      ${plays.map((p, i) => playListItem(p, i)).join('')}
-    </div>`;
+function uploadButton(kind, ondone) {
+  const input = h('input', { type: 'file', multiple: true, hidden: true, accept: kind === 'file' ? '.pdf,application/pdf' : kind === 'image' ? 'image/*' : 'image/*,.pdf' });
+  const btn = h('button', { class: 'btn btn-dark', type: 'button', onclick: () => input.click() }, 'Upload from this device');
+  input.addEventListener('change', async () => {
+    const files = [...input.files]; if (!files.length) return;
+    btn.disabled = true; let last = null;
+    for (const [i, original] of files.entries()) {
+      btn.textContent = 'Uploading ' + (i + 1) + ' of ' + files.length + '…';
+      try {
+        const file = await prepareUpload(original);
+        const fd = new FormData(); fd.append('file', file, file.name);
+        const d = await api('POST', '/api/upload', fd);
+        // Staged on the server; it joins the site at the next "Save & publish".
+        if (!uploads.some(u => u.name === d.filename)) {
+          pending[d.filename] = { sha: d.sha, url: URL.createObjectURL(file) };
+          uploads.push({ name: d.filename, kind: d.kind, size: d.size, used: false });
+          markDirty();
+        }
+        last = d.filename;
+      } catch (e) { toast(original.name + ': ' + e.message, true); }
+    }
+    btn.disabled = false; btn.textContent = 'Upload from this device'; input.value = '';
+    if (last) ondone(last, files.length);
+  });
+  return h('span', {}, btn, input);
 }
 
-function playListItem(p, i) {
-  const thumb = p.image ? `<img class="list-item-thumb" src="/Images/${esc(p.image)}" />` : `<div class="list-item-thumb-ph"></div>`;
-  return `<div class="list-item" id="play-${i}">
-    <div class="list-item-header" onclick="togglePlay(${i})">
-      ${thumb}
-      <div class="list-item-label">${esc(p.title)}<div class="list-item-sub">${esc(p.year)}</div></div>
-      <div class="list-item-controls">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();movePlay(${i},-1)">&uarr;</button>
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();movePlay(${i},1)">&darr;</button>
-        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deletePlay(${i})">Delete</button>
-      </div>
-    </div>
-    <div class="list-item-body" id="play-body-${i}" style="display:none">
-      ${playForm(p, i)}
-    </div>
-  </div>`;
+function libraryPage() {
+  return h('section', { class: 'card' },
+    h('div', { class: 'upload-bar' }, uploadButton(null, () => { render(); toast('Uploaded. Press “Save & publish” to keep it.'); }),
+      h('span', { class: 'hint', style: 'margin:0' }, 'JPG, PNG, WebP, GIF or PDF. Large photos are resized automatically; other files can be up to 4 MB.')),
+    libraryGrid(null));
 }
 
-function playForm(p, i) {
-  const details = (p.details||[]).map((d, di) => `
-    <div class="details-row" id="play-det-${i}-${di}">
-      <input value="${esc(d.key)}" placeholder="Label" class="play-det-key" />
-      <input value="${esc(d.value)}" placeholder="Value" class="play-det-val" />
-      <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-    </div>`).join('');
-  return `
-    <div class="form-row">
-      <div class="form-group"><label>Title</label><input id="play-title-${i}" value="${esc(p.title||'')}" /></div>
-      <div class="form-group"><label>Year / Label</label><input id="play-year-${i}" value="${esc(p.year||'')}" /></div>
-    </div>
-    <div class="form-group">
-      <label>Poster Image</label>
-      <div class="img-pick-row">
-        <div id="play-img-prev-${i}">
-          ${p.image ? `<img class="img-preview" src="/Images/${esc(p.image)}" />` : '<div class="img-preview-placeholder">No image</div>'}
-        </div>
-        <div>
-          <input type="hidden" id="play-img-${i}" value="${esc(p.image||'')}" />
-          <button class="btn btn-secondary btn-sm img-pick-btn" onclick="openImagePicker(fn=>{setPlayImage(${i},fn)})">Choose image</button>
-        </div>
-      </div>
-    </div>
-    <div class="form-group"><label>Description</label><textarea id="play-desc-${i}" style="min-height:90px">${esc(p.description||'')}</textarea></div>
-    <div class="form-group">
-      <label>Detail Rows</label>
-      <div class="details-editor" id="play-details-${i}">${details}</div>
-      <button class="btn btn-ghost btn-sm" style="margin-top:0.4rem" onclick="addPlayDetail(${i})">+ Add detail row</button>
-    </div>
-    <div class="form-actions"><button class="btn btn-primary" onclick="savePlay(${i})">Save Play</button></div>`;
+/* Modal to choose (or upload) an image / file. */
+function pickFile(kind, selected, onpick) {
+  const body = h('div', { class: 'modal-body' });
+  const close = () => { overlay.remove(); document.removeEventListener('keydown', onKey); };
+  const choose = name => { close(); onpick(name); };
+  const draw = () => fill(body, 
+    h('div', { class: 'upload-bar' }, uploadButton(kind, (name, count) => { count === 1 ? choose(name) : draw(); }),
+      h('span', { class: 'hint', style: 'margin:0' }, kind === 'file' ? 'PDF files.' : 'Or pick one you uploaded before:')),
+    libraryGrid(kind, { onpick: choose, selected }));
+  const overlay = h('div', { class: 'overlay', onclick: e => { if (e.target === overlay) close(); } },
+    h('div', { class: 'modal', role: 'dialog', 'aria-modal': 'true' },
+      h('div', { class: 'modal-head' }, h('strong', {}, kind === 'file' ? 'Choose a file' : 'Choose an image'),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Close', onclick: close }, '✕')),
+      body));
+  const onKey = e => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  draw();
+  document.body.append(overlay);
 }
 
-function togglePlay(i) { const b = document.getElementById(`play-body-${i}`); b.style.display = b.style.display==='none'?'block':'none'; }
-function addPlay() {
-  const plays = [...(content.theatre_plays||[])];
-  plays.push({ id:'play-'+Date.now(), title:'New Play', year:'', image:'', description:'', details:[] });
-  content.theatre_plays = plays;
-  renderTheatrePlays(document.getElementById('main'));
-  setTimeout(()=>togglePlay(plays.length-1),50);
-}
-function deletePlay(i) {
-  if (!confirm('Delete this play?')) return;
-  const plays=[...(content.theatre_plays||[])]; plays.splice(i,1);
-  saveSection('theatre_plays',plays); renderTheatrePlays(document.getElementById('main'));
-}
-function movePlay(i,dir) {
-  const plays=[...(content.theatre_plays||[])]; const j=i+dir;
-  if(j<0||j>=plays.length) return;
-  [plays[i],plays[j]]=[plays[j],plays[i]];
-  saveSection('theatre_plays',plays); renderTheatrePlays(document.getElementById('main'));
-}
-function savePlay(i) {
-  const plays=[...(content.theatre_plays||[])];
-  const details=[...document.querySelectorAll(`#play-details-${i} .details-row`)].map(r=>({ key:r.querySelector('.play-det-key').value, value:r.querySelector('.play-det-val').value })).filter(d=>d.key||d.value);
-  plays[i]={ ...plays[i], title:val(`play-title-${i}`), year:val(`play-year-${i}`), image:val(`play-img-${i}`), description:val(`play-desc-${i}`), details };
-  saveSection('theatre_plays',plays);
-}
-function setPlayImage(i,fn) { document.getElementById(`play-img-${i}`).value=fn; document.getElementById(`play-img-prev-${i}`).innerHTML=`<img class="img-preview" src="/Images/${esc(fn)}" />`; }
-function addPlayDetail(i) {
-  const w=document.getElementById(`play-details-${i}`); const div=document.createElement('div'); div.className='details-row';
-  div.innerHTML=`<input value="" placeholder="Label" class="play-det-key" /><input value="" placeholder="Value" class="play-det-val" /><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
-  w.appendChild(div);
+function accountPage() {
+  const pw = { current: '', next: '', again: '' };
+  const publishInfo = card('Publishing', null,
+    h('p', { class: 'card-sub', style: 'margin:0' },
+      publishes
+        ? 'When you press “Save & publish”, the changes are sent to the live website. It updates in about a minute.'
+        : 'This editor is not connected to the live website (GITHUB_TOKEN is missing). Changes are saved here only.'));
+  if (hosted) {
+    return h('div', {}, publishInfo,
+      card('Password', null, h('p', { class: 'card-sub', style: 'margin:0' }, 'The password for this editor is set in the Vercel project settings (ADMIN_PASSWORD_HASH). Ask whoever set up the site to change it.')),
+      h('a', { class: 'btn', href: '/admin/logout' }, 'Sign out'));
+  }
+  return h('div', {}, publishInfo,
+    card('Change password', null,
+      text(pw, 'current', 'Current password', { type: 'password' }),
+      row(text(pw, 'next', 'New password', { type: 'password' }), text(pw, 'again', 'New password again', { type: 'password' })),
+      h('button', { class: 'btn btn-dark', type: 'button', onclick: async () => {
+        if (pw.next !== pw.again) return toast('The new passwords do not match.', true);
+        try { await api('POST', '/api/change-password', { current: pw.current, new: pw.next }); toast('Password changed.'); render(); }
+        catch (e) { toast(e.message, true); }
+      } }, 'Change password')),
+    h('a', { class: 'btn', href: '/admin/logout' }, 'Sign out'));
 }
 
-/* ── Theatre Credits ──────────────────────────────────────── */
-function renderTheatreCredits(el) {
-  const credits = content.theatre_credits || [];
-  el.innerHTML = `
-    <div class="page-header">
-      <div><h1 class="page-title">Theatre &mdash; Acting Credits</h1><p class="page-sub">Stage acting credits table.</p></div>
-    </div>
-    <table class="table-editor" id="tc-table">
-      <thead><tr><th>Production Title</th><th>Venue</th><th>Detail (year &middot; role)</th><th class="ctrl-col"></th></tr></thead>
-      <tbody>
-        ${credits.map((c,i)=>`<tr>
-          <td><input value="${esc(c.title)}" class="tc-title" /></td>
-          <td><input value="${esc(c.venue)}" class="tc-venue" /></td>
-          <td><input value="${esc(c.detail)}" class="tc-detail" /></td>
-          <td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-    <div class="form-actions" style="margin-top:0.75rem">
-      <button class="btn btn-secondary" onclick="addTheatreCredit()">+ Add row</button>
-      <button class="btn btn-primary" onclick="saveTheatreCredits()">Save Changes</button>
-    </div>`;
-}
-function addTheatreCredit() {
-  const tbody = document.querySelector('#tc-table tbody'); const tr=document.createElement('tr');
-  tr.innerHTML=`<td><input value="" class="tc-title" /></td><td><input value="" class="tc-venue" /></td><td><input value="" class="tc-detail" /></td><td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>`;
-  tbody.appendChild(tr);
-}
-function saveTheatreCredits() {
-  const rows=[...document.querySelectorAll('#tc-table tbody tr')].map(r=>({ title:r.querySelector('.tc-title').value, venue:r.querySelector('.tc-venue').value, detail:r.querySelector('.tc-detail').value })).filter(r=>r.title||r.venue);
-  saveSection('theatre_credits',rows);
+/* ── Navigation & render ───────────────────────────────────────── */
+function go(id) { currentPage = id; history.replaceState(null, '', '#' + id); render(); document.getElementById('main').scrollTop = 0; }
+
+function render() {
+  const wasDirty = dirty;
+  const page = PAGES.find(p => p.id === currentPage) || PAGES.find(p => p.id);
+  currentPage = page.id;
+  fill(document.getElementById('sidebar'), ...PAGES.map(p => p.group
+    ? h('div', { class: 'side-label' }, p.group)
+    : h('button', { class: 'side-item' + (p.id === currentPage ? ' active' : ''), type: 'button', onclick: () => go(p.id) }, p.name)));
+  refreshItemHeads = () => {};
+  fill(document.getElementById('main'), h('div', { class: 'page' },
+    h('h1', { class: 'page-title' }, page.name),
+    h('p', { class: 'page-sub' }, page.sub),
+    page.build()));
+  dirty = wasDirty;   // building a page never counts as an edit
+  renderStatus();
 }
 
-/* ── Cinema ───────────────────────────────────────────────── */
-function renderCinema(el) {
-  const film = content.cinema_featured || {};
-  const credits = content.cinema_credits || [];
-  const details = (film.details||[]).map((d,di)=>`
-    <div class="details-row" id="film-det-${di}">
-      <input value="${esc(d.key)}" placeholder="Label" class="film-det-key" />
-      <input value="${esc(d.value)}" placeholder="Value" class="film-det-val" />
-      <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-    </div>`).join('');
-  const paragraphs=(film.paragraphs||[]).map((p,pi)=>`
-    <div class="para-item" id="film-para-${pi}">
-      <textarea class="film-para">${esc(p)}</textarea>
-      <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-    </div>`).join('');
+document.getElementById('logout').addEventListener('click', e => {
+  if (dirty && !confirm('You have unsaved changes. Sign out anyway?')) e.preventDefault();
+  else window.removeEventListener('beforeunload', warnUnsaved);
+});
 
-  el.innerHTML=`
-    <div class="page-header"><div><h1 class="page-title">Cinema</h1><p class="page-sub">Featured film and screen acting credits.</p></div></div>
-
-    <div class="section-block">
-      <p class="page-title" style="font-size:1rem;margin-bottom:1rem">Featured Film</p>
-      <div class="form-row">
-        <div class="form-group"><label>Title</label><input id="film-title" value="${esc(film.title||'')}" /></div>
-        <div class="form-group"><label>Label</label><input id="film-label" value="${esc(film.label||'')}" /></div>
-      </div>
-      <div class="form-group"><label>Year / Type</label><input id="film-year" value="${esc(film.year||'')}" /></div>
-      <div class="form-group">
-        <label>Poster Image</label>
-        <div class="img-pick-row">
-          <div id="film-img-prev">
-            ${film.image?`<img class="img-preview" src="/Images/${esc(film.image)}" />`:'<div class="img-preview-placeholder">No image</div>'}
-          </div>
-          <div>
-            <input type="hidden" id="film-img" value="${esc(film.image||'')}" />
-            <button class="btn btn-secondary btn-sm img-pick-btn" onclick="openImagePicker(fn=>{setFilmImage(fn)})">Choose image</button>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Description Paragraphs</label>
-        <div class="para-list" id="film-paras">${paragraphs}</div>
-        <button class="btn btn-ghost btn-sm" style="margin-top:0.4rem" onclick="addFilmPara()">+ Add paragraph</button>
-      </div>
-      <div class="form-group">
-        <label>Detail Rows</label>
-        <div class="details-editor" id="film-details">${details}</div>
-        <button class="btn btn-ghost btn-sm" style="margin-top:0.4rem" onclick="addFilmDetail()">+ Add detail row</button>
-      </div>
-      <div class="form-actions"><button class="btn btn-primary" onclick="saveCinemaFeatured()">Save Featured Film</button></div>
-    </div>
-
-    <hr class="divider" />
-
-    <div class="section-block">
-      <p class="page-title" style="font-size:1rem;margin-bottom:1rem">Screen Acting Credits</p>
-      <table class="table-editor" id="cc-table">
-        <thead><tr><th>Title</th><th>Venue / Director</th><th>Year</th><th class="ctrl-col"></th></tr></thead>
-        <tbody>
-          ${credits.map(c=>`<tr>
-            <td><input value="${esc(c.title)}" class="cc-title" /></td>
-            <td><input value="${esc(c.venue)}" class="cc-venue" /></td>
-            <td><input value="${esc(c.year)}" class="cc-year" style="width:60px" /></td>
-            <td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-      <div class="form-actions" style="margin-top:0.75rem">
-        <button class="btn btn-secondary" onclick="addCinemaCredit()">+ Add row</button>
-        <button class="btn btn-primary" onclick="saveCinemaCredits()">Save Credits</button>
-      </div>
-    </div>`;
-}
-
-function setFilmImage(fn) { document.getElementById('film-img').value=fn; document.getElementById('film-img-prev').innerHTML=`<img class="img-preview" src="/Images/${esc(fn)}" />`; }
-function addFilmPara() {
-  const w=document.getElementById('film-paras'); const div=document.createElement('div'); div.className='para-item';
-  div.innerHTML=`<textarea class="film-para"></textarea><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`; w.appendChild(div);
-}
-function addFilmDetail() {
-  const w=document.getElementById('film-details'); const div=document.createElement('div'); div.className='details-row';
-  div.innerHTML=`<input value="" placeholder="Label" class="film-det-key" /><input value="" placeholder="Value" class="film-det-val" /><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
-  w.appendChild(div);
-}
-function saveCinemaFeatured() {
-  const paras=[...document.querySelectorAll('#film-paras .film-para')].map(t=>t.value).filter(Boolean);
-  const details=[...document.querySelectorAll('#film-details .details-row')].map(r=>({ key:r.querySelector('.film-det-key').value, value:r.querySelector('.film-det-val').value })).filter(d=>d.key||d.value);
-  const data={ label:val('film-label'), title:val('film-title'), year:val('film-year'), image:val('film-img'), paragraphs:paras, details };
-  saveSection('cinema_featured',data);
-}
-function addCinemaCredit() {
-  const tbody=document.querySelector('#cc-table tbody'); const tr=document.createElement('tr');
-  tr.innerHTML=`<td><input value="" class="cc-title" /></td><td><input value="" class="cc-venue" /></td><td><input value="" class="cc-year" style="width:60px" /></td><td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>`;
-  tbody.appendChild(tr);
-}
-function saveCinemaCredits() {
-  const rows=[...document.querySelectorAll('#cc-table tbody tr')].map(r=>({ title:r.querySelector('.cc-title').value, venue:r.querySelector('.cc-venue').value, year:r.querySelector('.cc-year').value })).filter(r=>r.title||r.venue);
-  saveSection('cinema_credits',rows);
-}
-
-/* ── Press ─────────────────────────────────────────────────── */
-function renderPress(el) {
-  const items=content.press||[];
-  el.innerHTML=`
-    <div class="page-header"><div><h1 class="page-title">Press & Recognition</h1><p class="page-sub">Awards, prizes and notable recognition.</p></div></div>
-    <table class="table-editor" id="press-table">
-      <thead><tr><th style="width:70px">Year</th><th>Display text</th><th>URL (link)</th><th class="ctrl-col"></th></tr></thead>
-      <tbody>
-        ${items.map(p=>`<tr>
-          <td><input value="${esc(p.year)}" class="press-year" style="width:60px" /></td>
-          <td><input value="${esc(p.text)}" class="press-text" /></td>
-          <td><input value="${esc(p.url||'')}" class="press-url" placeholder="https://..." /></td>
-          <td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-    <div class="form-actions" style="margin-top:0.75rem">
-      <button class="btn btn-secondary" onclick="addPressItem()">+ Add row</button>
-      <button class="btn btn-primary" onclick="savePress()">Save Changes</button>
-    </div>`;
-}
-function addPressItem() {
-  const tbody=document.querySelector('#press-table tbody'); const tr=document.createElement('tr');
-  tr.innerHTML=`<td><input value="" class="press-year" style="width:60px" /></td><td><input value="" class="press-text" /></td><td><input value="" class="press-url" placeholder="https://..." /></td><td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>`;
-  tbody.appendChild(tr);
-}
-function savePress() {
-  const rows=[...document.querySelectorAll('#press-table tbody tr')].map(r=>({ year:r.querySelector('.press-year').value, text:r.querySelector('.press-text').value, url:r.querySelector('.press-url').value })).filter(r=>r.text);
-  saveSection('press',rows);
-}
-
-/* ── About ─────────────────────────────────────────────────── */
-function renderAbout(el) {
-  const a=content.about||{};
-  const paras=(a.paragraphs||[]).map((p,i)=>`
-    <div class="para-item" id="ab-para-${i}">
-      <textarea class="ab-para">${esc(p)}</textarea>
-      <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-    </div>`).join('');
-  const timeline=(a.timeline||[]).map((t,i)=>`<tr>
-    <td><input value="${esc(t.year)}" class="tl-year" style="width:55px" /></td>
-    <td><input value="${esc(t.text)}" class="tl-text" /></td>
-    <td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>
-  </tr>`).join('');
-
-  el.innerHTML=`
-    <div class="page-header"><div><h1 class="page-title">About</h1><p class="page-sub">Biography, timeline and fields.</p></div></div>
-
-    <div class="section-block">
-      <div class="form-group"><label>Intro sentence</label><textarea id="ab-intro" style="min-height:70px">${esc(a.intro||'')}</textarea></div>
-      <div class="form-group">
-        <label>Biography Paragraphs</label>
-        <div class="para-list" id="ab-paras">${paras}</div>
-        <button class="btn btn-ghost btn-sm" style="margin-top:0.4rem" onclick="addAboutPara()">+ Add paragraph</button>
-      </div>
-      <div class="form-group"><label>Closing sentence (italic)</label><textarea id="ab-closing" style="min-height:70px">${esc(a.closing||'')}</textarea></div>
-      <div class="form-actions"><button class="btn btn-primary" onclick="saveAboutText()">Save Bio</button></div>
-    </div>
-
-    <hr class="divider" />
-
-    <div class="section-block">
-      <p class="page-title" style="font-size:1rem;margin-bottom:1rem">Timeline</p>
-      <table class="table-editor" id="tl-table">
-        <thead><tr><th style="width:70px">Year</th><th>Milestone</th><th class="ctrl-col"></th></tr></thead>
-        <tbody>${timeline}</tbody>
-      </table>
-      <div class="form-actions" style="margin-top:0.75rem">
-        <button class="btn btn-secondary" onclick="addTimelineItem()">+ Add row</button>
-        <button class="btn btn-primary" onclick="saveTimeline()">Save Timeline</button>
-      </div>
-    </div>
-
-    <hr class="divider" />
-
-    <div class="section-block">
-      <p class="page-title" style="font-size:1rem;margin-bottom:0.75rem">Fields</p>
-      <p class="page-sub" style="margin-bottom:0.75rem">Enter each field name and press Enter.</p>
-      <div class="tag-input-wrap" id="fields-wrap" onclick="document.getElementById('fields-input').focus()">
-        ${(a.fields||[]).map(f=>`<span class="tag">${esc(f)}<button class="tag-remove" onclick="removeField(this)">&times;</button></span>`).join('')}
-        <input class="tag-input" id="fields-input" placeholder="Add field..." onkeydown="addField(event)" />
-      </div>
-      <div class="form-actions" style="margin-top:0.75rem"><button class="btn btn-primary" onclick="saveFields()">Save Fields</button></div>
-    </div>`;
-}
-function addAboutPara() {
-  const w=document.getElementById('ab-paras'); const div=document.createElement('div'); div.className='para-item';
-  div.innerHTML=`<textarea class="ab-para"></textarea><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`; w.appendChild(div);
-}
-function saveAboutText() {
-  const paras=[...document.querySelectorAll('#ab-paras .ab-para')].map(t=>t.value).filter(Boolean);
-  const a=content.about||{};
-  saveSection('about',{ ...a, intro:val('ab-intro'), paragraphs:paras, closing:val('ab-closing') });
-}
-function addTimelineItem() {
-  const tbody=document.querySelector('#tl-table tbody'); const tr=document.createElement('tr');
-  tr.innerHTML=`<td><input value="" class="tl-year" style="width:55px" /></td><td><input value="" class="tl-text" /></td><td class="ctrl-col"><button class="btn btn-ghost btn-sm" onclick="this.closest('tr').remove()" style="color:#c00">&times;</button></td>`;
-  tbody.appendChild(tr);
-}
-function saveTimeline() {
-  const rows=[...document.querySelectorAll('#tl-table tbody tr')].map(r=>({ year:r.querySelector('.tl-year').value, text:r.querySelector('.tl-text').value })).filter(r=>r.text);
-  const a=content.about||{};
-  saveSection('about',{ ...a, timeline:rows });
-}
-function addField(e) {
-  if(e.key!=='Enter') return;
-  const input=document.getElementById('fields-input');
-  const val=input.value.trim(); if(!val) return;
-  const wrap=document.getElementById('fields-wrap');
-  const span=document.createElement('span'); span.className='tag';
-  span.innerHTML=`${esc(val)}<button class="tag-remove" onclick="removeField(this)">&times;</button>`;
-  wrap.insertBefore(span,input); input.value='';
-}
-function removeField(btn) { btn.parentElement.remove(); }
-function saveFields() {
-  const fields=[...document.querySelectorAll('#fields-wrap .tag')].map(t=>t.childNodes[0].textContent.trim()).filter(Boolean);
-  const a=content.about||{};
-  saveSection('about',{ ...a, fields });
-}
-
-/* ── Contact ──────────────────────────────────────────────── */
-function renderContact(el) {
-  const c=content.contact||{};
-  const r=content.rights_note||{};
-  el.innerHTML=`
-    <div class="page-header"><div><h1 class="page-title">Contact & Rights</h1></div></div>
-    <div class="form-group"><label>Contact description</label><textarea id="c-desc" style="min-height:80px">${esc(c.description||'')}</textarea></div>
-    <div class="form-group"><label>Email address</label><input id="c-email" type="email" value="${esc(c.email||'')}" /></div>
-    <div class="form-actions"><button class="btn btn-primary" onclick="saveContact()">Save Contact</button></div>
-    <hr class="divider" />
-    <div class="form-group"><label>Rights note title</label><input id="r-title" value="${esc(r.title||'')}" /></div>
-    <div class="form-group"><label>Rights note text</label><textarea id="r-text">${esc(r.text||'')}</textarea></div>
-    <div class="form-actions"><button class="btn btn-primary" onclick="saveRights()">Save Rights Note</button></div>`;
-}
-function saveContact() { saveSection('contact',{ description:val('c-desc'), email:val('c-email') }); }
-function saveRights() { saveSection('rights_note',{ title:val('r-title'), text:val('r-text') }); }
-
-/* ── Images ───────────────────────────────────────────────── */
-async function renderImages(el) {
-  el.innerHTML=`<div class="page-header"><div><h1 class="page-title">Images</h1><p class="page-sub">All uploaded images. Click to delete.</p></div></div><div id="img-man-grid" class="img-grid" style="max-width:800px"></div>
-  <div style="margin-top:1rem"><label class="btn btn-secondary" for="img-man-upload">Upload new image<input type="file" id="img-man-upload" accept="image/*" style="display:none" onchange="manageUpload(this)" /></label></div>`;
-  await loadManageGrid();
-}
-async function loadManageGrid() {
-  const res=await fetch('/api/images'); const files=await res.json();
-  const grid=document.getElementById('img-man-grid');
-  if(!grid) return;
-  grid.innerHTML=files.map(f=>`
-    <div class="img-grid-item" title="${esc(f)}">
-      <img src="/Images/${esc(f)}" />
-      <span>${esc(f)}</span>
-      <button onclick="deleteImageFile('${esc(f)}')" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:0.75rem;padding:0.15rem 0.35rem">&times;</button>
-    </div>`).join('');
-}
-async function manageUpload(input) {
-  const file=input.files[0]; if(!file) return;
-  const fd=new FormData(); fd.append('file',file);
-  const res=await fetch('/api/upload',{method:'POST',body:fd});
-  const json=await res.json();
-  if(json.filename) { showToast('Uploaded: '+json.filename,'success'); await loadManageGrid(); }
-  else showToast('Upload failed','error');
-  input.value='';
-}
-async function deleteImageFile(filename) {
-  if(!confirm(`Delete image "${filename}"? This cannot be undone.`)) return;
-  const res=await fetch(`/api/images/${encodeURIComponent(filename)}`,{method:'DELETE'});
-  const json=await res.json();
-  if(json.ok) { showToast('Deleted','success'); await loadManageGrid(); }
-  else showToast('Error: '+json.error,'error');
-}
-
-/* ── Settings ─────────────────────────────────────────────── */
-function renderSettings(el) {
-  el.innerHTML=`
-    <div class="page-header"><div><h1 class="page-title">Settings</h1><p class="page-sub">Change admin password.</p></div></div>
-    <div style="max-width:400px">
-      <div class="form-group"><label>Current password</label><input id="pw-current" type="password" /></div>
-      <div class="form-group"><label>New password</label><input id="pw-new" type="password" /></div>
-      <div class="form-group"><label>Confirm new password</label><input id="pw-confirm" type="password" /></div>
-      <div class="form-actions"><button class="btn btn-primary" onclick="changePassword()">Change Password</button></div>
-    </div>`;
-}
-async function changePassword() {
-  const cur=val('pw-current'), nw=val('pw-new'), conf=val('pw-confirm');
-  if(nw!==conf) { showToast('Passwords do not match','error'); return; }
-  if(nw.length<6) { showToast('Password must be at least 6 characters','error'); return; }
-  const res=await fetch('/api/change-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({current:cur,new:nw})});
-  const json=await res.json();
-  if(json.ok) { showToast('Password changed!','success'); document.getElementById('pw-current').value=''; document.getElementById('pw-new').value=''; document.getElementById('pw-confirm').value=''; }
-  else showToast('Error: '+json.error,'error');
-}
-
-/* ── Image Picker Modal ────────────────────────────────────── */
-async function openImagePicker(callback) {
-  imgPickerCallback=callback;
-  selectedImage=null;
-  document.getElementById('imgModal').classList.add('open');
-  const res=await fetch('/api/images'); const files=await res.json();
-  document.getElementById('imgGrid').innerHTML=files.map(f=>`
-    <div class="img-grid-item" onclick="selectImage('${esc(f)}',this)" title="${esc(f)}">
-      <img src="/Images/${esc(f)}" /><span>${esc(f)}</span>
-    </div>`).join('');
-}
-function selectImage(filename,el) {
-  document.querySelectorAll('.img-grid-item').forEach(e=>e.classList.remove('selected'));
-  el.classList.add('selected'); selectedImage=filename;
-}
-function closeModal() { document.getElementById('imgModal').classList.remove('open'); }
-function confirmImagePick() {
-  if(!selectedImage) { showToast('No image selected','error'); return; }
-  if(imgPickerCallback) imgPickerCallback(selectedImage);
-  closeModal();
-}
-async function uploadImage(input) {
-  const file=input.files[0]; if(!file) return;
-  const fd=new FormData(); fd.append('file',file);
-  const res=await fetch('/api/upload',{method:'POST',body:fd});
-  const json=await res.json();
-  if(json.filename) {
-    showToast('Uploaded!','success');
-    const res2=await fetch('/api/images'); const files=await res2.json();
-    document.getElementById('imgGrid').innerHTML=files.map(f=>`
-      <div class="img-grid-item" onclick="selectImage('${esc(f)}',this)" title="${esc(f)}">
-        <img src="/Images/${esc(f)}" /><span>${esc(f)}</span>
-      </div>`).join('');
-  } else showToast('Upload failed','error');
-  input.value='';
-}
-
-/* ── Utilities ─────────────────────────────────────────────── */
-function val(id) { const el=document.getElementById(id); return el?el.value:''; }
-function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-// Close modal on overlay click
-document.getElementById('imgModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+(async function init() {
+  try {
+    const data = await api('GET', '/api/content');
+    content = data.content; uploads = data.uploads; publishes = data.publishes; hosted = data.hosted;
+    document.querySelector('.topbar-brand').textContent = 'Site editor — ' + content.site.name;
+    render();
+  } catch (e) {
+    fill(document.getElementById('main'), h('p', { class: 'warn' }, e.message));
+  }
+})();
 </script>
 </body>
 </html>

@@ -1,11 +1,87 @@
 {
+  "site": {
+    "name": "Temo Rekhviashvili",
+    "seo_title": "Temo Rekhviashvili | Writer, Playwright, Actor",
+    "seo_description": "Portfolio website for Temo Rekhviashvili, Georgian writer, playwright, and actor.",
+    "url": "",
+    "share_image": "",
+    "footer_text": "Writer · Playwright · Actor"
+  },
   "hero": {
     "tagline": "Writer · Playwright · Actor",
     "bio": "Temo Rekhviashvili is a Georgian writer, playwright and actor working across literature, theatre and cinema. He is the author of the novel \"Courier's Tales\" and the collection \"Two Plays\", and the co-screenwriter and lead actor of the film \"Temo Re\". His work has been published, staged and screened in Georgia and internationally.",
     "image": "LMP_9716.JPG"
   },
+  "sections": {
+    "books": {
+      "visible": true,
+      "nav": "Books",
+      "heading": "Books",
+      "note": "Three books in Georgian. Translation rights are held by the author. English samples and synopses are available."
+    },
+    "theatre": {
+      "visible": true,
+      "nav": "Theatre",
+      "heading": "Theatre",
+      "note": "Stage work as playwright and actor.",
+      "plays_label": "Playwright / Dramatic Writing",
+      "credits_label": "Actor",
+      "credits_heading": "Selected stage acting credits",
+      "credits_note": "A concise selection of theatre roles.",
+      "credits_footnote": "Full theatre CV available on request."
+    },
+    "cinema": {
+      "visible": true,
+      "nav": "Cinema",
+      "heading": "Cinema",
+      "note": "Film work as writer, co-screenwriter and actor.",
+      "films_label": "Films",
+      "credits_label": "Selected screen acting credits",
+      "credits_footnote": "Full filmography available on IMDb.",
+      "credits_link_label": "IMDb",
+      "credits_link_url": ""
+    },
+    "press": {
+      "visible": true,
+      "nav": "Press",
+      "heading": "Press",
+      "note": ""
+    },
+    "about": {
+      "visible": true,
+      "nav": "About",
+      "heading": "About",
+      "highlights_label": "Selected highlights",
+      "fields_label": "Fields",
+      "cv_label": "Download CV"
+    },
+    "contact": {
+      "visible": true,
+      "nav": "Contact",
+      "heading": "Get in touch"
+    }
+  },
+  "section_order": [
+    "books",
+    "theatre",
+    "cinema",
+    "press",
+    "about",
+    "contact"
+  ],
   "books": [
     {
+      "id": "neo-tbilisian",
+      "visible": true,
+      "label": "Poetry",
+      "title": "Neo-Tbilisian Mukhambazebi",
+      "image": "7fb6624f-7758-45b7-ad13-020881a5b109.png",
+      "meta_line1": "Intelekti Publishing",
+      "meta_line2": "",
+      "summary": "",
+      "paragraphs": [
+        "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
+      ],
       "details": [
         {
           "key": "Year",
@@ -28,17 +104,23 @@
           "value": "Gvantsa Shubitidze"
         }
       ],
-      "id": "neo-tbilisian",
-      "image": "7fb6624f-7758-45b7-ad13-020881a5b109.png",
-      "label": "Poetry",
-      "meta_line1": "Intelekti Publishing",
-      "meta_line2": "",
-      "paragraphs": [
-        "A collection of poems built from toasts, love, debt, insomnia, pop songs and the small rituals of everyday life."
-      ],
-      "title": "Neo-Tbilisian Mukhambazebi"
+      "links": []
     },
     {
+      "id": "pathetic-monologues-book",
+      "visible": true,
+      "label": "Plays / Collection",
+      "title": "Two Plays",
+      "image": "Patetique Book.jpeg",
+      "meta_line1": "Published by Sulakauri Publishing, 2025",
+      "meta_line2": "A collection of two plays by Temo Rekhviashvili",
+      "summary": "",
+      "paragraphs": [
+        "\"Pathetic Monologues - Two Plays\" brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.",
+        "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. One of its voices dreams of leaving Georgia for Berlin, turning emigration into both a comic obsession and a symptom of deeper personal and social despair.",
+        "CO₂ is a darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying - often too late - to understand themselves.",
+        "Both plays have been staged in Georgia: Pathetic Monologues premiered at Theatre Company Haraki in December 2023, while CO₂ premiered at Theatre on Atoneli in April 2025."
+      ],
       "details": [
         {
           "key": "Year",
@@ -81,19 +163,22 @@
           "value": "CO₂ received the Friedrich Ebert Stiftung Prize in Dramaturgy in 2025."
         }
       ],
-      "id": "pathetic-monologues-book",
-      "image": "Patetique Book.jpeg",
-      "label": "Plays / Collection",
-      "meta_line1": "Published by Sulakauri Publishing, 2025",
-      "meta_line2": "A collection of two plays by Temo Rekhviashvili",
-      "paragraphs": [
-        "\"Pathetic Monologues - Two Plays\" brings together two stage works by Temo Rekhviashvili, rooted in the language, contradictions and absurdities of contemporary Georgian life.\n \n",
-        "Pathetic Monologues is a satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. One of its voices dreams of leaving Georgia for Berlin, turning emigration into both a comic obsession and a symptom of deeper personal and social despair.\n \n",
-        "CO₂ is a darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying - often too late - to understand themselves.\nBoth plays have been staged in Georgia: Pathetic Monologues premiered at Theatre Company Haraki in December 2023, while CO₂ premiered at Theatre on Atoneli in April 2025.\n"
-      ],
-      "title": "Two Plays"
+      "links": []
     },
     {
+      "id": "couriers-tales",
+      "visible": true,
+      "label": "NOVELLA",
+      "title": "Courier’s Tales",
+      "image": "Carrier Tales.jpeg",
+      "meta_line1": "",
+      "meta_line2": "",
+      "summary": "",
+      "paragraphs": [
+        "Courier’s Tales is the debut novella by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.",
+        "Set mostly in contemporary Tbilisi, the novel moves through streets, staircases, rehearsal rooms and precarious jobs. In its final part, the story opens toward Germany: the narrator travels from Georgia to Berlin and then to Hamburg, where his desperate attempt to reach a Nick Cave concert turns into a comic and painful episode of disorientation, language failure, humiliation and desire.",
+        "At once local and European, Courier’s Tales is a portrait of a young man trying to find his place between work and art, survival and longing, the city he comes from and the places he imagines as escape."
+      ],
       "details": [
         {
           "key": "Original Title",
@@ -132,32 +217,35 @@
           "value": "Giorgi Lomsadze"
         }
       ],
-      "id": "couriers-tales",
-      "image": "Carrier Tales.jpeg",
-      "label": "NOVELLA",
-      "meta_line1": "",
-      "meta_line2": "",
-      "paragraphs": [
-        "Courier’s Tales is the debut novella by Temo Rekhviashvili. Told through the voice of a young actor who works as a courier, the book is composed of fragments from everyday life: deliveries, theatre rehearsals, friendships, debt, exhaustion, self-irony and the effort to survive.\n",
-        "Set mostly in contemporary Tbilisi, the novel moves through streets, staircases, rehearsal rooms and precarious jobs. In its final part, the story opens toward Germany: the narrator travels from Georgia to Berlin and then to Hamburg, where his desperate attempt to reach a Nick Cave concert turns into a comic and painful episode of disorientation, language failure, humiliation and desire.",
-        "At once local and European, Courier’s Tales is a portrait of a young man trying to find his place between work and art, survival and longing, the city he comes from and the places he imagines as escape."
-      ],
-      "title": "Courier’s Tales"
+      "links": []
     },
     {
       "id": "book-1784191164615",
+      "visible": false,
       "label": "",
       "title": "New Book",
       "image": "",
       "meta_line1": "",
       "meta_line2": "",
+      "summary": "",
       "paragraphs": [],
-      "details": []
+      "details": [],
+      "links": []
     }
   ],
   "theatre_plays": [
     {
-      "description": "A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves.",
+      "id": "co2",
+      "visible": true,
+      "label": "",
+      "title": "CO₂",
+      "image": "CO2.jpeg",
+      "meta_line1": "Play, 2025",
+      "meta_line2": "",
+      "summary": "",
+      "paragraphs": [
+        "A darkly comic and self-reflective play about masculinity, alcoholism, failed intimacy and the emotional wreckage left inside domestic life. Through a distinctly feminist lens, the play looks at male vulnerability, dependency and the damage men cause while trying — often too late — to understand themselves."
+      ],
       "details": [
         {
           "key": "Director",
@@ -185,20 +273,27 @@
         },
         {
           "key": "premiered",
-          "value": "Theatre On Atoneli 2025 "
+          "value": "Theatre On Atoneli 2025"
         },
         {
           "key": "Recognation",
           "value": "Friedrich Ebert Stiftung Prize in Dramaturgy, 2025"
         }
       ],
-      "id": "co2",
-      "image": "CO2.jpeg",
-      "title": "CO₂",
-      "year": "Play, 2025"
+      "links": []
     },
     {
-      "description": "A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity.",
+      "id": "pathetic-monologues-play",
+      "visible": true,
+      "label": "",
+      "title": "Pathetic Monologues",
+      "image": "Pathetique Theater.jpeg",
+      "meta_line1": "Play, 2023",
+      "meta_line2": "",
+      "summary": "",
+      "paragraphs": [
+        "A stage satire of public speech, privilege, politics and self-importance, but also a play about exhaustion, failed intimacy and the fantasy of escape. The production brings together a chorus of voices caught between confession, performance and social absurdity."
+      ],
       "details": [
         {
           "key": "Director",
@@ -214,7 +309,7 @@
         },
         {
           "key": "starring",
-          "value": "Giorgi Razmadze, Beka Khachidze, Vaniko Tarkhnishvili, Sopiko gvimradze, Natalia Gabisonia, Gvantsa Enukidze, Lasha Lashkhi. "
+          "value": "Giorgi Razmadze, Beka Khachidze, Vaniko Tarkhnishvili, Sopiko gvimradze, Natalia Gabisonia, Gvantsa Enukidze, Lasha Lashkhi."
         },
         {
           "key": "Technical Group",
@@ -229,10 +324,55 @@
           "value": "Tsinandali Award for Theatre Arts, 2024 -Natalia Gabisonia; Liberty Award for Best Actress, 2024 - Natalia Gabisonia"
         }
       ],
-      "id": "pathetic-monologues-play",
-      "image": "Pathetique Theater.jpeg",
-      "title": "Pathetic Monologues",
-      "year": "Play, 2023"
+      "links": []
+    }
+  ],
+  "films": [
+    {
+      "id": "temo-re",
+      "visible": true,
+      "label": "Featured Film",
+      "title": "Temo Re",
+      "image": "Temo Re Movie.jpeg",
+      "meta_line1": "Short film, 2025",
+      "meta_line2": "",
+      "summary": "",
+      "paragraphs": [
+        "Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili’s debut novel Courier’s Tales. Rekhviashvili co-wrote the film and plays the leading role.",
+        "The film follows Temo, a young actor who also works as a courier. Over the course of a single day, he travels across Tbilisi on a moped and performs in a suburban theatre in the evening. The poverty, injustice, corruption and alienation he encounters during the day gradually transform into disturbing visions that haunt him at night.",
+        "Constructed as a black-and-white photomontage, Temo Re combines fiction and documentary elements to create a fragmented portrait of contemporary Tbilisi and a young man moving between work, theatre, exhaustion and imagination"
+      ],
+      "details": [
+        {
+          "key": "Director",
+          "value": "Anka Gujabidze"
+        },
+        {
+          "key": "Writers",
+          "value": "Temo Rekhviashvili, Anka Gujabidze, Salome Asatiani"
+        },
+        {
+          "key": "Based On",
+          "value": "Courier’s Tales by Temo Rekhviashvili"
+        },
+        {
+          "key": "Country",
+          "value": "Georgia"
+        },
+        {
+          "key": "Runtime",
+          "value": "50 minutes"
+        },
+        {
+          "key": "Awards",
+          "value": "Tiger Short Award · KNF Award · IFFR · SFCC Critics’ Award · Golden Prometheus · Eliso Award"
+        },
+        {
+          "key": "Cast",
+          "value": "Natalia Gabisonia, Mikheil Abramishvili, Sandro Kalandadze, Tamara Chumashvili and others"
+        }
+      ],
+      "links": []
     }
   ],
   "theatre_credits": [
@@ -272,47 +412,6 @@
       "detail": "2017 · Erisikhton / Giorgi"
     }
   ],
-  "cinema_featured": {
-    "label": "Featured Film",
-    "title": "Temo Re",
-    "year": "Short film, 2025",
-    "image": "Temo Re Movie.jpeg",
-    "paragraphs": [
-      "Temo Re is a Georgian short film directed by Anka Gujabidze and adapted from Temo Rekhviashvili’s debut novel Courier’s Tales. Rekhviashvili co-wrote the film and plays the leading role.",
-      "The film follows Temo, a young actor who also works as a courier. Over the course of a single day, he travels across Tbilisi on a moped and performs in a suburban theatre in the evening. The poverty, injustice, corruption and alienation he encounters during the day gradually transform into disturbing visions that haunt him at night.",
-      "Constructed as a black-and-white photomontage, Temo Re combines fiction and documentary elements to create a fragmented portrait of contemporary Tbilisi and a young man moving between work, theatre, exhaustion and imagination"
-    ],
-    "details": [
-      {
-        "key": "Director",
-        "value": "Anka Gujabidze"
-      },
-      {
-        "key": "Writers",
-        "value": "Temo Rekhviashvili, Anka Gujabidze, Salome Asatiani"
-      },
-      {
-        "key": "Based On",
-        "value": "Courier’s Tales by Temo Rekhviashvili"
-      },
-      {
-        "key": "Country",
-        "value": "Georgia"
-      },
-      {
-        "key": "Runtime",
-        "value": "50 minutes"
-      },
-      {
-        "key": "Awards",
-        "value": "Tiger Short Award · KNF Award · IFFR · SFCC Critics’ Award · Golden Prometheus · Eliso Award"
-      },
-      {
-        "key": "Cast",
-        "value": "Natalia Gabisonia, Mikheil Abramishvili, Sandro Kalandadze, Tamara Chumashvili and others"
-      }
-    ]
-  },
   "cinema_credits": [
     {
       "title": "Congratulations Once Again",
@@ -362,31 +461,36 @@
       "url": "https://tbilvino.ge/culture"
     }
   ],
-  "cv": {
-    "download_url": "",
-    "entries": []
+  "rights_note": {
+    "visible": true,
+    "title": "Rights & Samples",
+    "text": "",
+    "inquiry_text": "For publishing, translation and adaptation inquiries please get in touch."
   },
   "about": {
-    "closing": "",
-    "fields": [],
+    "image": "",
     "intro": "",
     "paragraphs": [
-      "Temo Rekhviashvili is a Georgian writer, playwright and actor, born in 1993.\n\n",
-      "He graduated from the Faculty of Drama at Shota Rustaveli Theatre and Film Georgia State University in 2015 and has since worked as an independent actor with several theatres. \nIn 2016, he took part in founding Open Space Of Experimental Art, and in 2019 became one of the co-founders of Theatre Company Haraki, an independent theatre company based in Tbilisi. \nIn 2017, together with Gvantsa Enukidze, he founded the poetry collective Universally Accessible Dramatic Poetry. ",
+      "Temo Rekhviashvili is a Georgian writer, playwright and actor, born in 1993.",
+      "He graduated from the Faculty of Drama at Shota Rustaveli Theatre and Film Georgia State University in 2015 and has since worked as an independent actor with several theatres.",
+      "In 2016, he took part in founding Open Space Of Experimental Art, and in 2019 became one of the co-founders of Theatre Company Haraki, an independent theatre company based in Tbilisi.",
+      "In 2017, together with Gvantsa Enukidze, he founded the poetry collective Universally Accessible Dramatic Poetry.",
       "Since 2019, he has been a member of Temur Chkheidze’s Studio.",
       "Rekhviashvili works across prose, theatre, poetry, performance and cinema. His writing often begins with ordinary situations - a delivery, a rehearsal, a conversation, a failed relationship, or a room shared by two men - and follows them until they reveal something larger about the society surrounding the characters.",
       "His debut novella, Courier’s Tales, was published by Sulakauri Publishing in 2021 and received the SABA Literary Award for Best Debut in 2022. Narrated by a young actor working as a courier, the book portrays contemporary Tbilisi through daily work, exhaustion, humour and encounters across the city.",
       "His book Two Plays, published by Sulakauri Publishing in 2025, brings together Pathetic Monologues and CO₂. The plays use satire, confession and theatrical absurdity to explore public speech, masculinity, intimacy, alcohol dependency and fantasies of escape.",
       "Courier’s Tales later inspired the film Temo Re, directed by Anka Gujabidze. Rekhviashvili co-wrote the film and played the lead role. It premiered at the International Film Festival Rotterdam, where it received the Tiger Short Award and the KNF Award."
     ],
-    "timeline": []
+    "closing": "",
+    "timeline": [],
+    "fields": []
+  },
+  "cv": {
+    "download_url": ""
   },
   "contact": {
     "description": "For literary, theatrical, and film collaborations, publishing inquiries, translation rights, and professional engagements.",
-    "email": "temmorekhviashvili@gmail.com"
-  },
-  "rights_note": {
-    "title": "Rights & Samples",
-    "text": ""
+    "email": "temmorekhviashvili@gmail.com",
+    "links": []
   }
 }

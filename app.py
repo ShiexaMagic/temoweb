@@ -1,16 +1,28 @@
-import base64
+"""
+The editor for the portfolio site.
+
+  /admin       every text, image, link and section of the page
+  /api/*       what the editor page talks to
+
+The public site is the static index.html.  Saving in the editor rebuilds
+that file from content.json + templates/index.html and commits it — with
+content.json and any new images — to GitHub in one commit; Vercel then
+redeploys.  Runs as a Vercel serverless function (api/index.py) or locally
+with `python app.py`.
+"""
+import hashlib
 import json
+import mimetypes
 import os
+import re
 import secrets
-import subprocess
-import sys
-import threading
-import urllib.error
-import urllib.request
+import time
+from datetime import timedelta
 from functools import wraps
 
 from flask import (
     Flask,
+    Response,
     jsonify,
     redirect,
     render_template,
@@ -20,45 +32,36 @@ from flask import (
     url_for,
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from werkzeug.utils import secure_filename
+
+import site_content
+from store import StoreError, make_store
 
 # ── Configuration ───────────────────────────────────────────────
-ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp", "gif"}
-
 BASE = os.path.dirname(os.path.abspath(__file__))
-CONTENT_FILE = os.path.join(BASE, "content.json")
 CONFIG_FILE = os.path.join(BASE, "admin_config.json")
-IMAGES_DIR = os.path.join(BASE, "Images")
 
-# Git / hosting env vars (set these in Railway dashboard)
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
-GITHUB_REPO  = os.environ.get("GITHUB_REPO", "ShiexaMagic/temoweb")
+IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp", "gif"}
+FILE_EXTENSIONS = {"pdf"}
+# Vercel rejects request bodies over 4.5 MB; the editor shrinks photos in
+# the browser before sending them.
+MAX_UPLOAD_BYTES = 4 * 1024 * 1024
+UPLOAD_NAME = re.compile(r"^[a-z0-9][a-z0-9-]*-[0-9a-f]{8}\.(jpg|jpeg|png|webp|gif|pdf)$")
+BLOB_SHA = re.compile(r"^[0-9a-f]{40}$")
 
-# Ensure build.py is importable from the background thread
-if BASE not in sys.path:
-    sys.path.insert(0, BASE)
+# Hosted mode: the login comes from environment variables (Vercel settings).
+HOSTED = bool(os.environ.get("ADMIN_PASSWORD_HASH"))
 
 app = Flask(__name__, template_folder="templates")
-
-
-def _load_secret_key():
-    # Env var takes priority (Railway / production)
-    if os.environ.get("SECRET_KEY"):
-        return os.environ["SECRET_KEY"]
-    cfg = _load_admin_config()
-    return cfg.get("secret_key", secrets.token_hex(32))
+store = make_store(BASE)
 
 
 def _load_admin_config():
-    # ── Hosted mode: credentials from environment variables ──────
-    if os.environ.get("ADMIN_PASSWORD_HASH"):
+    if HOSTED:
         return {
             "username": os.environ.get("ADMIN_USERNAME", "admin"),
             "password_hash": os.environ["ADMIN_PASSWORD_HASH"],
-            "secret_key": os.environ.get("SECRET_KEY", secrets.token_hex(32)),
-            "hosted": True,
         }
-    # ── Local mode: credentials from admin_config.json ───────────
+    # Local mode: credentials in admin_config.json (never committed).
     if not os.path.exists(CONFIG_FILE):
         cfg = {
             "username": "admin",
@@ -74,138 +77,95 @@ def _load_admin_config():
         return json.load(f)
 
 
-app.secret_key = _load_secret_key()
+def _secret_key():
+    if os.environ.get("SECRET_KEY"):
+        return os.environ["SECRET_KEY"]
+    if HOSTED:
+        # Must be identical on every serverless instance, so derive it from
+        # another secret rather than generating a random one.
+        seed = os.environ["ADMIN_PASSWORD_HASH"] + os.environ.get("GITHUB_TOKEN", "")
+        return hashlib.sha256(("session:" + seed).encode()).hexdigest()
+    return _load_admin_config().get("secret_key") or secrets.token_hex(32)
 
 
-def _configure_git():
-    """Set git identity and token-authenticated remote URL (for Railway)."""
-    try:
-        if GITHUB_TOKEN:
-            remote_url = f"https://x-access-token:{GITHUB_TOKEN}@github.com/{GITHUB_REPO}.git"
-            subprocess.run(["git", "remote", "set-url", "origin", remote_url],
-                           cwd=BASE, capture_output=True, timeout=10)
-        subprocess.run(["git", "config", "user.email", "admin@temorekhviashvili.com"],
-                       cwd=BASE, capture_output=True, timeout=10)
-        subprocess.run(["git", "config", "user.name", "Temo Rekhviashvili"],
-                       cwd=BASE, capture_output=True, timeout=10)
-    except Exception as exc:  # git not in PATH or other OS error — non-fatal
-        print(f"[git config] skipped: {exc}")
-
-
-_configure_git()
+app.secret_key = _secret_key()
+app.config.update(
+    MAX_CONTENT_LENGTH=MAX_UPLOAD_BYTES + 64 * 1024,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=HOSTED,
+    PERMANENT_SESSION_LIFETIME=timedelta(days=30),
+)
 
 
 # ── Helpers ─────────────────────────────────────────────────────
-def load_content():
-    with open(CONTENT_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+def _ext(filename):
+    return filename.rsplit(".", 1)[1].lower() if "." in filename else ""
 
 
-def save_content(data):
-    with open(CONTENT_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+def _load_content():
+    return site_content.parse(store.read("content.json"))
 
 
-# \u2500\u2500 GitHub API push (no git binary needed) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-_push_status = {"status": "idle", "message": ""}
-
-
-def _github_update_file(filepath, content_bytes, message):
-    """Update one file in the GitHub repo via the REST API."""
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{filepath}"
-    hdrs = {
-        "Authorization": f"token {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github.v3+json",
-        "Content-Type": "application/json",
-    }
-    sha = None
-    try:
-        req = urllib.request.Request(url, headers=hdrs)
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            sha = json.loads(resp.read()).get("sha")
-    except urllib.error.HTTPError:
-        pass
-    body = {"message": message, "content": base64.b64encode(content_bytes).decode()}
-    if sha:
-        body["sha"] = sha
-    req = urllib.request.Request(url, data=json.dumps(body).encode(), method="PUT", headers=hdrs)
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read())
-
-
-def _git_cli_push(section):
-    """Fallback: use local git CLI (local development only)."""
-    subprocess.run(["git", "checkout", "-B", "main"], cwd=BASE, capture_output=True, timeout=10)
-    subprocess.run(["git", "add", "content.json", "index.html"], cwd=BASE, capture_output=True, timeout=10)
-    commit = subprocess.run(["git", "commit", "-m", f"admin: update {section}"],
-                            cwd=BASE, capture_output=True, timeout=10, text=True)
-    if commit.returncode not in (0, 1):
-        return False, commit.stderr.strip()
-    push = subprocess.run(["git", "push", "origin", "HEAD:main"],
-                          cwd=BASE, capture_output=True, timeout=30, text=True)
-    return (True, None) if push.returncode == 0 else (False, push.stderr.strip() or push.stdout.strip())
-
-
-def git_auto_push(section):
-    """Rebuild static site and push via GitHub API or local git."""
-    def _push():
-        global _push_status
-        _push_status = {"status": "pushing", "message": "Building & pushing..."}
-        try:
-            import build as _build
-            _build.build()
-            msg = f"admin: update {section}"
-            if GITHUB_TOKEN:
-                with open(CONTENT_FILE, "rb") as f:
-                    _github_update_file("content.json", f.read(), msg)
-                with open(os.path.join(BASE, "index.html"), "rb") as f:
-                    _github_update_file("index.html", f.read(), msg)
-                _push_status = {"status": "ok", "message": "Built & pushed -> Vercel deploying"}
-            else:
-                ok, err = _git_cli_push(section)
-                _push_status = ({"status": "ok", "message": "Built & pushed -> Vercel deploying"}
-                                if ok else {"status": "error", "message": err or "git push failed"})
-        except Exception as exc:
-            _push_status = {"status": "error", "message": str(exc)}
-            print(f"[push error] {exc}")
-    threading.Thread(target=_push, daemon=True).start()
-def load_admin_config():
-    return _load_admin_config()
-
-
-def save_admin_config(cfg):
-    if _load_admin_config().get("hosted"):
-        # In hosted mode credentials live in Railway env vars — cannot be
-        # written to a file that survives restarts.  Return silently; the
-        # /api/change-password route will surface an appropriate message.
-        return
-    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
-        json.dump(cfg, f, indent=2)
-
-
-def allowed_file(filename):
-    return (
-        "." in filename
-        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-    )
+def _uploads(content, extra_names=()):
+    """Files in Images/ (plus not-yet-saved uploads), for the editor."""
+    used = site_content.referenced_images(content)
+    files = []
+    for entry in store.list_dir("Images"):
+        ext = _ext(entry["name"])
+        if ext in IMAGE_EXTENSIONS or ext in FILE_EXTENSIONS:
+            files.append({
+                "name": entry["name"],
+                "kind": "image" if ext in IMAGE_EXTENSIONS else "file",
+                "size": entry["size"],
+                "used": entry["name"] in used,
+            })
+    known = {f["name"] for f in files}
+    for name in extra_names:
+        if name not in known:
+            files.append({"name": name, "kind": "image" if _ext(name) in IMAGE_EXTENSIONS else "file",
+                          "size": 0, "used": name in used})
+    return sorted(files, key=lambda f: f["name"].lower())
 
 
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if not session.get("logged_in"):
-            if request.is_json or request.path.startswith("/api/"):
-                return jsonify({"error": "Unauthorized"}), 401
+            if request.path.startswith("/api/"):
+                return jsonify({"error": "Your session expired — please sign in again."}), 401
             return redirect(url_for("admin_login"))
+        # Changes must come from the editor page itself, not a foreign form.
+        if request.method != "GET" and request.headers.get("X-Requested-With") != "admin":
+            return jsonify({"error": "Bad request"}), 400
         return f(*args, **kwargs)
 
     return decorated
 
 
-# ── Public routes ────────────────────────────────────────────────
+@app.after_request
+def no_cache(resp):
+    if request.path.startswith(("/admin", "/api/")) and "Cache-Control" not in resp.headers:
+        resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+
+@app.errorhandler(StoreError)
+def store_error(exc):
+    return jsonify({"error": str(exc)}), 502
+
+
+@app.errorhandler(413)
+def too_large(_):
+    return jsonify({"error": "File is too large (4 MB maximum)."}), 413
+
+
+# ── Local development only: on Vercel these paths are static files ──
 @app.route("/")
 def index():
-    return render_template("index.html", content=load_content())
+    content = _load_content()
+    names = [e["name"] for e in store.list_dir("Images")]
+    return Response(site_content.render_site(content, names), mimetype="text/html")
 
 
 @app.route("/styles.css")
@@ -220,23 +180,41 @@ def scriptjs():
 
 @app.route("/Images/<path:filename>")
 def images(filename):
-    return send_from_directory(IMAGES_DIR, filename)
+    return send_from_directory(os.path.join(BASE, "Images"), filename)
 
 
-# ── Admin auth ───────────────────────────────────────────────────
+# ── Sign in ──────────────────────────────────────────────────────
+_failed_logins = {}   # ip -> [timestamps]
+LOGIN_WINDOW, LOGIN_MAX = 300, 8
+
+
+def _client_ip():
+    return (request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+            or request.remote_addr or "?")
+
+
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     error = None
     if request.method == "POST":
-        cfg = load_admin_config()
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-        if username == cfg["username"] and check_password_hash(
-            cfg["password_hash"], password
-        ):
-            session["logged_in"] = True
-            return redirect(url_for("admin_dashboard"))
-        error = "Invalid credentials."
+        ip, now = _client_ip(), time.time()
+        recent = [t for t in _failed_logins.get(ip, []) if now - t < LOGIN_WINDOW]
+        if len(recent) >= LOGIN_MAX:
+            error = "Too many attempts. Please wait a few minutes and try again."
+        else:
+            cfg = _load_admin_config()
+            username = request.form.get("username", "").strip()
+            password = request.form.get("password", "")
+            if username == cfg["username"] and check_password_hash(cfg["password_hash"], password):
+                _failed_logins.pop(ip, None)
+                session.clear()
+                session["logged_in"] = True
+                session.permanent = True
+                return redirect(url_for("admin_dashboard"))
+            time.sleep(0.6)   # slow down guessing
+            recent.append(now)
+            error = "Wrong username or password."
+        _failed_logins[ip] = recent
     return render_template("admin/login.html", error=error)
 
 
@@ -246,7 +224,6 @@ def admin_logout():
     return redirect(url_for("admin_login"))
 
 
-# ── Admin dashboard ──────────────────────────────────────────────
 @app.route("/admin")
 @app.route("/admin/")
 @login_required
@@ -254,102 +231,112 @@ def admin_dashboard():
     return render_template("admin/dashboard.html")
 
 
+@app.route("/admin/file/<path:filename>")
+@login_required
+def admin_file(filename):
+    """An image straight from storage — for files saved moments ago that the
+    public site has not finished deploying yet."""
+    if "/" in filename or filename.startswith("."):
+        return "", 404
+    data = store.read("Images/" + filename)
+    if data is None:
+        return "", 404
+    mime = mimetypes.guess_type(filename)[0] or "application/octet-stream"
+    return Response(data, mimetype=mime, headers={"Cache-Control": "private, max-age=86400"})
+
+
 # ── Content API ──────────────────────────────────────────────────
 @app.route("/api/content", methods=["GET"])
 @login_required
 def api_get_content():
-    return jsonify(load_content())
+    content = _load_content()
+    return jsonify({
+        "content": content,
+        "uploads": _uploads(content),
+        "hosted": HOSTED,
+        "publishes": store.publishes,
+    })
 
 
-VALID_SECTIONS = {
-    "hero",
-    "books",
-    "theatre_plays",
-    "theatre_credits",
-    "cinema_featured",
-    "cinema_credits",
-    "press",
-    "about",
-    "contact",
-    "rights_note",
-    "cv",
-}
-
-
-@app.route("/api/content/<section>", methods=["PUT"])
+@app.route("/api/content", methods=["PUT"])
 @login_required
-def api_update_section(section):
-    if section not in VALID_SECTIONS:
-        return jsonify({"error": "Section not found"}), 404
-    data = request.get_json(force=True, silent=True)
-    if data is None:
-        return jsonify({"error": "Invalid JSON body"}), 400
-    content = load_content()
-    content[section] = data
-    save_content(content)
-    git_auto_push(section)
-    return jsonify({"ok": True})
+def api_save_content():
+    body = request.get_json(force=True, silent=True)
+    if not isinstance(body, dict) or not isinstance(body.get("content"), dict):
+        return jsonify({"error": "Invalid data"}), 400
+    content = site_content.normalize(body["content"])
+
+    # Uploads made since the last save: filename -> staged blob.
+    new_files = body.get("new_files") or {}
+    changes = {}
+    for name, sha in new_files.items():
+        if not UPLOAD_NAME.match(str(name)) or not BLOB_SHA.match(str(sha)):
+            return jsonify({"error": "Invalid upload. Please upload the file again."}), 400
+        changes["Images/" + name] = {"blob": sha}
+
+    existing = [e["name"] for e in store.list_dir("Images")]
+    changes["content.json"] = site_content.dump(content)
+    changes["index.html"] = site_content.render_site(content, existing + list(new_files)).encode("utf-8")
+    store.commit(changes, "admin: update site")
+    return jsonify({"ok": True, "content": content, "uploads": _uploads(content, new_files)})
 
 
-# ── Image API ────────────────────────────────────────────────────
-@app.route("/api/images", methods=["GET"])
-@login_required
-def api_list_images():
-    files = sorted(
-        f for f in os.listdir(IMAGES_DIR) if allowed_file(f)
-    )
-    return jsonify(files)
-
-
+# ── Uploads API ──────────────────────────────────────────────────
 @app.route("/api/upload", methods=["POST"])
 @login_required
 def api_upload():
-    if "file" not in request.files:
+    """Stage a file.  It becomes part of the site at the next save."""
+    f = request.files.get("file")
+    if not f or not f.filename:
         return jsonify({"error": "No file provided"}), 400
-    f = request.files["file"]
-    if not f.filename or not allowed_file(f.filename):
-        return jsonify({"error": "Invalid or unsupported file type"}), 400
-    filename = secure_filename(f.filename)
-    f.save(os.path.join(IMAGES_DIR, filename))
-    return jsonify({"filename": filename})
+    ext = _ext(f.filename)
+    if ext not in IMAGE_EXTENSIONS and ext not in FILE_EXTENSIONS:
+        return jsonify({"error": "Unsupported file type. Use JPG, PNG, WebP, GIF or PDF."}), 400
+    data = f.read()
+    if len(data) > MAX_UPLOAD_BYTES:
+        return jsonify({"error": "File is too large (4 MB maximum)."}), 413
+    # Content-hashed name: the public site caches images for a year, so a
+    # changed image must always get a new name.
+    stem = site_content._slug(os.path.basename(f.filename).rsplit(".", 1)[0]) or "file"
+    filename = f"{stem}-{hashlib.sha1(data).hexdigest()[:8]}.{ext}"
+    return jsonify({
+        "filename": filename,
+        "sha": store.put_blob(data),
+        "kind": "image" if ext in IMAGE_EXTENSIONS else "file",
+        "size": len(data),
+    })
 
 
-@app.route("/api/images/<filename>", methods=["DELETE"])
+@app.route("/api/images/<path:filename>", methods=["DELETE"])
 @login_required
 def api_delete_image(filename):
-    safe = secure_filename(filename)
-    path = os.path.join(IMAGES_DIR, safe)
-    if not os.path.isfile(path):
+    content = _load_content()
+    names = {e["name"] for e in store.list_dir("Images")}
+    if "/" in filename or filename not in names:
         return jsonify({"error": "File not found"}), 404
-    os.remove(path)
-    return jsonify({"ok": True})
+    if filename in site_content.referenced_images(content):
+        return jsonify({"error": "This image is used on the site. Replace it there first."}), 409
+    store.commit({"Images/" + filename: None}, "admin: delete " + filename)
+    remaining = [u for u in _uploads(content) if u["name"] != filename]
+    return jsonify({"ok": True, "uploads": remaining})
 
 
-# ── Settings API ─────────────────────────────────────────────────
-@app.route("/api/git-status", methods=["GET"])
-@login_required
-def api_git_status():
-    return jsonify(_push_status)
-
-
+# ── Account ──────────────────────────────────────────────────────
 @app.route("/api/change-password", methods=["POST"])
 @login_required
 def api_change_password():
-    if _load_admin_config().get("hosted"):
-        return jsonify({
-            "error": "Running in hosted mode. Update the ADMIN_PASSWORD_HASH "
-                     "environment variable in your Railway dashboard instead."
-        }), 400
+    if HOSTED:
+        return jsonify({"error": "On the hosted site the password is set by the "
+                                 "ADMIN_PASSWORD_HASH variable in the Vercel project settings."}), 400
     data = request.get_json(force=True, silent=True) or {}
-    current = data.get("current", "")
-    new_pw = data.get("new", "")
-    cfg = load_admin_config()
-    if not check_password_hash(cfg["password_hash"], current):
+    cfg = _load_admin_config()
+    if not check_password_hash(cfg["password_hash"], data.get("current", "")):
         return jsonify({"error": "Current password is incorrect"}), 403
-    if len(new_pw) < 6:
-        return jsonify({"error": "New password must be at least 6 characters"}), 400
-    cfg["password_hash"] = generate_password_hash(new_pw)
-    save_admin_config(cfg)
+    if len(data.get("new", "")) < 8:
+        return jsonify({"error": "New password must be at least 8 characters"}), 400
+    cfg["password_hash"] = generate_password_hash(data["new"])
+    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, indent=2)
     return jsonify({"ok": True})
 
 

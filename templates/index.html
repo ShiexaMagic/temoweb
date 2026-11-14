@@ -1,301 +1,349 @@
+{#- Public page. Every piece of text here comes from content.json, edited in /admin. -#}
+{%- set site = content.site -%}
+{%- set S = content.sections -%}
+
+{%- macro cover(item, cls='') -%}
+  {%- if item.image -%}
+    <img src="/Images/{{ item.image | urlencode }}" alt="{{ item.title }}" loading="lazy" />
+  {%- else -%}
+    <span class="cover-blank {{ cls }}"><span>{{ item.title }}</span></span>
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro link_list(links) -%}
+  {%- for link in links if link.url -%}
+    <a class="arrow-link" href="{{ link.url }}"{% if link.url.startswith('http') %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.label }}</a>
+  {%- endfor -%}
+{%- endmacro -%}
+
+{#- One book / play / film in a section list. -#}
+{%- macro work(item, facts=false) -%}
+<article class="work{% if facts %} work-boxed{% endif %}">
+  <a class="work-cover" href="#/{{ item.id }}" tabindex="-1" aria-hidden="true">{{ cover(item) }}</a>
+  <div class="work-main">
+    {% if item.label %}<p class="kicker">{{ item.label }}</p>{% endif %}
+    <h3 class="work-title"><a href="#/{{ item.id }}">{{ item.title }}</a></h3>
+    {% if item.meta_line1 or item.meta_line2 %}
+    <p class="work-meta">{{ item.meta_line1 }}{% if item.meta_line1 and item.meta_line2 %}<br />{% endif %}{{ item.meta_line2 }}</p>
+    {% endif %}
+    {% set blurb = item.summary or (item.paragraphs[0] if item.paragraphs else '') %}
+    {% if blurb %}<p class="work-summary">{{ blurb | rich }}</p>{% endif %}
+    <p class="work-links">
+      {{ link_list(item.links) }}
+      <a class="arrow-link" href="#/{{ item.id }}">More info</a>
+    </p>
+  </div>
+  {% if facts and item.details %}
+  <dl class="facts work-facts">
+    {% for d in item.details[:3] %}
+    <div><dt>{{ d.key }}</dt><dd>{{ d.value }}</dd></div>
+    {% endfor %}
+  </dl>
+  {% endif %}
+</article>
+{%- endmacro -%}
+
+{#- The full page for one book / play / film (shown when it is opened). -#}
+{%- macro detail(item, section_key) -%}
+<article class="detail" id="detail-{{ item.id }}" data-title="{{ item.title }}" hidden>
+  <div class="detail-text">
+    <p class="kicker">{{ S[section_key].nav or S[section_key].heading }}{% if item.label %} / {{ item.label }}{% endif %}</p>
+    <h2 class="detail-title">{{ item.title }}</h2>
+    {% if item.meta_line1 or item.meta_line2 %}
+    <p class="detail-meta">{{ item.meta_line1 }}{% if item.meta_line1 and item.meta_line2 %}<br />{% endif %}{{ item.meta_line2 }}</p>
+    {% endif %}
+    {% if item.paragraphs %}
+    <div class="prose">
+      {% for p in item.paragraphs %}<p>{{ p | rich }}</p>{% endfor %}
+    </div>
+    {% endif %}
+    {% if item.details %}
+    <dl class="facts detail-facts">
+      {% for d in item.details %}
+      <div><dt>{{ d.key }}</dt><dd>{{ d.value | rich }}</dd></div>
+      {% endfor %}
+    </dl>
+    {% endif %}
+    {% if item.links %}<p class="work-links">{{ link_list(item.links) }}</p>{% endif %}
+    <p><a class="arrow-link back-link" href="#{{ section_key }}">Back to {{ S[section_key].nav or S[section_key].heading }}</a></p>
+  </div>
+  <figure class="detail-figure">{{ cover(item, 'cover-blank-lg') }}</figure>
+</article>
+{%- endmacro -%}
+
+{%- macro section_head(key) -%}
+<header class="section-head">
+  <h2>{{ S[key].heading }}</h2>
+  {% if S[key].note %}<p class="section-note">{{ S[key].note | rich }}</p>{% endif %}
+</header>
+{%- endmacro -%}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Temo Rekhviashvili | Writer, Playwright, Actor</title>
-    <meta name="description" content="Portfolio website for Temo Rekhviashvili, Georgian writer, playwright, and actor." />
+    <title>{{ site.seo_title or site.name }}</title>
+    <meta name="description" content="{{ site.seo_description }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ site.seo_title or site.name }}" />
+    <meta property="og:description" content="{{ site.seo_description }}" />
+    {% if site.url %}
+    <link rel="canonical" href="{{ site.url }}/" />
+    <meta property="og:url" content="{{ site.url }}/" />
+    {% if site.share_image %}<meta property="og:image" content="{{ site.url }}/Images/{{ site.share_image | urlencode }}" />{% endif %}
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Noto+Serif+Georgian:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css?v={{ v }}" />
   </head>
   <body>
-    <header class="site-header">
-      <nav class="nav container">
-        <a class="brand" href="#home">Temo Rekhviashvili</a>
-        <div class="nav-links">
-          <a href="#books">Books</a>
-          <a href="#theatre">Theatre</a>
-          <a href="#cinema">Cinema</a>
-          <a href="#press">Press</a>
-          <a href="#cv">CV</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" id="siteHeader">
+      <nav class="nav wrap" aria-label="Main">
+        <a class="brand" href="#home">{{ site.name }}</a>
+        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">
+          <span class="nav-toggle-label">Menu</span>
+        </button>
+        <div class="nav-links" id="navLinks">
+          {% for key in content.visible_sections %}
+          <a href="#{{ key }}" data-section="{{ key }}">{{ S[key].nav or S[key].heading }}</a>
+          {% endfor %}
         </div>
       </nav>
     </header>
 
-    <main id="home">
+    <main id="main">
 
       <!-- ── HERO ── -->
-      <section class="hero">
-        <div class="hero-text-panel">
-          <div class="hero-text-inner">
-            <p class="hero-tagline">{{ content.hero.tagline }}</p>
-            <h1>Temo<br />Rekhviashvili</h1>
-            <p class="hero-bio">{{ content.hero.bio }}</p>
-          </div>
+      <section class="hero" id="home">
+        <div class="hero-text">
+          <h1>{{ site.name }}</h1>
+          {% if content.hero.tagline %}<p class="hero-tagline">{{ content.hero.tagline }}</p>{% endif %}
+          {% if content.hero.bio %}<p class="hero-bio">{{ content.hero.bio | rich }}</p>{% endif %}
         </div>
-        <div class="hero-image-panel">
-          <img src="/Images/{{ content.hero.image if content.hero.image else 'Temo Image.jpeg' }}" alt="Temo Rekhviashvili" />
+        <div class="hero-image">
+          {% if content.hero.image %}
+          <img src="/Images/{{ content.hero.image | urlencode }}" alt="{{ site.name }}" fetchpriority="high" />
+          {% endif %}
         </div>
       </section>
 
+      {% for key in content.visible_sections %}
+
+      {% if key == 'books' %}
       <!-- ── BOOKS ── -->
       <section id="books" class="section">
-        <div class="container">
-          <div class="section-header">
-            <p class="section-label">Books</p>
-            <h2>Publications</h2>
-            <p class="section-note">Three books in Georgian. Translation rights are held by the author. English samples and synopses are available.</p>
-          </div>
-
-          <div class="items-grid">
-            {% for book in content.books %}
-            <article class="grid-card" data-modal='{{ book | tojson }}' onclick="openDetailModal(this)">
-              <div class="card-cover {% if not book.image %}card-cover-placeholder{% endif %}">
-                {% if book.image %}
-                  <img src="/Images/{{ book.image }}" alt="{{ book.title }}" />
-                {% else %}
-                  <div class="cover-placeholder"><p>{{ book.title }}</p></div>
-                {% endif %}
-              </div>
-              <div class="card-foot">
-                <p class="item-label">{{ book.label }}</p>
-                <p class="card-title">{{ book.title }}</p>
-              </div>
-            </article>
-            {% endfor %}
-          </div>
-
-          <div class="rights-bar">
-            <div>
-              <p class="rights-label">{{ content.rights_note.title }}</p>
-              <p>{{ content.rights_note.text }}</p>
-            </div>
-            <div>
-              <p>For publishing, translation and adaptation inquiries please get in touch.</p>
-              <a href="mailto:{{ content.contact.email }}" class="text-link">{{ content.contact.email }} &rarr;</a>
-            </div>
+        <div class="wrap">
+          {{ section_head('books') }}
+          <div class="work-list">
+            {% for item in content.books %}{{ work(item) }}{% endfor %}
           </div>
         </div>
+        {% set rn = content.rights_note %}
+        {% if rn.visible and (rn.text or rn.inquiry_text) %}
+        <aside class="rights">
+          <div class="wrap rights-grid">
+            <div>
+              {% if rn.title %}<p class="kicker">{{ rn.title }}</p>{% endif %}
+              {% if rn.text %}<p>{{ rn.text | rich }}</p>{% endif %}
+            </div>
+            <div>{% if rn.inquiry_text %}<p>{{ rn.inquiry_text | rich }}</p>{% endif %}</div>
+            <div>
+              {% if content.contact.email %}
+              <a class="arrow-link" href="mailto:{{ content.contact.email }}">{{ content.contact.email }}</a>
+              {% endif %}
+            </div>
+          </div>
+        </aside>
+        {% endif %}
       </section>
 
+      {% elif key == 'theatre' %}
       <!-- ── THEATRE ── -->
-      <section id="theatre" class="section section-alt">
-        <div class="container">
-          <p class="section-label">Theatre</p>
-          <h2>Stage work as playwright and actor.</h2>
+      <section id="theatre" class="section">
+        <div class="wrap">
+          {{ section_head('theatre') }}
 
-          <div class="subsection-label">Playwright / Dramatic Writing</div>
-
-          <div class="items-grid plays-grid">
-            {% for play in content.theatre_plays %}
-            <article class="grid-card" data-modal='{{ play | tojson }}' onclick="openDetailModal(this)">
-              <div class="card-cover">
-                {% if play.image %}
-                  <img src="/Images/{{ play.image }}" alt="{{ play.title }}" />
-                {% endif %}
-              </div>
-              <div class="card-foot">
-                <p class="item-label">{{ play.year }}</p>
-                <p class="card-title">{{ play.title }}</p>
-              </div>
-            </article>
-            {% endfor %}
+          {% if content.theatre_plays %}
+          {% if S.theatre.plays_label %}<p class="kicker sub-kicker">{{ S.theatre.plays_label }}</p>{% endif %}
+          <div class="work-list work-list-boxed">
+            {% for item in content.theatre_plays %}{{ work(item, facts=true) }}{% endfor %}
           </div>
+          {% endif %}
 
-          <div class="subsection-label">Actor</div>
-          <h3 class="subsection-title">Selected stage acting credits</h3>
-          <p class="subsection-subtitle">A concise selection of theatre roles.</p>
-
-          <table class="credits-table">
-            <tbody>
-              {% for credit in content.theatre_credits %}
-              <tr>
-                <td class="credit-title">{{ credit.title }}</td>
-                <td class="credit-venue">{{ credit.venue }}</td>
-                <td class="credit-detail">{{ credit.detail }}</td>
-              </tr>
+          {% if content.theatre_credits %}
+          <div class="credits">
+            {% if S.theatre.credits_label %}<p class="kicker sub-kicker">{{ S.theatre.credits_label }}</p>{% endif %}
+            <header class="credits-head">
+              {% if S.theatre.credits_heading %}<h3>{{ S.theatre.credits_heading }}</h3>{% endif %}
+              {% if S.theatre.credits_note %}<p>{{ S.theatre.credits_note }}</p>{% endif %}
+            </header>
+            <ul class="rows">
+              {% for c in content.theatre_credits %}
+              <li class="row">
+                <span class="row-title">{{ c.title }}</span>
+                <span class="row-mid">{{ c.venue }}</span>
+                <span class="row-end">{{ c.detail }}</span>
+              </li>
               {% endfor %}
-            </tbody>
-          </table>
-          <p class="table-note">Full theatre CV available on request.</p>
+            </ul>
+            {% if S.theatre.credits_footnote %}<p class="footnote">{{ S.theatre.credits_footnote | rich }}</p>{% endif %}
+          </div>
+          {% endif %}
         </div>
       </section>
 
+      {% elif key == 'cinema' %}
       <!-- ── CINEMA ── -->
       <section id="cinema" class="section">
-        <div class="container">
-          <p class="section-label">Cinema</p>
-          <h2>Film work as writer, co-screenwriter and actor.</h2>
+        <div class="wrap">
+          {{ section_head('cinema') }}
 
-          {% set film = content.cinema_featured %}
-          <div class="featured-film-compact" data-modal='{{ film | tojson }}' onclick="openDetailModal(this)">
-            <div class="film-poster-compact">
-              {% if film.image %}
-                <img src="/Images/{{ film.image }}" alt="{{ film.title }}" />
-              {% endif %}
-            </div>
-            <div class="film-info-compact">
-              <p class="item-label">{{ film.label }}</p>
-              <h3>{{ film.title }}</h3>
-              <p class="item-meta">{{ film.year }}</p>
-              {% if film.paragraphs %}
-                <p>{{ film.paragraphs[0] }}</p>
-              {% endif %}
-              <p class="more-hint">Click for full details &rarr;</p>
-            </div>
+          {% if content.films %}
+          {% if S.cinema.films_label %}<p class="kicker sub-kicker">{{ S.cinema.films_label }}</p>{% endif %}
+          <div class="work-list work-list-boxed">
+            {% for item in content.films %}{{ work(item, facts=true) }}{% endfor %}
           </div>
+          {% endif %}
 
-          <div class="subsection-label">Selected Screen Acting Credits</div>
-          <table class="credits-table">
-            <tbody>
-              {% for credit in content.cinema_credits %}
-              <tr>
-                <td class="credit-title">{{ credit.title }}</td>
-                <td class="credit-venue">{{ credit.venue }}</td>
-                <td class="credit-detail">{{ credit.year }}</td>
-              </tr>
+          {% if content.cinema_credits %}
+          <div class="credits">
+            {% if S.cinema.credits_label %}<p class="kicker sub-kicker">{{ S.cinema.credits_label }}</p>{% endif %}
+            <ul class="rows">
+              {% for c in content.cinema_credits %}
+              <li class="row">
+                <span class="row-title">{{ c.title }}</span>
+                <span class="row-mid">{{ c.venue }}</span>
+                <span class="row-end">{{ c.year }}</span>
+              </li>
               {% endfor %}
-            </tbody>
-          </table>
-          <p class="table-note">Full filmography available on IMDb.</p>
-        </div>
-      </section>
-
-      <!-- ── PRESS ── -->
-      <section id="press" class="section section-alt">
-        <div class="container">
-          <p class="section-label">Press</p>
-          <h2>Recognition</h2>
-          <div class="press-list">
-            {% for item in content.press %}
-            {% if item.url %}
-            <a class="press-item press-item-link" href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
-              <span class="press-year">{{ item.year }}</span>
-              <p>{{ item.text }}</p>
-              <span class="press-ext">&#8599;</span>
-            </a>
-            {% else %}
-            <div class="press-item">
-              <span class="press-year">{{ item.year }}</span>
-              <p>{{ item.text }}</p>
-            </div>
+            </ul>
+            {% if S.cinema.credits_footnote or S.cinema.credits_link_url %}
+            <p class="footnote">
+              {{ S.cinema.credits_footnote | rich }}
+              {% if S.cinema.credits_link_url %}
+              <a class="arrow-link" href="{{ S.cinema.credits_link_url }}" target="_blank" rel="noopener noreferrer">{{ S.cinema.credits_link_label or 'Link' }}</a>
+              {% endif %}
+            </p>
             {% endif %}
-            {% endfor %}
           </div>
+          {% endif %}
         </div>
       </section>
 
-      <!-- ── CV ── -->
-      <section id="cv" class="section cv-section section-alt">
-        <div class="container">
-          <div class="cv-layout">
-            <div class="cv-photo">
-              <img src="/Images/{{ content.hero.image if content.hero.image else 'Temo Image.jpeg' }}" alt="Temo Rekhviashvili" />
-            </div>
-            <div class="cv-text">
-              <p class="section-label">Biography / CV</p>
-              <h2>Temo<br />Rekhviashvili</h2>
-              <div class="cv-bio">
-                {% for para in content.about.paragraphs %}
-                  <p>{{ para }}</p>
-                {% endfor %}
-              </div>
-              {% if content.cv and content.cv.entries %}
-              <div class="cv-entries">
-                {% for entry in content.cv.entries %}
-                <div class="cv-entry">
-                  <span class="cv-entry-year">{{ entry.year }}</span>
-                  <span class="cv-entry-cat">{{ entry.category }}</span>
-                  <span class="cv-entry-text">{{ entry.text }}</span>
-                </div>
-                {% endfor %}
-              </div>
-              {% endif %}
-              {% if content.cv and content.cv.download_url %}
-              <a href="{{ content.cv.download_url }}" class="cv-download" target="_blank" rel="noopener noreferrer">Download CV &rarr;</a>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── ABOUT ── -->
-      <section id="about" class="section">
-        <div class="container">
-          <p class="section-label">About</p>
-          <div class="about-layout">
-            <div class="about-main">
-              <h2>About</h2>
-              <p class="about-intro">{{ content.about.intro }}</p>
-              {% for para in content.about.paragraphs %}
-                <p>{{ para }}</p>
-              {% endfor %}
-              <p class="about-closing">{{ content.about.closing }}</p>
-            </div>
-
-            <div class="about-sidebar">
-              <div class="highlights-box">
-                <p class="highlights-label">Selected Highlights</p>
-                <div class="timeline">
-                  {% for item in content.about.timeline %}
-                  <div class="timeline-item">
-                    <span class="tl-year">{{ item.year }}</span>
-                    <span>{{ item.text }}</span>
-                  </div>
-                  {% endfor %}
-                </div>
-              </div>
-
-              <div class="fields-box">
-                <p class="highlights-label">Fields</p>
-                <div class="fields-list">
-                  {% for field in content.about.fields %}
-                  <span>{{ field }}</span>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── CONTACT ── -->
-      <section id="contact" class="section section-alt">
-        <div class="container">
-          <p class="section-label">Contact</p>
-          <h2>Get in touch</h2>
-          <div class="contact-layout">
-            <p>{{ content.contact.description }}</p>
-            <div>
-              <a href="mailto:{{ content.contact.email }}" class="contact-email">
-                {{ content.contact.email }} &rarr;
+      {% elif key == 'press' %}
+      <!-- ── PRESS ── -->
+      <section id="press" class="section">
+        <div class="wrap">
+          {{ section_head('press') }}
+          <ul class="rows press-rows">
+            {% for item in content.press %}
+            <li>
+              {% if item.url %}
+              <a class="row row-link" href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                <span class="row-year">{{ item.year }}</span>
+                <span class="row-title">{{ item.text }}</span>
+                <span class="row-ext" aria-hidden="true">&#8599;</span>
               </a>
+              {% else %}
+              <div class="row">
+                <span class="row-year">{{ item.year }}</span>
+                <span class="row-title">{{ item.text }}</span>
+              </div>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </section>
+
+      {% elif key == 'about' %}
+      <!-- ── ABOUT ── -->
+      {% set about = content.about %}
+      <section id="about" class="section">
+        <div class="wrap">
+          <header class="section-head">
+            <h2>{{ S.about.heading }}</h2>
+            {% if about.intro %}<p class="section-note section-note-lg">{{ about.intro | rich }}</p>{% endif %}
+          </header>
+          {% set has_side = about.image or about.timeline or about.fields %}
+          <div class="about-grid{% if not has_side %} about-grid-solo{% endif %}">
+            <div class="prose">
+              {% for p in about.paragraphs %}<p>{{ p | rich }}</p>{% endfor %}
+              {% if about.closing %}<p class="about-closing">{{ about.closing | rich }}</p>{% endif %}
+              {% if content.cv.download_url %}
+              <p><a class="arrow-link" href="{{ content.cv.download_url }}" target="_blank" rel="noopener noreferrer">{{ S.about.cv_label or 'Download CV' }}</a></p>
+              {% endif %}
             </div>
+            {% if has_side %}
+            <aside class="about-side">
+              {% if about.image %}
+              <figure class="about-photo"><img src="/Images/{{ about.image | urlencode }}" alt="{{ site.name }}" loading="lazy" /></figure>
+              {% endif %}
+              {% if about.timeline %}
+              <div class="side-box">
+                <p class="kicker">{{ S.about.highlights_label }}</p>
+                <dl class="timeline">
+                  {% for t in about.timeline %}
+                  <div><dt>{{ t.year }}</dt><dd>{{ t.text | rich }}</dd></div>
+                  {% endfor %}
+                </dl>
+              </div>
+              {% endif %}
+              {% if about.fields %}
+              <div class="side-box">
+                <p class="kicker">{{ S.about.fields_label }}</p>
+                <ul class="fields">
+                  {% for f in about.fields %}<li>{{ f }}</li>{% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+            </aside>
+            {% endif %}
           </div>
         </div>
       </section>
 
+      {% elif key == 'contact' %}
+      <!-- ── CONTACT ── -->
+      <section id="contact" class="section section-contact">
+        <div class="wrap">
+          <header class="section-head">
+            <h2>{{ S.contact.heading }}</h2>
+            {% if content.contact.description %}<p class="section-note">{{ content.contact.description | rich }}</p>{% endif %}
+          </header>
+          {% if content.contact.email %}
+          <a class="contact-email" href="mailto:{{ content.contact.email }}">{{ content.contact.email }}</a>
+          {% endif %}
+          {% if content.contact.links %}
+          <p class="work-links contact-links">{{ link_list(content.contact.links) }}</p>
+          {% endif %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% endfor %}
     </main>
 
-    <!-- ── DETAIL MODAL ── -->
-    <div class="detail-modal-overlay" id="detailModal" onclick="closeModalOnOverlay(event)">
-      <div class="detail-modal">
-        <button class="modal-x" onclick="closeDetailModal()" aria-label="Close">&times;</button>
-        <div class="modal-inner" id="modalInner"></div>
-      </div>
-    </div>
-
     <footer class="site-footer">
-      <div class="container footer-content">
-        <p>&copy; <span id="year"></span> Temo Rekhviashvili</p>
-        <p>Writer &middot; Playwright &middot; Actor</p>
+      <div class="wrap footer-grid">
+        <p>&copy; {{ year }} {{ site.name }}</p>
+        {% if site.footer_text %}<p>{{ site.footer_text }}</p>{% endif %}
       </div>
     </footer>
 
-    <script src="/script.js"></script>
+    <!-- ── DETAIL PAGES (one per book / play / film) ── -->
+    <div class="detail-view" id="detailView" hidden>
+      <div class="wrap">
+        {% for item in content.books %}{{ detail(item, 'books') }}{% endfor %}
+        {% for item in content.theatre_plays %}{{ detail(item, 'theatre') }}{% endfor %}
+        {% for item in content.films %}{{ detail(item, 'cinema') }}{% endfor %}
+      </div>
+    </div>
+
+    <script src="/script.js?v={{ v }}"></script>
   </body>
 </html>

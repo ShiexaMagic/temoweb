@@ -1,0 +1,4 @@
+# Not needed on Vercel (the editor function needs the Python files and templates).
+reference_images
+*.docx
+README.md
