@@ -8,6 +8,13 @@
   var baseTitle = document.title;
   var scrollMemory = {};          // address -> scroll position, for Back / Forward
 
+  /* ── Black / white design switch (remembered on this device) ── */
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) { /* private mode */ }
+  });
+
   /* ── Mobile menu ── */
   function setMenu(open) {
     navLinks.classList.toggle('open', open);
