@@ -281,7 +281,12 @@
           "value": "Friedrich Ebert Stiftung Prize in Dramaturgy, 2025"
         }
       ],
-      "links": []
+      "links": [
+        {
+          "label": "Rating/ tickets",
+          "url": "https://tobe.one/production/57fcb50e-9b1f-42ea-8ede-0e2d63a3732a"
+        }
+      ]
     },
     {
       "id": "pathetic-monologues-play",
@@ -325,7 +330,12 @@
           "value": "Tsinandali Award for Theatre Arts, 2024 -Natalia Gabisonia; Liberty Award for Best Actress, 2024 - Natalia Gabisonia"
         }
       ],
-      "links": []
+      "links": [
+        {
+          "label": "Ticket/Rating",
+          "url": "https://tobe.one/production/7d01d427-c609-4dae-9121-27876b78c004"
+        }
+      ]
     }
   ],
   "films": [
@@ -420,24 +430,9 @@
       "year": "2025"
     },
     {
-      "title": "Natia",
-      "venue": "Directed by Anna Parcerisas Casanovas",
-      "year": "2017"
-    },
-    {
       "title": "The Box",
       "venue": "Directed by Elene Khuntsaria",
       "year": "2015"
-    },
-    {
-      "title": "The Version",
-      "venue": "Directed by Ilia Beria",
-      "year": "2013"
-    },
-    {
-      "title": "The Wheels",
-      "venue": "Directed by Giorgi Khechuashvili",
-      "year": "2013"
     }
   ],
   "press": [
